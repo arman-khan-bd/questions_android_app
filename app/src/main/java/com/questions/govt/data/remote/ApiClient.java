@@ -25,13 +25,16 @@ import com.questions.govt.data.remote.response.UserProfileResponse;
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import com.questions.govt.data.remote.response.AuthData;
 
 /**
  * Thread-safe singleton providing OkHttp and Retrofit instances,
@@ -63,6 +66,12 @@ public class ApiClient {
                 .connectTimeout(AppConfig.CONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .readTimeout(AppConfig.READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .writeTimeout(AppConfig.WRITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .connectionSpecs(Arrays.asList(
+                        ConnectionSpec.MODERN_TLS,
+                        ConnectionSpec.COMPATIBLE_TLS,
+                        ConnectionSpec.CLEARTEXT
+                ))
                 .addInterceptor(new AuthInterceptor())
                 .addInterceptor(new AccountStatusInterceptor());
 
@@ -146,7 +155,20 @@ public class ApiClient {
             }
 
             if (innerType != null && !Void.class.equals(innerType)) {
-                if (UserProfileResponse.class.equals(innerType)
+                if (AuthData.class.equals(innerType)) {
+                    try {
+                        AuthData auth = null;
+                        if (jsonObject.has("data") && jsonObject.get("data").isJsonObject()) {
+                            auth = context.deserialize(jsonObject.get("data"), innerType);
+                        }
+                        if (auth == null || auth.getToken() == null || auth.getToken().isEmpty()) {
+                            auth = context.deserialize(json, innerType);
+                        }
+                        response.setData(auth);
+                    } catch (Exception e) {
+                        Log.w(TAG, "AuthData deserialization error: " + e.getMessage());
+                    }
+                } else if (UserProfileResponse.class.equals(innerType)
                         || StatisticsResponse.class.equals(innerType)
                         || LeaderboardResponse.class.equals(innerType)
                         || HomeFeedResponse.class.equals(innerType)

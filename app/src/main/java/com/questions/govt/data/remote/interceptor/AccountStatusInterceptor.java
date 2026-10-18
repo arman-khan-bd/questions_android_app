@@ -41,25 +41,25 @@ public class AccountStatusInterceptor implements Interceptor {
         Request request = chain.request();
         Response response = chain.proceed(request);
 
-        // Check for 403 Forbidden or custom account status payloads
-        if (response.code() == 403 || response.code() == 401) {
+        // Check for 403 Forbidden custom account status payloads (suspended or disabled)
+        if (response.code() == 403) {
             ResponseBody responseBody = response.body();
             if (responseBody != null) {
-                BufferedSource source = responseBody.source();
-                source.request(Long.MAX_VALUE); // Buffer the entire body
-                Buffer buffer = source.getBuffer();
-
-                Charset charset = StandardCharsets.UTF_8;
-                MediaType contentType = responseBody.contentType();
-                if (contentType != null) {
-                    Charset cs = contentType.charset(StandardCharsets.UTF_8);
-                    if (cs != null) {
-                        charset = cs;
-                    }
-                }
-
-                String bodyString = buffer.clone().readString(charset);
                 try {
+                    BufferedSource source = responseBody.source();
+                    source.request(65536); // Safely buffer up to 64KB without blocking
+                    Buffer buffer = source.getBuffer();
+
+                    Charset charset = StandardCharsets.UTF_8;
+                    MediaType contentType = responseBody.contentType();
+                    if (contentType != null) {
+                        Charset cs = contentType.charset(StandardCharsets.UTF_8);
+                        if (cs != null) {
+                            charset = cs;
+                        }
+                    }
+
+                    String bodyString = buffer.clone().readString(charset);
                     JsonObject jsonObject = JsonParser.parseString(bodyString).getAsJsonObject();
                     if (jsonObject.has("account_status")) {
                         String status = jsonObject.get("account_status").getAsString();

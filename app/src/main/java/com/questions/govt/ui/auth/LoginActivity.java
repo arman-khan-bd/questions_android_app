@@ -23,6 +23,7 @@ import com.questions.govt.data.remote.response.ApiResponse;
 import com.questions.govt.data.remote.response.AuthData;
 import com.questions.govt.ui.main.MainActivity;
 import com.questions.govt.util.FeatureFlagManager;
+import com.questions.govt.util.NetworkErrorParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -135,10 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    String errorMsg = "Invalid credentials. Please verify your phone/email and password.";
-                    if (response.body() != null && !TextUtils.isEmpty(response.body().getMessage())) {
-                        errorMsg = response.body().getMessage();
-                    }
+                    String errorMsg = NetworkErrorParser.parseError(response, "Invalid credentials. Please verify your phone/email and password.");
                     Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                 }
             }
@@ -146,7 +144,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ApiResponse<AuthData>> call, Throwable t) {
                 setLoading(false);
-                Toast.makeText(LoginActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show();
+                String errorMsg = NetworkErrorParser.parseFailure(t, getString(R.string.network_error));
+                Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_LONG).show();
             }
         });
     }

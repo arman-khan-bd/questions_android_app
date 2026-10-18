@@ -25,6 +25,7 @@ import com.questions.govt.data.remote.response.ApiResponse;
 import com.questions.govt.data.remote.response.AuthData;
 import com.questions.govt.ui.main.MainActivity;
 import com.questions.govt.util.FeatureFlagManager;
+import com.questions.govt.util.NetworkErrorParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -169,10 +170,7 @@ public class RegisterActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    String errorMsg = "Registration failed. This phone or email may already be in use.";
-                    if (response.body() != null && !TextUtils.isEmpty(response.body().getMessage())) {
-                        errorMsg = response.body().getMessage();
-                    }
+                    String errorMsg = NetworkErrorParser.parseError(response, "Registration failed. This phone or email may already be in use.");
                     Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                 }
             }
@@ -180,7 +178,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ApiResponse<AuthData>> call, Throwable t) {
                 setLoading(false);
-                Toast.makeText(RegisterActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show();
+                String errorMsg = NetworkErrorParser.parseFailure(t, getString(R.string.network_error));
+                Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_LONG).show();
             }
         });
     }
