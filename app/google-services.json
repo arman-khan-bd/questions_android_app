@@ -36,6 +36,35 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:399506337080:android:1a0b639ddc99311335e5cd",
+        "android_client_info": {
+          "package_name": "com.questions.govt.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "399506337080-0q16kcvbjptm7atdi4ttgksa1jp8pk51.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuZid_TF_DYvIppIaEMXc2HSELtH-Ej7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "399506337080-0q16kcvbjptm7atdi4ttgksa1jp8pk51.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:399506337080:android:c3c93f34eabbf66035e5cd",
         "android_client_info": {
           "package_name": "com.smartmess.android"
