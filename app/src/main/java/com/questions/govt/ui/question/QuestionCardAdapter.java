@@ -75,6 +75,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
     }
 
+    public List<Question> getQuestions() {
+        return new ArrayList<>(questionList);
+    }
+
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

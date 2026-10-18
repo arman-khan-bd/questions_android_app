@@ -27,6 +27,7 @@ import com.questions.govt.data.local.SessionManager;
 import com.questions.govt.data.model.User;
 import com.questions.govt.data.remote.response.UserProfileResponse;
 import com.questions.govt.data.repository.UserRepository;
+import com.questions.govt.ui.question.CreateQuestionActivity;
 
 import java.util.Locale;
 
@@ -42,6 +43,7 @@ public class ProfileFragment extends Fragment {
     private ImageView imgCoverPhoto;
     private ImageView imgAvatar;
     private MaterialButton btnEditProfile;
+    private MaterialButton btnProfileCreateQuestion;
     private TextView tvProfileName;
     private TextView tvProfileUsername;
     private TextView tvProfileBio;
@@ -97,6 +99,14 @@ public class ProfileFragment extends Fragment {
 
         // Hide back button in fragment context
         toolbarProfile.setNavigationIcon(null);
+
+        btnProfileCreateQuestion = root.findViewById(R.id.btnProfileCreateQuestion);
+        if (btnProfileCreateQuestion != null) {
+            btnProfileCreateQuestion.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), CreateQuestionActivity.class);
+                startActivity(intent);
+            });
+        }
 
         btnEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), EditProfileActivity.class);

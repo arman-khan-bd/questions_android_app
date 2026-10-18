@@ -136,6 +136,11 @@
     <string name="change_cover">Change Cover</string>
     <string name="fix_report">Resolve &amp; Edit Question</string>
 
+    <!-- Question & Exam Creation -->
+    <string name="create_question">Create Question</string>
+    <string name="exam_from_questions">Exam from Questions</string>
+    <string name="exam_from_my_questions">Exam with My Questions</string>
+
     <!-- Support & Legal Compliance -->
     <string name="support_email_label">Contact Support</string>
     <string name="privacy_policy_title">Privacy Policy</string>

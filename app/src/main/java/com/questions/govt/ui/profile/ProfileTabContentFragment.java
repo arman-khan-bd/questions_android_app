@@ -1,5 +1,6 @@
 package com.questions.govt.ui.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +15,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.questions.govt.R;
 import com.questions.govt.data.model.CustomExamRequest;
 import com.questions.govt.data.model.ExamResult;
 import com.questions.govt.data.model.Question;
 import com.questions.govt.data.model.ReportItem;
+import com.questions.govt.data.remote.response.CustomExamGenerateResponse;
+import com.questions.govt.ui.exam.ExamArenaActivity;
+import com.questions.govt.ui.question.CreateQuestionActivity;
 import com.questions.govt.ui.question.QuestionCardAdapter;
 
 import java.io.Serializable;
@@ -43,6 +49,8 @@ public class ProfileTabContentFragment extends Fragment {
     private ImageView imgTabEmpty;
     private TextView tvTabEmptyTitle;
     private TextView tvTabEmptySubtitle;
+    private MaterialButton btnTabEmptyAction;
+    private ExtendedFloatingActionButton fabTabAction;
 
     public static ProfileTabContentFragment newInstance(int tabIndex, Serializable dataList) {
         ProfileTabContentFragment fragment = new ProfileTabContentFragment();
@@ -71,6 +79,8 @@ public class ProfileTabContentFragment extends Fragment {
         imgTabEmpty = root.findViewById(R.id.imgTabEmpty);
         tvTabEmptyTitle = root.findViewById(R.id.tvTabEmptyTitle);
         tvTabEmptySubtitle = root.findViewById(R.id.tvTabEmptySubtitle);
+        btnTabEmptyAction = root.findViewById(R.id.btnTabEmptyAction);
+        fabTabAction = root.findViewById(R.id.fabTabAction);
 
         rvTabContent.setLayoutManager(new LinearLayoutManager(requireContext()));
         bindTabAdapter();
@@ -96,11 +106,37 @@ public class ProfileTabContentFragment extends Fragment {
                 List<Question> questions = dataList instanceof List ? (List<Question>) dataList : new ArrayList<>();
                 if (questions.isEmpty()) {
                     showEmpty("No Questions Created", "Submit questions to contribute to the community.", R.drawable.ic_edit);
+                    if (btnTabEmptyAction != null) {
+                        btnTabEmptyAction.setVisibility(View.VISIBLE);
+                        btnTabEmptyAction.setText(R.string.create_question);
+                        btnTabEmptyAction.setOnClickListener(v -> startActivity(new Intent(requireContext(), CreateQuestionActivity.class)));
+                    }
+                    if (fabTabAction != null) {
+                        fabTabAction.setVisibility(View.GONE);
+                    }
                 } else {
                     hideEmpty();
                     QuestionCardAdapter adapter = new QuestionCardAdapter(requireContext(), getChildFragmentManager());
                     adapter.submitList(questions);
                     rvTabContent.setAdapter(adapter);
+
+                    if (fabTabAction != null) {
+                        fabTabAction.setVisibility(View.VISIBLE);
+                        fabTabAction.setText(R.string.exam_from_my_questions);
+                        fabTabAction.setOnClickListener(v -> {
+                            CustomExamGenerateResponse examSession = new CustomExamGenerateResponse();
+                            examSession.setExamId(System.currentTimeMillis() % 100000);
+                            examSession.setTitle("My Questions Exam (" + questions.size() + " Questions)");
+                            examSession.setTotalQuestions(questions.size());
+                            examSession.setDurationMinutes(Math.max(5, questions.size() * 1));
+                            examSession.setNegativeMarking(0.25);
+                            examSession.setQuestions(questions);
+
+                            Intent intent = new Intent(requireContext(), ExamArenaActivity.class);
+                            intent.putExtra(ExamArenaActivity.EXTRA_EXAM_DATA, examSession);
+                            startActivity(intent);
+                        });
+                    }
                 }
                 break;
             }
@@ -161,10 +197,22 @@ public class ProfileTabContentFragment extends Fragment {
         tvTabEmptyTitle.setText(title);
         tvTabEmptySubtitle.setText(subtitle);
         imgTabEmpty.setImageResource(iconRes);
+        if (btnTabEmptyAction != null) {
+            btnTabEmptyAction.setVisibility(View.GONE);
+        }
+        if (fabTabAction != null) {
+            fabTabAction.setVisibility(View.GONE);
+        }
     }
 
     private void hideEmpty() {
         layoutTabEmpty.setVisibility(View.GONE);
         rvTabContent.setVisibility(View.VISIBLE);
+        if (btnTabEmptyAction != null) {
+            btnTabEmptyAction.setVisibility(View.GONE);
+        }
+        if (fabTabAction != null) {
+            fabTabAction.setVisibility(View.GONE);
+        }
     }
 }

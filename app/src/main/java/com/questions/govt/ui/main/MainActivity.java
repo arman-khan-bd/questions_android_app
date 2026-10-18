@@ -340,9 +340,6 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_profile) {
                 loadFragment(new ProfileFragment());
                 return true;
-            } else if (itemId == R.id.nav_menu) {
-                drawerLayout.openDrawer(GravityCompat.START);
-                return false;
             }
             return false;
         });

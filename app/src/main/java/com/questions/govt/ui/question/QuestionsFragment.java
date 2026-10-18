@@ -28,18 +28,22 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.questions.govt.R;
 import com.questions.govt.data.model.Question;
 import com.questions.govt.data.model.TaxonomyItem;
 import com.questions.govt.data.remote.ApiClient;
 import com.questions.govt.data.remote.response.ApiResponse;
+import com.questions.govt.data.remote.response.CustomExamGenerateResponse;
 import com.questions.govt.data.remote.response.PaginatedList;
 import com.questions.govt.data.repository.QuestionRepository;
 import com.questions.govt.data.repository.TaxonomyRepository;
+import com.questions.govt.ui.exam.ExamArenaActivity;
 import com.questions.govt.util.FeatureFlagManager;
 import com.questions.govt.util.NetworkErrorParser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +72,7 @@ public class QuestionsFragment extends Fragment {
     private ProgressBar pbInitialLoading;
     private ProgressBar pbPagination;
     private FloatingActionButton fabCreateQuestion;
+    private ExtendedFloatingActionButton fabCreateExamFromQuestions;
 
     private QuestionCardAdapter adapter;
     private QuestionRepository questionRepository;
@@ -122,12 +127,36 @@ public class QuestionsFragment extends Fragment {
         pbInitialLoading = view.findViewById(R.id.pbInitialLoading);
         pbPagination = view.findViewById(R.id.pbPagination);
         fabCreateQuestion = view.findViewById(R.id.fabCreateQuestion);
+        fabCreateExamFromQuestions = view.findViewById(R.id.fabCreateExamFromQuestions);
 
         // Feature flag for creating question
         boolean canCreateQuestion = FeatureFlagManager.getInstance().isCommunityQuestionCreationEnabled();
         fabCreateQuestion.setVisibility(canCreateQuestion ? View.VISIBLE : View.GONE);
         fabCreateQuestion.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), CreateQuestionActivity.class);
+            startActivity(intent);
+        });
+
+        fabCreateExamFromQuestions.setOnClickListener(v -> {
+            List<Question> currentQuestions = adapter != null ? adapter.getQuestions() : null;
+            if (currentQuestions == null || currentQuestions.isEmpty()) {
+                Toast.makeText(requireContext(), "No questions available to create an exam session.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            List<Question> examQuestions = new ArrayList<>(currentQuestions);
+            if (examQuestions.size() > 25) {
+                examQuestions = new ArrayList<>(examQuestions.subList(0, 25));
+            }
+            CustomExamGenerateResponse examSession = new CustomExamGenerateResponse();
+            examSession.setExamId(System.currentTimeMillis() % 100000);
+            examSession.setTitle("Question Bank Exam (" + examQuestions.size() + " Questions)");
+            examSession.setTotalQuestions(examQuestions.size());
+            examSession.setDurationMinutes(Math.max(5, examQuestions.size() * 1));
+            examSession.setNegativeMarking(0.25);
+            examSession.setQuestions(examQuestions);
+
+            Intent intent = new Intent(requireContext(), ExamArenaActivity.class);
+            intent.putExtra(ExamArenaActivity.EXTRA_EXAM_DATA, examSession);
             startActivity(intent);
         });
 
