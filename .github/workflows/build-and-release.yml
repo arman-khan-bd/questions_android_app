@@ -62,46 +62,58 @@ jobs:
           BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | tail -n 1)
           APKSIGNER="$BUILD_TOOLS_DIR/apksigner"
           
-          UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
-          DEBUG_APK="app/build/outputs/apk/debug/app-debug.apk"
+          # Find APK paths dynamically
+          RELEASE_SOURCE=$(find app/build/outputs/apk/release -name "*.apk" | head -n 1)
+          DEBUG_SOURCE=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
+
+          echo "Found Release APK: $RELEASE_SOURCE"
+          echo "Found Debug APK: $DEBUG_SOURCE"
 
           # 1. Copy Debug APK (already signed with Android debug keystore)
-          if [ -f "$DEBUG_APK" ]; then
-            cp "$DEBUG_APK" release-artifacts/GovtExamPrep-debug.apk
-            echo "Copied Debug APK -> GovtExamPrep-debug.apk"
+          if [ -n "$DEBUG_SOURCE" ] && [ -f "$DEBUG_SOURCE" ]; then
+            cp "$DEBUG_SOURCE" release-artifacts/questions-govt-debug.apk
+            cp "$DEBUG_SOURCE" release-artifacts/GovtExamPrep-debug.apk
+            echo "Copied Debug APK"
           fi
 
           # 2. Sign Release APK
-          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ]; then
-            echo "Signing with repository secret keystore..."
-            echo "$KEYSTORE_BASE64" | base64 -d > release.keystore
-            $APKSIGNER sign --ks release.keystore \
-              --ks-pass "pass:$KEYSTORE_PASSWORD" \
-              --ks-key-alias "$KEY_ALIAS" \
-              --key-pass "pass:${KEY_PASSWORD:-$KEYSTORE_PASSWORD}" \
-              --out release-artifacts/GovtExamPrep-release.apk \
-              "$UNSIGNED_APK"
-            rm -f release.keystore
-          else
-            echo "No SIGNING_KEYSTORE_BASE64 secret provided. Generating signing certificate for installable APK..."
-            keytool -genkeypair -v -keystore ci-release.jks -alias releaseKey -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass android -keypass android -dname "CN=GovtJobPrep, OU=App, O=GovtExam, L=Dhaka, ST=Dhaka, C=BD"
-            $APKSIGNER sign --ks ci-release.jks \
-              --ks-pass pass:android \
-              --ks-key-alias releaseKey \
-              --key-pass pass:android \
-              --out release-artifacts/GovtExamPrep-release.apk \
-              "$UNSIGNED_APK"
-            rm -f ci-release.jks
-          fi
+          if [ -n "$RELEASE_SOURCE" ] && [ -f "$RELEASE_SOURCE" ]; then
+            if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ]; then
+              echo "Signing with repository secret keystore..."
+              echo "$KEYSTORE_BASE64" | base64 -d > release.keystore
+              $APKSIGNER sign --ks release.keystore \
+                --ks-pass "pass:$KEYSTORE_PASSWORD" \
+                --ks-key-alias "$KEY_ALIAS" \
+                --key-pass "pass:${KEY_PASSWORD:-$KEYSTORE_PASSWORD}" \
+                --out release-artifacts/questions-govt-release.apk \
+                "$RELEASE_SOURCE"
+              rm -f release.keystore
+            else
+              echo "No SIGNING_KEYSTORE_BASE64 secret provided. Generating signing certificate for installable APK..."
+              keytool -genkeypair -v -keystore ci-release.jks -alias releaseKey -keyalg RSA -keysize 2048 -validity 10000 \
+                -storepass android -keypass android -dname "CN=GovtJobPrep, OU=App, O=GovtExam, L=Dhaka, ST=Dhaka, C=BD"
+              $APKSIGNER sign --ks ci-release.jks \
+                --ks-pass pass:android \
+                --ks-key-alias releaseKey \
+                --key-pass pass:android \
+                --out release-artifacts/questions-govt-release.apk \
+                "$RELEASE_SOURCE"
+              rm -f ci-release.jks
+            fi
 
-          # 3. Verify signature
-          echo "Verifying Release APK signature..."
-          $APKSIGNER verify --verbose release-artifacts/GovtExamPrep-release.apk
+            cp release-artifacts/questions-govt-release.apk release-artifacts/GovtExamPrep-release.apk
+
+            # 3. Verify signature
+            echo "Verifying Release APK signature..."
+            $APKSIGNER verify --verbose release-artifacts/questions-govt-release.apk
+          else
+            echo "ERROR: Release APK not found in app/build/outputs/apk/release!"
+            exit 1
+          fi
 
           # 4. Generate Checksums
           cd release-artifacts
-          sha256sum GovtExamPrep-*.apk > SHA256SUMS.txt
+          sha256sum *.apk > SHA256SUMS.txt
           cat SHA256SUMS.txt
           cd ..
 
@@ -120,21 +132,22 @@ jobs:
           elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
           else
-            TAG="v1.0.0-$(date +'%Y%m%d%H%M')-${GITHUB_SHA::7}"
+            TAG="v1.0.0"
           fi
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Release tag determined: $TAG"
 
       - name: Publish to GitHub Releases
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release)
+        if: github.event_name != 'pull_request'
         with:
           tag_name: ${{ steps.release_info.outputs.tag }}
-          name: "Govt Job MCQ Exam Prep ${{ steps.release_info.outputs.tag }}"
+          target_commitish: ${{ github.sha }}
+          name: "Govt Job Exam Prep ${{ steps.release_info.outputs.tag }}"
           draft: false
           prerelease: false
+          make_latest: true
           generate_release_notes: true
           files: |
-            release-artifacts/GovtExamPrep-release.apk
-            release-artifacts/GovtExamPrep-debug.apk
+            release-artifacts/*.apk
             release-artifacts/SHA256SUMS.txt
