@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.statistics;
+package com.questions.govt.ui.statistics;
 
 import android.content.Context;
 import android.content.Intent;

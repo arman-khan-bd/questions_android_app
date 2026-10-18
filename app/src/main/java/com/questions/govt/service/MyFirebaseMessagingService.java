@@ -1,4 +1,4 @@
-﻿package com.questions.govt.service;
+package com.questions.govt.service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;

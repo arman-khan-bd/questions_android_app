@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.remote;
+package com.questions.govt.data.remote;
 
 import com.questions.govt.AppConfig;
 import com.questions.govt.data.model.AppConfigData;

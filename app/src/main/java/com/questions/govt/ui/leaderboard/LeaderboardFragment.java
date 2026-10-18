@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.leaderboard;
+package com.questions.govt.ui.leaderboard;
 
 import android.content.Intent;
 import android.os.Bundle;

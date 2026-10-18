@@ -1,4 +1,4 @@
-﻿package com.questions.govt;
+package com.questions.govt;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.profile;
+package com.questions.govt.ui.profile;
 
 import android.content.Context;
 import android.content.Intent;

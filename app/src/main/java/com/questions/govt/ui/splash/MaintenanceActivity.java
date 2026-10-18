@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.splash;
+package com.questions.govt.ui.splash;
 
 import android.content.Intent;
 import android.os.Bundle;

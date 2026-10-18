@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.local;
+package com.questions.govt.data.local;
 
 import android.content.Context;
 

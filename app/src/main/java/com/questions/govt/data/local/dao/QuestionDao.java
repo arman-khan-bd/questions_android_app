@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.local.dao;
+package com.questions.govt.data.local.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

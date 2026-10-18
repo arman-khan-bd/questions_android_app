@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.search;
+package com.questions.govt.ui.search;
 
 import android.content.Context;
 import android.text.TextUtils;

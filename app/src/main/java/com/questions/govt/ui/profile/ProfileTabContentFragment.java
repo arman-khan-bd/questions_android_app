@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.profile;
+package com.questions.govt.ui.profile;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

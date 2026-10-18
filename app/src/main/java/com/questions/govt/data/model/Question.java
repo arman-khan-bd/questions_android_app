@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.model;
+package com.questions.govt.data.model;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;

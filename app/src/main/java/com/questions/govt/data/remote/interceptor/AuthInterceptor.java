@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.remote.interceptor;
+package com.questions.govt.data.remote.interceptor;
 
 import androidx.annotation.NonNull;
 

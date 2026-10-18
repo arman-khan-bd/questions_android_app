@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.model;
+package com.questions.govt.data.model;
 
 import com.google.gson.annotations.SerializedName;
 

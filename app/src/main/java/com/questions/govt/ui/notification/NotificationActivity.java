@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.notification;
+package com.questions.govt.ui.notification;
 
 import android.content.Intent;
 import android.os.Bundle;

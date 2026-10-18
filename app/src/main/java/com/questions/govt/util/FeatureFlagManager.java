@@ -1,4 +1,4 @@
-﻿package com.questions.govt.util;
+package com.questions.govt.util;
 
 import com.google.gson.Gson;
 import com.questions.govt.data.local.SessionManager;

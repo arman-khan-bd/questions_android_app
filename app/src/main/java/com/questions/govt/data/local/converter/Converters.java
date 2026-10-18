@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.local.converter;
+package com.questions.govt.data.local.converter;
 
 import androidx.room.TypeConverter;
 

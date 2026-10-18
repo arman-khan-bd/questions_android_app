@@ -1,4 +1,4 @@
-﻿package com.questions.govt.util;
+package com.questions.govt.util;
 
 import android.content.Context;
 

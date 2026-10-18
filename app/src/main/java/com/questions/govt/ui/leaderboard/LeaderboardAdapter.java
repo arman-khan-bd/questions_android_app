@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.leaderboard;
+package com.questions.govt.ui.leaderboard;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.remote.request;
+package com.questions.govt.data.remote.request;
 
 import com.google.gson.annotations.SerializedName;
 

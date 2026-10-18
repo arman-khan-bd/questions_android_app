@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.splash;
+package com.questions.govt.ui.splash;
 
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;

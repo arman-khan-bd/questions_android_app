@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.notification;
+package com.questions.govt.ui.notification;
 
 import android.content.Context;
 import android.graphics.Color;

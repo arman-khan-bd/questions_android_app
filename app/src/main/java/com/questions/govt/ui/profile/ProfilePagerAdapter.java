@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.profile;
+package com.questions.govt.ui.profile;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

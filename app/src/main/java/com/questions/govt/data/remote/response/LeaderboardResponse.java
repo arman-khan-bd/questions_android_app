@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.remote.response;
+package com.questions.govt.data.remote.response;
 
 import com.google.gson.annotations.SerializedName;
 import com.questions.govt.data.model.LeaderboardEntry;

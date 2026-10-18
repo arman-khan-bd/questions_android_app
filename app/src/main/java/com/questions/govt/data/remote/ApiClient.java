@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.remote;
+package com.questions.govt.data.remote;
 
 import android.content.Context;
 import android.util.Log;

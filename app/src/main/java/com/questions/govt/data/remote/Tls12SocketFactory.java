@@ -1,4 +1,4 @@
-﻿package com.questions.govt.data.remote;
+package com.questions.govt.data.remote;
 
 import java.io.IOException;
 import java.net.InetAddress;

@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.exam;
+package com.questions.govt.ui.exam;
 
 import android.content.Intent;
 import android.os.Bundle;

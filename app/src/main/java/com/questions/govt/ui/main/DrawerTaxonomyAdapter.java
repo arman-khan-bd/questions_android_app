@@ -1,4 +1,4 @@
-﻿package com.questions.govt.ui.main;
+package com.questions.govt.ui.main;
 
 import android.view.LayoutInflater;
 import android.view.View;
