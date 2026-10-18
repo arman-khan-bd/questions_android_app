@@ -81,6 +81,9 @@ import retrofit2.Response;
  */
 public class MainActivity extends AppCompatActivity {
 
+    // Navigation Drawer
+    private DrawerLayout drawerLayout;
+
     // Top App Bar
     private ImageView btnNavMenu;
     private ImageView ivHeaderLogo;
