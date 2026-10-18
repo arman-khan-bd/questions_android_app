@@ -142,6 +142,9 @@ public class CommentBottomSheetFragment extends BottomSheetDialogFragment {
 
         Map<String, String> body = new HashMap<>();
         body.put("comment_text", text);
+        if (replyParentId != null) {
+            body.put("parent_id", String.valueOf(replyParentId));
+        }
 
         Call<ApiResponse<Comment>> call;
         if (replyParentId != null) {

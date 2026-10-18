@@ -31,6 +31,7 @@ import com.questions.govt.data.model.ExamResult;
 import com.questions.govt.data.model.Question;
 import com.questions.govt.data.remote.response.CustomExamGenerateResponse;
 import com.questions.govt.data.repository.ExamRepository;
+import com.questions.govt.util.ExamSessionManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -131,6 +132,20 @@ public class ExamArenaActivity extends AppCompatActivity {
     }
 
     private void loadExamData() {
+        // 1. Check in-memory session (avoids Binder transaction limits & NotSerializableException)
+        CustomExamGenerateResponse inMemorySession = ExamSessionManager.getInstance().getSession();
+        if (inMemorySession != null) {
+            examId = inMemorySession.getExamId();
+            examTitle = inMemorySession.getTitle() != null ? inMemorySession.getTitle() : "Question Bank Exam";
+            durationMinutes = inMemorySession.getDurationMinutes() > 0 ? inMemorySession.getDurationMinutes() : 20;
+            if (inMemorySession.getQuestions() != null && !inMemorySession.getQuestions().isEmpty()) {
+                questionList.clear();
+                questionList.addAll(inMemorySession.getQuestions());
+            }
+            initArenaSession();
+            return;
+        }
+
         if (getIntent().hasExtra(EXTRA_CUSTOM_REQUEST)) {
             CustomExamRequest request = (CustomExamRequest) getIntent().getSerializableExtra(EXTRA_CUSTOM_REQUEST);
             if (request != null) {
@@ -321,6 +336,63 @@ public class ExamArenaActivity extends AppCompatActivity {
 
         long timeSpentSeconds = (totalDurationMillis - millisRemaining) / 1000;
         if (timeSpentSeconds <= 0) timeSpentSeconds = 1;
+
+        // If Self-Test from Question Bank, calculate scores locally with negative cut marks
+        if (ExamSessionManager.getInstance().isSelfTest()) {
+            CustomExamGenerateResponse session = ExamSessionManager.getInstance().getSession();
+            double negativeMarking = session != null ? session.getNegativeMarking() : 0.25;
+
+            int total = questionList.size();
+            int correct = 0;
+            int wrong = 0;
+            int unattempted = 0;
+
+            for (Question q : questionList) {
+                String chosen = userAnswers.get(q.getId());
+                String answer = q.getCorrectOption();
+                if (TextUtils.isEmpty(chosen)) {
+                    unattempted++;
+                } else if (chosen.equalsIgnoreCase(answer)) {
+                    correct++;
+                } else {
+                    wrong++;
+                }
+            }
+
+            double negativeDeduction = wrong * Math.abs(negativeMarking);
+            double finalScore = Math.max(0, (correct * 1.0) - negativeDeduction);
+            float accuracy = total > 0 ? ((float) correct / total) * 100f : 0f;
+            boolean isPassed = accuracy >= 50f;
+
+            ExamResult result = new ExamResult();
+            result.setId(examId > 0 ? examId : System.currentTimeMillis() % 100000);
+            result.setExamId(result.getId());
+            result.setTitle(examTitle);
+            result.setTotalQuestions(total);
+            result.setAttemptedCount(correct + wrong);
+            result.setCorrectCount(correct);
+            result.setWrongCount(wrong);
+            result.setSkippedCount(unattempted);
+            result.setRawScore(correct * 1.0);
+            result.setNegativeDeduction(negativeDeduction);
+            result.setFinalScore(finalScore);
+            result.setAccuracyPercentage(accuracy);
+            result.setTimeSpentSeconds(timeSpentSeconds);
+            result.setPassed(isPassed);
+            result.setPointsEarned(correct * 5.0);
+            result.setCompletedAt(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+
+            // Cache result in Room database
+            com.questions.govt.data.local.AppDatabase.databaseWriteExecutor.execute(() -> {
+                com.questions.govt.data.local.AppDatabase.getInstance(ExamArenaActivity.this).examDao().insertExamResult(result);
+            });
+
+            Intent intent = new Intent(ExamArenaActivity.this, ExamResultActivity.class);
+            intent.putExtra(ExamResultActivity.EXTRA_RESULT, result);
+            startActivity(intent);
+            finish();
+            return;
+        }
 
         examRepository.submitExam(examId, examTitle, userAnswers, timeSpentSeconds, new ExamRepository.ExamCallback<ExamResult>() {
             @Override

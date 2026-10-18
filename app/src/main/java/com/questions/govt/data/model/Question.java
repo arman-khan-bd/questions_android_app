@@ -132,7 +132,7 @@ public class Question implements Serializable {
 
     @Ignore
     @SerializedName("tags")
-    private List<Object> rawTags;
+    private transient List<Object> rawTags;
 
     // Nested objects from Laravel QuestionResource
     @Ignore
@@ -330,36 +330,60 @@ public class Question implements Serializable {
     public void setCommentsCount(int commentsCount) { this.commentsCount = commentsCount; }
 
     public float getOptionAPct() {
+        if (optionAPct > 0) return optionAPct;
         if (metrics != null && metrics.distribution != null && metrics.distribution.containsKey("A")) {
             return metrics.distribution.get("A").percentage;
         }
         return optionAPct;
     }
-    public void setOptionAPct(float optionAPct) { this.optionAPct = optionAPct; }
+    public void setOptionAPct(float optionAPct) {
+        this.optionAPct = optionAPct;
+        if (metrics != null && metrics.distribution != null && metrics.distribution.containsKey("A")) {
+            metrics.distribution.get("A").percentage = optionAPct;
+        }
+    }
 
     public float getOptionBPct() {
+        if (optionBPct > 0) return optionBPct;
         if (metrics != null && metrics.distribution != null && metrics.distribution.containsKey("B")) {
             return metrics.distribution.get("B").percentage;
         }
         return optionBPct;
     }
-    public void setOptionBPct(float optionBPct) { this.optionBPct = optionBPct; }
+    public void setOptionBPct(float optionBPct) {
+        this.optionBPct = optionBPct;
+        if (metrics != null && metrics.distribution != null && metrics.distribution.containsKey("B")) {
+            metrics.distribution.get("B").percentage = optionBPct;
+        }
+    }
 
     public float getOptionCPct() {
+        if (optionCPct > 0) return optionCPct;
         if (metrics != null && metrics.distribution != null && metrics.distribution.containsKey("C")) {
             return metrics.distribution.get("C").percentage;
         }
         return optionCPct;
     }
-    public void setOptionCPct(float optionCPct) { this.optionCPct = optionCPct; }
+    public void setOptionCPct(float optionCPct) {
+        this.optionCPct = optionCPct;
+        if (metrics != null && metrics.distribution != null && metrics.distribution.containsKey("C")) {
+            metrics.distribution.get("C").percentage = optionCPct;
+        }
+    }
 
     public float getOptionDPct() {
+        if (optionDPct > 0) return optionDPct;
         if (metrics != null && metrics.distribution != null && metrics.distribution.containsKey("D")) {
             return metrics.distribution.get("D").percentage;
         }
         return optionDPct;
     }
-    public void setOptionDPct(float optionDPct) { this.optionDPct = optionDPct; }
+    public void setOptionDPct(float optionDPct) {
+        this.optionDPct = optionDPct;
+        if (metrics != null && metrics.distribution != null && metrics.distribution.containsKey("D")) {
+            metrics.distribution.get("D").percentage = optionDPct;
+        }
+    }
 
     public int getUpvotesCount() { return upvotesCount; }
     public void setUpvotesCount(int upvotesCount) { this.upvotesCount = upvotesCount; }

@@ -23,21 +23,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.textfield.TextInputEditText;
 import com.questions.govt.R;
 import com.questions.govt.data.model.BannerItem;
-import com.questions.govt.data.model.CustomExamRequest;
 import com.questions.govt.data.model.TaxonomyItem;
-import com.questions.govt.data.remote.response.CustomExamGenerateResponse;
 import com.questions.govt.data.remote.response.HomeFeedResponse;
-import com.questions.govt.data.repository.ExamRepository;
 import com.questions.govt.data.repository.TaxonomyRepository;
 import com.questions.govt.ui.exam.ExamArenaActivity;
 import com.questions.govt.ui.search.SearchResultActivity;
-import com.questions.govt.util.FeatureFlagManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,30 +53,14 @@ public class HomeFragment extends Fragment {
     private TextView tvSubjectsCountBadge;
     private ChipGroup cgCategoriesAndTags;
 
-    // Inline Custom Exam Builder
-    private MaterialCardView cardCustomExamBuilder;
-    private TextInputEditText etCustomExamTitle;
-    private ChipGroup cgTaxonomyMultiSelect;
-    private ChipGroup cgDifficultySelector;
-    private ChipGroup cgNegativeMarkingPresets;
-    private TextInputEditText etTotalQuestions;
-    private TextInputEditText etExamDuration;
-    private Button btnStartCustomExam;
-    private ProgressBar pbExamGenerating;
-
     private BannerCarouselAdapter bannerAdapter;
     private TopicAdapter topicAdapter;
     private SubjectGridAdapter subjectAdapter;
 
     private TaxonomyRepository taxonomyRepository;
-    private ExamRepository examRepository;
 
     private final Handler carouselHandler = new Handler(Looper.getMainLooper());
     private Runnable carouselRunnable;
-
-    private final List<Long> selectedSubjectIds = new ArrayList<>();
-    private final List<String> selectedTagNames = new ArrayList<>();
-    private double selectedNegativeMarking = -0.25;
 
     @Nullable
     @Override
@@ -95,11 +73,9 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         taxonomyRepository = TaxonomyRepository.getInstance(requireContext());
-        examRepository = ExamRepository.getInstance(requireContext());
 
         initViews(view);
         setupAdapters();
-        setupCustomExamBuilder();
         observeTaxonomyData();
         loadHomeFeedData();
     }
@@ -111,16 +87,6 @@ public class HomeFragment extends Fragment {
         rvSubjects = view.findViewById(R.id.rvSubjects);
         tvSubjectsCountBadge = view.findViewById(R.id.tvSubjectsCountBadge);
         cgCategoriesAndTags = view.findViewById(R.id.cgCategoriesAndTags);
-
-        cardCustomExamBuilder = view.findViewById(R.id.cardCustomExamBuilder);
-        etCustomExamTitle = view.findViewById(R.id.etCustomExamTitle);
-        cgTaxonomyMultiSelect = view.findViewById(R.id.cgTaxonomyMultiSelect);
-        cgDifficultySelector = view.findViewById(R.id.cgDifficultySelector);
-        cgNegativeMarkingPresets = view.findViewById(R.id.cgNegativeMarkingPresets);
-        etTotalQuestions = view.findViewById(R.id.etTotalQuestions);
-        etExamDuration = view.findViewById(R.id.etExamDuration);
-        btnStartCustomExam = view.findViewById(R.id.btnStartCustomExam);
-        pbExamGenerating = view.findViewById(R.id.pbExamGenerating);
 
         swipeRefresh.setOnRefreshListener(this::loadHomeFeedData);
     }
@@ -194,7 +160,6 @@ public class HomeFragment extends Fragment {
             if (subjects != null && !subjects.isEmpty()) {
                 subjectAdapter.setSubjects(subjects);
                 tvSubjectsCountBadge.setText(subjects.size() + " Subjects");
-                populateTaxonomyMultiSelectChips(subjects, null);
             }
         });
 
@@ -215,7 +180,6 @@ public class HomeFragment extends Fragment {
         taxonomyRepository.getTags().observe(getViewLifecycleOwner(), tags -> {
             if (tags != null && !tags.isEmpty()) {
                 populateTagChips(tags);
-                populateTaxonomyMultiSelectChips(null, tags);
             }
         });
     }
@@ -236,7 +200,6 @@ public class HomeFragment extends Fragment {
                         if (response.getSubjects() != null && !response.getSubjects().isEmpty()) {
                             subjectAdapter.setSubjects(response.getSubjects());
                             tvSubjectsCountBadge.setText(response.getSubjects().size() + " Subjects");
-                            populateTaxonomyMultiSelectChips(response.getSubjects(), null);
                         }
                         if (response.getTopics() != null && !response.getTopics().isEmpty()) {
                             topicAdapter.setTopics(response.getTopics());
@@ -246,7 +209,6 @@ public class HomeFragment extends Fragment {
                         }
                         if (response.getTags() != null && !response.getTags().isEmpty()) {
                             populateTagChips(response.getTags());
-                            populateTaxonomyMultiSelectChips(null, response.getTags());
                         }
                     }
                 }
@@ -291,120 +253,6 @@ public class HomeFragment extends Fragment {
             });
             cgCategoriesAndTags.addView(chip);
         }
-    }
-
-    private void setupCustomExamBuilder() {
-        FeatureFlagManager flagManager = FeatureFlagManager.getInstance();
-
-        // Remote Feature Flag: Hide custom exam builder if disabled by Admin
-        boolean isBuilderEnabled = flagManager.isCustomExamBuilderEnabled();
-        cardCustomExamBuilder.setVisibility(isBuilderEnabled ? View.VISIBLE : View.GONE);
-
-        // Negative Marking Presets from Admin AppConfig
-        cgNegativeMarkingPresets.removeAllViews();
-        List<Double> presets = flagManager.getNegativeMarkingPresets();
-        for (int i = 0; i < presets.size(); i++) {
-            double preset = presets.get(i);
-            Chip chip = new Chip(requireContext());
-            chip.setText(String.format("%.2f", preset));
-            chip.setCheckable(true);
-            if (i == 1 || (presets.size() == 1)) {
-                chip.setChecked(true);
-                selectedNegativeMarking = preset;
-            }
-            chip.setOnCheckedChangeListener((btn, isChecked) -> {
-                if (isChecked) {
-                    selectedNegativeMarking = preset;
-                }
-            });
-            cgNegativeMarkingPresets.addView(chip);
-        }
-
-        btnStartCustomExam.setOnClickListener(v -> startCustomExam());
-    }
-
-    private void populateTaxonomyMultiSelectChips(List<TaxonomyItem> subjects, List<TaxonomyItem> tags) {
-        if (subjects != null) {
-            for (TaxonomyItem sub : subjects) {
-                Chip chip = new Chip(requireContext());
-                chip.setText(sub.getTitle());
-                chip.setCheckable(true);
-                chip.setOnCheckedChangeListener((btn, isChecked) -> {
-                    if (isChecked) {
-                        selectedSubjectIds.add(sub.getId());
-                    } else {
-                        selectedSubjectIds.remove(sub.getId());
-                    }
-                });
-                cgTaxonomyMultiSelect.addView(chip);
-            }
-        }
-        if (tags != null) {
-            for (TaxonomyItem tag : tags) {
-                Chip chip = new Chip(requireContext());
-                chip.setText("#" + tag.getTitle());
-                chip.setCheckable(true);
-                chip.setOnCheckedChangeListener((btn, isChecked) -> {
-                    if (isChecked) {
-                        selectedTagNames.add(tag.getTitle());
-                    } else {
-                        selectedTagNames.remove(tag.getTitle());
-                    }
-                });
-                cgTaxonomyMultiSelect.addView(chip);
-            }
-        }
-    }
-
-    private void startCustomExam() {
-        String title = etCustomExamTitle.getText() != null ? etCustomExamTitle.getText().toString().trim() : "Custom Exam";
-        String questionsCountStr = etTotalQuestions.getText() != null ? etTotalQuestions.getText().toString().trim() : "25";
-        String durationStr = etExamDuration.getText() != null ? etExamDuration.getText().toString().trim() : "20";
-
-        int totalQuestions = TextUtils.isEmpty(questionsCountStr) ? 25 : Integer.parseInt(questionsCountStr);
-        int durationMinutes = TextUtils.isEmpty(durationStr) ? 20 : Integer.parseInt(durationStr);
-
-        // Determine difficulty selection
-        String difficulty = "all";
-        int checkedChipId = cgDifficultySelector.getCheckedChipId();
-        if (checkedChipId == R.id.chipDiffEasy) difficulty = "easy";
-        else if (checkedChipId == R.id.chipDiffMedium) difficulty = "medium";
-        else if (checkedChipId == R.id.chipDiffHard) difficulty = "hard";
-
-        CustomExamRequest request = new CustomExamRequest();
-        request.setTitle(title);
-        request.setSubjectIds(selectedSubjectIds);
-        request.setTagNames(selectedTagNames);
-        request.setDifficulty(difficulty);
-        request.setNegativeMarking(selectedNegativeMarking);
-        request.setTotalQuestions(totalQuestions);
-        request.setDurationMinutes(durationMinutes);
-
-        btnStartCustomExam.setEnabled(false);
-        pbExamGenerating.setVisibility(View.VISIBLE);
-
-        examRepository.generateCustomExam(request, new ExamRepository.ExamCallback<CustomExamGenerateResponse>() {
-            @Override
-            public void onSuccess(CustomExamGenerateResponse response) {
-                if (isAdded()) {
-                    btnStartCustomExam.setEnabled(true);
-                    pbExamGenerating.setVisibility(View.GONE);
-
-                    Intent intent = new Intent(requireContext(), ExamArenaActivity.class);
-                    intent.putExtra(ExamArenaActivity.EXTRA_EXAM_DATA, response);
-                    startActivity(intent);
-                }
-            }
-
-            @Override
-            public void onError(String message) {
-                if (isAdded()) {
-                    btnStartCustomExam.setEnabled(true);
-                    pbExamGenerating.setVisibility(View.GONE);
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
     }
 
     @Override

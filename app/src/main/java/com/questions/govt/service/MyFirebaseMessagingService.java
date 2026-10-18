@@ -48,6 +48,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+    private static final Map<String, Long> RECENT_NOTIFICATIONS = new HashMap<>();
+
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -64,6 +66,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if (data.containsKey("title")) title = data.get("title");
             if (data.containsKey("body")) body = data.get("body");
             else if (data.containsKey("message")) body = data.get("message");
+        }
+
+        // Anti-Duplication: suppress duplicate push messages received within 15 seconds
+        String notifKey = title + "::" + body;
+        long now = System.currentTimeMillis();
+        synchronized (RECENT_NOTIFICATIONS) {
+            Long lastTime = RECENT_NOTIFICATIONS.get(notifKey);
+            if (lastTime != null && (now - lastTime) < 15000) {
+                Log.d(TAG, "Duplicate FCM message suppressed: " + notifKey);
+                return;
+            }
+            RECENT_NOTIFICATIONS.put(notifKey, now);
+            if (RECENT_NOTIFICATIONS.size() > 50) {
+                RECENT_NOTIFICATIONS.entrySet().removeIf(entry -> (now - entry.getValue()) > 60000);
+            }
         }
 
         // Save to Room DB with strict composite anti-duplication
@@ -97,10 +114,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
         }
 
-        showNotification(title, body);
+        showNotification(title, body, notifKey.hashCode());
     }
 
-    private void showNotification(String title, String messageBody) {
+    private void showNotification(String title, String messageBody, int notificationId) {
         Intent intent = new Intent(this, NotificationActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -122,7 +139,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (notificationManager != null) {
-            notificationManager.notify((int) System.currentTimeMillis(), notificationBuilder.build());
+            notificationManager.notify(notificationId, notificationBuilder.build());
         }
     }
 

@@ -78,6 +78,7 @@ public class ReportDialogFragment extends DialogFragment {
             btnSubmit.setEnabled(false);
 
             Map<String, String> body = new HashMap<>();
+            body.put("category", reason);
             body.put("reason", reason);
             body.put("note", note);
 

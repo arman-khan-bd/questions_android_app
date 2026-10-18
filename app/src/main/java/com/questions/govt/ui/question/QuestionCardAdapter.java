@@ -12,6 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -20,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.questions.govt.GovtExamApp;
 import com.questions.govt.R;
 import com.questions.govt.data.local.SessionManager;
@@ -31,7 +34,9 @@ import com.questions.govt.data.repository.QuestionRepository;
 import com.questions.govt.util.FeatureFlagManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interactive Question Card Adapter with instant answer checking, creator direct reveal,
@@ -39,7 +44,13 @@ import java.util.List;
  */
 public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapter.CardViewHolder> {
 
+    public interface OnSelectionChangedListener {
+        void onSelectionChanged(int count, List<Question> selectedQuestions);
+    }
+
     private final List<Question> questionList = new ArrayList<>();
+    private final Set<Long> selectedQuestionIds = new HashSet<>();
+    private OnSelectionChangedListener onSelectionChangedListener;
     private final QuestionRepository questionRepository;
     private final FragmentManager fragmentManager;
     private final User currentUser;
@@ -53,6 +64,56 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         this.questionRepository = QuestionRepository.getInstance(appContext);
         this.fragmentManager = fragmentManager;
         this.currentUser = SessionManager.getInstance().getUser();
+    }
+
+    public void setOnSelectionChangedListener(OnSelectionChangedListener listener) {
+        this.onSelectionChangedListener = listener;
+    }
+
+    public List<Question> getSelectedQuestions() {
+        List<Question> list = new ArrayList<>();
+        for (Question q : questionList) {
+            if (q != null && selectedQuestionIds.contains(q.getId())) {
+                list.add(q);
+            }
+        }
+        return list;
+    }
+
+    public int getSelectedCount() {
+        return selectedQuestionIds.size();
+    }
+
+    public void selectAll() {
+        for (Question q : questionList) {
+            if (q != null) {
+                selectedQuestionIds.add(q.getId());
+            }
+        }
+        notifyDataSetChanged();
+        notifySelectionChanged();
+    }
+
+    public void clearSelection() {
+        selectedQuestionIds.clear();
+        notifyDataSetChanged();
+        notifySelectionChanged();
+    }
+
+    public void toggleSelection(Question question) {
+        if (question == null) return;
+        if (selectedQuestionIds.contains(question.getId())) {
+            selectedQuestionIds.remove(question.getId());
+        } else {
+            selectedQuestionIds.add(question.getId());
+        }
+        notifySelectionChanged();
+    }
+
+    private void notifySelectionChanged() {
+        if (onSelectionChangedListener != null) {
+            onSelectionChangedListener.onSelectionChanged(selectedQuestionIds.size(), getSelectedQuestions());
+        }
     }
 
     public void submitList(List<Question> questions) {
@@ -94,6 +155,19 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
         // 1. Telemetry Impression Tracking
         questionRepository.recordQuestionView(question.getId());
+
+        // 1.1 Selection Checkbox & Long Click
+        if (holder.cbSelectQuestion != null) {
+            holder.cbSelectQuestion.setChecked(selectedQuestionIds.contains(question.getId()));
+            holder.cbSelectQuestion.setOnClickListener(v -> toggleSelection(question));
+        }
+        holder.itemView.setOnLongClickListener(v -> {
+            if (holder.cbSelectQuestion != null) {
+                holder.cbSelectQuestion.setChecked(!holder.cbSelectQuestion.isChecked());
+            }
+            toggleSelection(question);
+            return true;
+        });
 
         // 2. Metadata Badges
         holder.tvSubjectBadge.setText(!TextUtils.isEmpty(question.getSubjectTitle()) ? question.getSubjectTitle() : "General");
@@ -159,22 +233,26 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             resetOptionStyles(holder, context);
         }
 
-        // 8. Voting System (Rank-Neutral)
+        // 8. Voting System (Rank-Neutral & Liked State)
         FeatureFlagManager flagManager = FeatureFlagManager.getInstance();
         holder.layoutVoting.setVisibility(flagManager.isAnswerVotingSystemEnabled() ? View.VISIBLE : View.GONE);
-        holder.tvUpvotes.setText(String.valueOf(question.getUpvotesCount()));
-        holder.tvDownvotes.setText(String.valueOf(question.getDownvotesCount()));
+        bindVoting(holder, question, context);
 
         holder.btnUpvote.setOnClickListener(v -> {
             questionRepository.voteAnswer(question.getId(), "up", new QuestionRepository.RepositoryCallback<VoteResponse>() {
                 @Override
                 public void onSuccess(VoteResponse result) {
-                    holder.tvUpvotes.setText(String.valueOf(result.getUpvotesCount()));
-                    holder.tvDownvotes.setText(String.valueOf(result.getDownvotesCount()));
-                    Toast.makeText(context, "Vote recorded (Rank-Neutral)", Toast.LENGTH_SHORT).show();
+                    question.setUpvotesCount(result.getUpvotesCount());
+                    question.setDownvotesCount(result.getDownvotesCount());
+                    question.setUserVoted(result.getUserVoted());
+                    bindVoting(holder, question, context);
+                    String msg = "up".equalsIgnoreCase(result.getUserVoted()) ? "Upvoted!" : "Vote removed.";
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                 }
                 @Override
-                public void onError(String error) {}
+                public void onError(String error) {
+                    Toast.makeText(context, error != null ? error : "Vote failed.", Toast.LENGTH_SHORT).show();
+                }
             });
         });
 
@@ -182,12 +260,17 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             questionRepository.voteAnswer(question.getId(), "down", new QuestionRepository.RepositoryCallback<VoteResponse>() {
                 @Override
                 public void onSuccess(VoteResponse result) {
-                    holder.tvUpvotes.setText(String.valueOf(result.getUpvotesCount()));
-                    holder.tvDownvotes.setText(String.valueOf(result.getDownvotesCount()));
-                    Toast.makeText(context, "Dispute vote recorded", Toast.LENGTH_SHORT).show();
+                    question.setUpvotesCount(result.getUpvotesCount());
+                    question.setDownvotesCount(result.getDownvotesCount());
+                    question.setUserVoted(result.getUserVoted());
+                    bindVoting(holder, question, context);
+                    String msg = "down".equalsIgnoreCase(result.getUserVoted()) ? "Dispute recorded!" : "Vote removed.";
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                 }
                 @Override
-                public void onError(String error) {}
+                public void onError(String error) {
+                    Toast.makeText(context, error != null ? error : "Vote failed.", Toast.LENGTH_SHORT).show();
+                }
             });
         });
 
@@ -265,10 +348,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         highlightOption(holder.layoutOptionD, "D", selectedOption, correctOption, context);
 
         // Display community selection distribution percentage bars
-        showDistributionBar(holder.pbOptionA, holder.tvPctA, question.getOptionAPct());
-        showDistributionBar(holder.pbOptionB, holder.tvPctB, question.getOptionBPct());
-        showDistributionBar(holder.pbOptionC, holder.tvPctC, question.getOptionCPct());
-        showDistributionBar(holder.pbOptionD, holder.tvPctD, question.getOptionDPct());
+        boolean isACorrect = "A".equalsIgnoreCase(correctOption);
+        boolean isBCorrect = "B".equalsIgnoreCase(correctOption);
+        boolean isCCorrect = "C".equalsIgnoreCase(correctOption);
+        boolean isDCorrect = "D".equalsIgnoreCase(correctOption);
+
+        showDistributionBar(holder.pbOptionA, holder.tvPctA, question.getOptionAPct(), isACorrect, context);
+        showDistributionBar(holder.pbOptionB, holder.tvPctB, question.getOptionBPct(), isBCorrect, context);
+        showDistributionBar(holder.pbOptionC, holder.tvPctC, question.getOptionCPct(), isCCorrect, context);
+        showDistributionBar(holder.pbOptionD, holder.tvPctD, question.getOptionDPct(), isDCorrect, context);
 
         // Reveal Explanation Card
         holder.layoutExplanation.setVisibility(View.VISIBLE);
@@ -307,20 +395,75 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.pbOptionC.setVisibility(View.GONE);
         holder.pbOptionD.setVisibility(View.GONE);
 
+        int mutedColor = ContextCompat.getColor(context, R.color.text_secondary);
+        holder.tvPctA.setTextColor(mutedColor);
+        holder.tvPctA.setTypeface(null, Typeface.NORMAL);
         holder.tvPctA.setVisibility(View.GONE);
+
+        holder.tvPctB.setTextColor(mutedColor);
+        holder.tvPctB.setTypeface(null, Typeface.NORMAL);
         holder.tvPctB.setVisibility(View.GONE);
+
+        holder.tvPctC.setTextColor(mutedColor);
+        holder.tvPctC.setTypeface(null, Typeface.NORMAL);
         holder.tvPctC.setVisibility(View.GONE);
+
+        holder.tvPctD.setTextColor(mutedColor);
+        holder.tvPctD.setTypeface(null, Typeface.NORMAL);
         holder.tvPctD.setVisibility(View.GONE);
 
         holder.layoutExplanation.setVisibility(View.GONE);
     }
 
-    private void showDistributionBar(ProgressBar pb, TextView tvPct, float percentage) {
+    private void showDistributionBar(ProgressBar pb, TextView tvPct, float percentage, boolean isCorrect, Context context) {
         pb.setVisibility(View.VISIBLE);
         tvPct.setVisibility(View.VISIBLE);
-        int intPct = Math.round(percentage);
+        int intPct = Math.min(100, Math.max(0, Math.round(percentage)));
+        pb.setMax(100);
         pb.setProgress(intPct);
         tvPct.setText(intPct + "%");
+
+        int tintColor = ContextCompat.getColor(context, isCorrect ? R.color.diff_easy : R.color.primary);
+        pb.setProgressTintList(ColorStateList.valueOf(tintColor));
+        if (isCorrect) {
+            tvPct.setTextColor(tintColor);
+            tvPct.setTypeface(null, Typeface.BOLD);
+        } else {
+            tvPct.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
+            tvPct.setTypeface(null, Typeface.NORMAL);
+        }
+    }
+
+    private void bindVoting(CardViewHolder holder, Question question, Context context) {
+        holder.tvUpvotes.setText(String.valueOf(question.getUpvotesCount()));
+        holder.tvDownvotes.setText(String.valueOf(question.getDownvotesCount()));
+
+        String userVoted = question.getUserVoted();
+        if ("up".equalsIgnoreCase(userVoted) || "like".equalsIgnoreCase(userVoted)) {
+            holder.btnUpvote.setColorFilter(ContextCompat.getColor(context, R.color.primary));
+            holder.tvUpvotes.setTextColor(ContextCompat.getColor(context, R.color.primary));
+            holder.tvUpvotes.setTypeface(null, Typeface.BOLD);
+
+            holder.btnDownvote.setColorFilter(ContextCompat.getColor(context, R.color.text_muted));
+            holder.tvDownvotes.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
+            holder.tvDownvotes.setTypeface(null, Typeface.NORMAL);
+        } else if ("down".equalsIgnoreCase(userVoted) || "unlike".equalsIgnoreCase(userVoted)) {
+            holder.btnUpvote.setColorFilter(ContextCompat.getColor(context, R.color.text_muted));
+            holder.tvUpvotes.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
+            holder.tvUpvotes.setTypeface(null, Typeface.NORMAL);
+
+            holder.btnDownvote.setColorFilter(ContextCompat.getColor(context, R.color.diff_hard));
+            holder.tvDownvotes.setTextColor(ContextCompat.getColor(context, R.color.diff_hard));
+            holder.tvDownvotes.setTypeface(null, Typeface.BOLD);
+        } else {
+            holder.btnUpvote.setColorFilter(ContextCompat.getColor(context, R.color.text_muted));
+            holder.tvUpvotes.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
+            holder.tvUpvotes.setTypeface(null, Typeface.NORMAL);
+
+            holder.btnDownvote.setColorFilter(ContextCompat.getColor(context, R.color.text_muted));
+            holder.tvDownvotes.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
+            holder.tvDownvotes.setTypeface(null, Typeface.NORMAL);
+        }
     }
 
     private void bindStar(ImageView ivStar, boolean isStarred, Context context) {
@@ -333,6 +476,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     }
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
+        MaterialCheckBox cbSelectQuestion;
         TextView tvSubjectBadge;
         TextView tvDifficultyBadge;
         Button btnCreatorReveal;
@@ -377,6 +521,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
         CardViewHolder(View itemView) {
             super(itemView);
+            cbSelectQuestion = itemView.findViewById(R.id.cbSelectQuestion);
             tvSubjectBadge = itemView.findViewById(R.id.tvSubjectBadge);
             tvDifficultyBadge = itemView.findViewById(R.id.tvDifficultyBadge);
             btnCreatorReveal = itemView.findViewById(R.id.btnCreatorReveal);
