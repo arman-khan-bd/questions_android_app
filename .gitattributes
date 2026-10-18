@@ -1,0 +1,3 @@
+# Ensure gradlew wrapper shell script always uses LF line endings on Linux/CI
+gradlew text eol=lf
+*.bat text eol=crlf
