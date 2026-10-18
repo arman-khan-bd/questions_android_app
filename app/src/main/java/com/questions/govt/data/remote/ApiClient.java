@@ -10,6 +10,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import com.questions.govt.AppConfig;
 import com.questions.govt.BuildConfig;
 import com.questions.govt.GovtExamApp;
@@ -19,6 +20,7 @@ import com.questions.govt.data.remote.interceptor.AuthInterceptor;
 import com.questions.govt.data.remote.response.ApiResponse;
 import com.questions.govt.data.remote.response.HomeFeedResponse;
 import com.questions.govt.data.remote.response.LeaderboardResponse;
+import com.questions.govt.data.remote.response.PaginatedList;
 import com.questions.govt.data.remote.response.StatisticsResponse;
 import com.questions.govt.data.remote.response.UserProfileResponse;
 
@@ -26,6 +28,7 @@ import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -178,8 +181,57 @@ public class ApiClient {
                     } catch (Exception e) {
                         Log.w(TAG, "Root composite deserialization: " + e.getMessage());
                     }
+                } else if (PaginatedList.class.equals((innerType instanceof ParameterizedType) ? ((ParameterizedType) innerType).getRawType() : innerType)) {
+                    try {
+                        PaginatedList<Object> paginatedList = new PaginatedList<>();
+                        Type itemType = Object.class;
+                        if (innerType instanceof ParameterizedType) {
+                            Type[] typeArgs = ((ParameterizedType) innerType).getActualTypeArguments();
+                            if (typeArgs.length > 0) {
+                                itemType = typeArgs[0];
+                            }
+                        }
+                        Type listType = TypeToken.getParameterized(List.class, itemType).getType();
+
+                        if (jsonObject.has("data") && jsonObject.get("data").isJsonArray()) {
+                            paginatedList.setData(context.deserialize(jsonObject.get("data"), listType));
+                        } else if (jsonObject.has("data") && jsonObject.get("data").isJsonObject()) {
+                            JsonObject dataObj = jsonObject.getAsJsonObject("data");
+                            if (dataObj.has("data") && dataObj.get("data").isJsonArray()) {
+                                paginatedList.setData(context.deserialize(dataObj.get("data"), listType));
+                            }
+                            if (dataObj.has("current_page")) paginatedList.setCurrentPage(dataObj.get("current_page").getAsInt());
+                            if (dataObj.has("last_page")) paginatedList.setLastPage(dataObj.get("last_page").getAsInt());
+                            if (dataObj.has("per_page")) paginatedList.setPerPage(dataObj.get("per_page").getAsInt());
+                            if (dataObj.has("total")) paginatedList.setTotal(dataObj.get("total").getAsInt());
+                        }
+
+                        if (jsonObject.has("meta") && jsonObject.get("meta").isJsonObject()) {
+                            JsonObject meta = jsonObject.getAsJsonObject("meta");
+                            if (meta.has("current_page")) paginatedList.setCurrentPage(meta.get("current_page").getAsInt());
+                            if (meta.has("last_page")) paginatedList.setLastPage(meta.get("last_page").getAsInt());
+                            if (meta.has("per_page")) paginatedList.setPerPage(meta.get("per_page").getAsInt());
+                            if (meta.has("total")) paginatedList.setTotal(meta.get("total").getAsInt());
+                        } else if (jsonObject.has("current_page")) {
+                            paginatedList.setCurrentPage(jsonObject.get("current_page").getAsInt());
+                            if (jsonObject.has("last_page")) paginatedList.setLastPage(jsonObject.get("last_page").getAsInt());
+                            if (jsonObject.has("per_page")) paginatedList.setPerPage(jsonObject.get("per_page").getAsInt());
+                            if (jsonObject.has("total")) paginatedList.setTotal(jsonObject.get("total").getAsInt());
+                        }
+
+                        response.setData(paginatedList);
+                    } catch (Exception e) {
+                        Log.w(TAG, "PaginatedList deserialization error: " + e.getMessage());
+                    }
                 } else if (jsonObject.has("data") && !jsonObject.get("data").isJsonNull()) {
-                    response.setData(context.deserialize(jsonObject.get("data"), innerType));
+                    try {
+                        response.setData(context.deserialize(jsonObject.get("data"), innerType));
+                    } catch (Exception e) {
+                        Log.w(TAG, "Unwrapping data error, falling back to root: " + e.getMessage());
+                        try {
+                            response.setData(context.deserialize(json, innerType));
+                        } catch (Exception ignored) {}
+                    }
                 } else if (jsonObject.has("result") && !jsonObject.get("result").isJsonNull()) {
                     response.setData(context.deserialize(jsonObject.get("result"), innerType));
                 } else if (jsonObject.has("exam") && !jsonObject.get("exam").isJsonNull()) {

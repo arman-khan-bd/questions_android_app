@@ -53,22 +53,28 @@
                     android:paddingHorizontal="16dp"
                     android:paddingBottom="12dp">
 
-                    <!-- Overlapping Circle Avatar (90dp) -->
-                    <ImageView
-                        android:id="@+id/imgAvatar"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginTop="-45dp"
+                    <!-- Overlapping Circle Avatar with Web3 Glowing Dual Ring (92dp) -->
+                    <FrameLayout
+                        android:id="@+id/avatarContainer"
+                        android:layout_width="92dp"
+                        android:layout_height="92dp"
+                        android:layout_marginTop="-46dp"
                         android:background="@drawable/bg_dialog_rounded"
                         android:backgroundTint="@color/surface"
-                        android:contentDescription="Avatar"
                         android:padding="3dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_app_logo"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent">
 
-                    <!-- Profile Actions: Create Question & Edit Profile -->
+                        <ImageView
+                            android:id="@+id/imgAvatar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="Avatar"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_app_logo" />
+                    </FrameLayout>
+
+                    <!-- Web3 Profile Action Buttons -->
                     <LinearLayout
                         android:id="@+id/layoutProfileActions"
                         android:layout_width="wrap_content"
@@ -91,8 +97,8 @@
                             android:textSize="12sp"
                             app:backgroundTint="@color/primary"
                             app:cornerRadius="20dp"
-                            app:icon="@drawable/ic_nav_plus"
-                            app:iconSize="14dp"
+                            app:icon="@drawable/ic_lucide_plus"
+                            app:iconSize="16dp"
                             app:iconTint="@color/text_white" />
 
                         <!-- Edit Profile Action Button -->
@@ -106,25 +112,25 @@
                             android:textColor="@color/primary"
                             android:textSize="12sp"
                             app:cornerRadius="20dp"
-                            app:icon="@drawable/ic_edit"
-                            app:iconSize="14dp"
+                            app:icon="@drawable/ic_lucide_edit"
+                            app:iconSize="16dp"
                             app:iconTint="@color/primary"
-                            app:strokeColor="@color/primary"
+                            app:strokeColor="@color/border"
                             app:strokeWidth="1.5dp" />
                     </LinearLayout>
 
-                    <!-- Name -->
+                    <!-- User Name -->
                     <TextView
                         android:id="@+id/tvProfileName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-black"
                         android:textColor="@color/text_primary"
                         android:textSize="20sp"
-                        android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/imgAvatar"
+                        app:layout_constraintTop_toBottomOf="@id/avatarContainer"
                         tools:text="Md. Shahriar Hossain" />
 
                     <!-- Username Handle -->
@@ -132,7 +138,8 @@
                         android:id="@+id/tvProfileUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_secondary"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/primary"
                         android:textSize="13sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvProfileName"
@@ -144,158 +151,243 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:textColor="@color/text_primary"
+                        android:lineSpacingExtra="2dp"
+                        android:textColor="@color/text_secondary"
                         android:textSize="13sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvProfileUsername"
                         tools:text="Aspiring 46th BCS Cadre • Passionate about Bangladesh Affairs &amp; International Relations." />
 
-                    <!-- Academic & About Details Card -->
+                    <!-- Academic & Contact Details Card with Lucide Icons -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardAcademicInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        app:cardBackgroundColor="@color/surface_variant"
-                        app:cardCornerRadius="10dp"
+                        android:layout_marginTop="12dp"
+                        app:cardBackgroundColor="@color/card_background"
+                        app:cardCornerRadius="14dp"
                         app:cardElevation="0dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvProfileBio"
-                        app:strokeColor="@color/divider"
+                        app:strokeColor="@color/border"
                         app:strokeWidth="1dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="12dp">
+                            android:padding="14dp">
 
-                            <TextView
-                                android:id="@+id/tvInstitution"
-                                android:layout_width="wrap_content"
+                            <!-- Institution Row -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/text_primary"
-                                android:textSize="13sp"
-                                tools:text="🏛️ University of Dhaka" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/tvDegreeAndYear"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:textColor="@color/text_secondary"
-                                android:textSize="12sp"
-                                tools:text="🎓 B.Sc. in Computer Science &amp; Eng. (Passing 2024)" />
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:contentDescription="Institution"
+                                    app:srcCompat="@drawable/ic_lucide_building"
+                                    app:tint="@color/primary" />
 
-                            <TextView
-                                android:id="@+id/tvPhone"
-                                android:layout_width="wrap_content"
+                                <TextView
+                                    android:id="@+id/tvInstitution"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="13sp"
+                                    tools:text="University of Dhaka" />
+                            </LinearLayout>
+
+                            <!-- Degree / Year Row -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:textColor="@color/text_secondary"
-                                android:textSize="12sp"
-                                tools:text="📞 +880 1712-345678" />
+                                android:layout_marginTop="8dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:contentDescription="Graduation"
+                                    app:srcCompat="@drawable/ic_lucide_graduation_cap"
+                                    app:tint="@color/secondary" />
+
+                                <TextView
+                                    android:id="@+id/tvDegreeAndYear"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="12sp"
+                                    tools:text="Class of 2024" />
+                            </LinearLayout>
+
+                            <!-- Phone Row -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:contentDescription="Phone"
+                                    app:srcCompat="@drawable/ic_lucide_phone"
+                                    app:tint="@color/amber_accent" />
+
+                                <TextView
+                                    android:id="@+id/tvPhone"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="12sp"
+                                    tools:text="+880 1712-345678" />
+                            </LinearLayout>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Stats Row -->
-                    <LinearLayout
+                    <!-- Web3 Stats Row with Lucide Icons -->
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/layoutStatsRow"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:background="@drawable/bg_dialog_rounded"
-                        android:backgroundTint="@color/primary_surface"
-                        android:orientation="horizontal"
-                        android:paddingVertical="10dp"
+                        app:cardBackgroundColor="@color/card_background"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/cardAcademicInfo">
+                        app:layout_constraintTop_toBottomOf="@id/cardAcademicInfo"
+                        app:strokeColor="@color/border"
+                        app:strokeWidth="1dp">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                            android:orientation="horizontal"
+                            android:paddingVertical="12dp">
 
-                            <TextView
-                                android:id="@+id/tvRankValue"
-                                android:layout_width="wrap_content"
+                            <!-- Rank Column -->
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/primary"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                tools:text="#14" />
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:contentDescription="Rank"
+                                    app:srcCompat="@drawable/ic_lucide_trophy"
+                                    app:tint="@color/gold" />
+
+                                <TextView
+                                    android:id="@+id/tvRankValue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="sans-serif-black"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="16sp"
+                                    tools:text="#14" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Global Rank"
+                                    android:textColor="@color/text_muted"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/divider" />
+
+                            <!-- Score Column -->
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="Rank"
-                                android:textColor="@color/text_secondary"
-                                android:textSize="11sp" />
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:contentDescription="Score"
+                                    app:srcCompat="@drawable/ic_lucide_flame"
+                                    app:tint="@color/secondary" />
+
+                                <TextView
+                                    android:id="@+id/tvScoreValue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="sans-serif-black"
+                                    android:textColor="@color/secondary"
+                                    android:textSize="16sp"
+                                    tools:text="182.5" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Points"
+                                    android:textColor="@color/text_muted"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/divider" />
+
+                            <!-- Tier Column -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:contentDescription="Tier"
+                                    app:srcCompat="@drawable/ic_lucide_shield"
+                                    app:tint="@color/amber_accent" />
+
+                                <TextView
+                                    android:id="@+id/tvTierValue"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="sans-serif-black"
+                                    android:textColor="@color/amber_accent"
+                                    android:textSize="15sp"
+                                    tools:text="Master" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Tier Badge"
+                                    android:textColor="@color/text_muted"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
                         </LinearLayout>
-
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/divider" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvScoreValue"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/secondary"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                tools:text="182.5" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Score"
-                                android:textColor="@color/text_secondary"
-                                android:textSize="11sp" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/divider" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvTierValue"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/amber_accent"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                tools:text="Master" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Tier"
-                                android:textColor="@color/text_secondary"
-                                android:textSize="11sp" />
-                        </LinearLayout>
-                    </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

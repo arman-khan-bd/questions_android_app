@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/card_background"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp"
+    app:rippleColor="@color/primary_light"
+    app:strokeColor="@color/border"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Subject Icon Glow Container -->
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_dialog_rounded"
+            android:backgroundTint="@color/primary_surface">
+
+            <ImageView
+                android:id="@+id/ivSubjectCardIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="Subject"
+                app:srcCompat="@drawable/ic_app_logo" />
+        </FrameLayout>
+
+        <!-- Subject Name -->
+        <TextView
+            android:id="@+id/tvSubjectCardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-bold"
+            android:gravity="center"
+            android:maxLines="2"
+            android:minLines="2"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            tools:text="Bangladesh Affairs" />
+
+        <!-- Count Badge Pill -->
+        <TextView
+            android:id="@+id/tvSubjectCardCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_dialog_rounded"
+            android:backgroundTint="@color/surface_variant"
+            android:fontFamily="sans-serif-medium"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:textColor="@color/primary"
+            android:textSize="10sp"
+            tools:text="450 MCQs" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

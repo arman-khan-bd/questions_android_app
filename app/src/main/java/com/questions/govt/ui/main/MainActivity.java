@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,7 +81,8 @@ import retrofit2.Response;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private DrawerLayout drawerLayout;
+    // Top App Bar
+    private ImageView btnNavMenu;
     private ImageView ivHeaderLogo;
     private TextView tvHeaderTitle;
     private ImageView btnSearchToggle;
@@ -100,23 +102,21 @@ public class MainActivity extends AppCompatActivity {
     // Bottom Navigation
     private BottomNavigationView bottomNav;
 
-    // Drawer Views
+    // Drawer Views (Web3 Card & Pill Architecture)
     private ImageView ivDrawerLogo;
     private TextView tvDrawerAppName;
-    private RecyclerView rvDrawerPopularSearches;
-    private RecyclerView rvDrawerTopics;
+    private ChipGroup cgDrawerPopularSearches;
+    private ChipGroup cgDrawerTopics;
+    private ChipGroup cgDrawerCategories;
     private ChipGroup cgDrawerTags;
-    private RecyclerView rvDrawerCategories;
     private RecyclerView rvDrawerSubjects;
+    private TextView tvDrawerSubjectsCount;
     private LinearLayout layoutDrawerSaved;
     private SwitchCompat switchDarkMode;
     private LinearLayout layoutDrawerLogout;
     private TextView tvDrawerVersion;
 
-    private SearchSuggestionAdapter drawerPopularAdapter;
-    private DrawerTaxonomyAdapter drawerTopicsAdapter;
-    private DrawerTaxonomyAdapter drawerCategoriesAdapter;
-    private DrawerTaxonomyAdapter drawerSubjectsAdapter;
+    private DrawerSubjectCardAdapter drawerSubjectsCardAdapter;
 
     private TaxonomyRepository taxonomyRepository;
     private NotificationRepository notificationRepository;
@@ -158,6 +158,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViews() {
         drawerLayout = findViewById(R.id.drawerLayout);
+        btnNavMenu = findViewById(R.id.btnNavMenu);
+        if (btnNavMenu != null) {
+            btnNavMenu.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        }
         ivHeaderLogo = findViewById(R.id.ivHeaderLogo);
         tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         btnSearchToggle = findViewById(R.id.btnSearchToggle);
@@ -176,11 +180,12 @@ public class MainActivity extends AppCompatActivity {
 
         ivDrawerLogo = findViewById(R.id.ivDrawerLogo);
         tvDrawerAppName = findViewById(R.id.tvDrawerAppName);
-        rvDrawerPopularSearches = findViewById(R.id.rvDrawerPopularSearches);
-        rvDrawerTopics = findViewById(R.id.rvDrawerTopics);
+        cgDrawerPopularSearches = findViewById(R.id.cgDrawerPopularSearches);
+        cgDrawerTopics = findViewById(R.id.cgDrawerTopics);
+        cgDrawerCategories = findViewById(R.id.cgDrawerCategories);
         cgDrawerTags = findViewById(R.id.cgDrawerTags);
-        rvDrawerCategories = findViewById(R.id.rvDrawerCategories);
         rvDrawerSubjects = findViewById(R.id.rvDrawerSubjects);
+        tvDrawerSubjectsCount = findViewById(R.id.tvDrawerSubjectsCount);
         layoutDrawerSaved = findViewById(R.id.layoutDrawerSaved);
         switchDarkMode = findViewById(R.id.switchDarkMode);
         layoutDrawerLogout = findViewById(R.id.layoutDrawerLogout);
@@ -381,73 +386,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupLeftDrawer() {
-        // 1. Top 5 Popular Searches
-        drawerPopularAdapter = new SearchSuggestionAdapter(query -> {
-            drawerLayout.closeDrawer(GravityCompat.START);
-            launchSearchResult(query);
-        });
-        rvDrawerPopularSearches.setLayoutManager(new LinearLayoutManager(this));
-        rvDrawerPopularSearches.setAdapter(drawerPopularAdapter);
-
-        // 2. Topics
-        drawerTopicsAdapter = new DrawerTaxonomyAdapter(topic -> {
-            drawerLayout.closeDrawer(GravityCompat.START);
-            Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
-            intent.putExtra(SearchResultActivity.EXTRA_TOPIC_ID, topic.getId());
-            intent.putExtra(SearchResultActivity.EXTRA_QUERY, topic.getTitle());
-            startActivity(intent);
-        });
-        rvDrawerTopics.setLayoutManager(new LinearLayoutManager(this));
-        rvDrawerTopics.setAdapter(drawerTopicsAdapter);
-
-        // 4. Categories
-        drawerCategoriesAdapter = new DrawerTaxonomyAdapter(cat -> {
-            drawerLayout.closeDrawer(GravityCompat.START);
-            Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
-            intent.putExtra(SearchResultActivity.EXTRA_CATEGORY_ID, cat.getId());
-            intent.putExtra(SearchResultActivity.EXTRA_QUERY, cat.getTitle());
-            startActivity(intent);
-        });
-        rvDrawerCategories.setLayoutManager(new LinearLayoutManager(this));
-        rvDrawerCategories.setAdapter(drawerCategoriesAdapter);
-
-        // 5. Subjects
-        drawerSubjectsAdapter = new DrawerTaxonomyAdapter(sub -> {
+        // 1. Subjects (Modern Web3 2-column Card View)
+        drawerSubjectsCardAdapter = new DrawerSubjectCardAdapter(sub -> {
             drawerLayout.closeDrawer(GravityCompat.START);
             Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
             intent.putExtra(SearchResultActivity.EXTRA_SUBJECT_ID, sub.getId());
             intent.putExtra(SearchResultActivity.EXTRA_QUERY, sub.getTitle());
             startActivity(intent);
         });
-        rvDrawerSubjects.setLayoutManager(new LinearLayoutManager(this));
-        rvDrawerSubjects.setAdapter(drawerSubjectsAdapter);
+        rvDrawerSubjects.setLayoutManager(new GridLayoutManager(this, 2));
+        rvDrawerSubjects.setAdapter(drawerSubjectsCardAdapter);
 
-        // Populate drawer from Room repositories
+        // Populate drawer subjects from Room repository
         taxonomyRepository.getSubjects().observe(this, list -> {
-            if (list != null) drawerSubjectsAdapter.updateData(list);
-        });
-        taxonomyRepository.getTopics().observe(this, list -> {
-            if (list != null) drawerTopicsAdapter.updateData(list);
-        });
-        taxonomyRepository.getCategories().observe(this, list -> {
-            if (list != null) drawerCategoriesAdapter.updateData(list);
-        });
-        taxonomyRepository.getTags().observe(this, tags -> {
-            cgDrawerTags.removeAllViews();
-            if (tags != null) {
-                for (TaxonomyItem tag : tags) {
-                    Chip chip = new Chip(MainActivity.this);
-                    chip.setText("#" + tag.getTitle());
-                    chip.setChipBackgroundColorResource(R.color.surface_variant);
-                    chip.setOnClickListener(v -> {
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
-                        intent.putExtra(SearchResultActivity.EXTRA_TAG, tag.getTitle());
-                        startActivity(intent);
-                    });
-                    cgDrawerTags.addView(chip);
+            if (list != null) {
+                drawerSubjectsCardAdapter.updateData(list);
+                if (tvDrawerSubjectsCount != null) {
+                    tvDrawerSubjectsCount.setText(list.size() + " Total");
                 }
             }
+        });
+
+        // 2. Topics (Pill View)
+        taxonomyRepository.getTopics().observe(this, this::populateDrawerTopicPills);
+
+        // 3. Categories (Pill View)
+        taxonomyRepository.getCategories().observe(this, this::populateDrawerCategoryPills);
+
+        // 4. Tags (Pill View)
+        taxonomyRepository.getTags().observe(this, this::populateDrawerTagPills);
+
+        // 5. Popular Searches from Home Feed or Suggestions
+        ApiClient.getApiService().getSearchSuggestions("").enqueue(new Callback<ApiResponse<SearchSuggestionsResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<SearchSuggestionsResponse>> call, Response<ApiResponse<SearchSuggestionsResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    populateDrawerSearchPills(response.body().getData().getPopularSearches());
+                }
+            }
+            @Override
+            public void onFailure(Call<ApiResponse<SearchSuggestionsResponse>> call, Throwable t) {}
         });
 
         // 6. Footer Actions
@@ -467,6 +445,79 @@ public class MainActivity extends AppCompatActivity {
         });
 
         layoutDrawerLogout.setOnClickListener(v -> showLogoutConfirmation());
+    }
+
+    private void populateDrawerTopicPills(List<TaxonomyItem> topics) {
+        if (cgDrawerTopics == null) return;
+        cgDrawerTopics.removeAllViews();
+        if (topics == null || topics.isEmpty()) return;
+        for (TaxonomyItem topic : topics) {
+            Chip chip = createWeb3PillChip(topic.getTitle(), () -> {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                intent.putExtra(SearchResultActivity.EXTRA_TOPIC_ID, topic.getId());
+                intent.putExtra(SearchResultActivity.EXTRA_QUERY, topic.getTitle());
+                startActivity(intent);
+            });
+            cgDrawerTopics.addView(chip);
+        }
+    }
+
+    private void populateDrawerCategoryPills(List<TaxonomyItem> categories) {
+        if (cgDrawerCategories == null) return;
+        cgDrawerCategories.removeAllViews();
+        if (categories == null || categories.isEmpty()) return;
+        for (TaxonomyItem cat : categories) {
+            Chip chip = createWeb3PillChip(cat.getTitle(), () -> {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                intent.putExtra(SearchResultActivity.EXTRA_CATEGORY_ID, cat.getId());
+                intent.putExtra(SearchResultActivity.EXTRA_QUERY, cat.getTitle());
+                startActivity(intent);
+            });
+            cgDrawerCategories.addView(chip);
+        }
+    }
+
+    private void populateDrawerTagPills(List<TaxonomyItem> tags) {
+        if (cgDrawerTags == null) return;
+        cgDrawerTags.removeAllViews();
+        if (tags == null || tags.isEmpty()) return;
+        for (TaxonomyItem tag : tags) {
+            Chip chip = createWeb3PillChip("#" + tag.getTitle(), () -> {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
+                intent.putExtra(SearchResultActivity.EXTRA_TAG, tag.getTitle());
+                startActivity(intent);
+            });
+            cgDrawerTags.addView(chip);
+        }
+    }
+
+    private void populateDrawerSearchPills(List<String> searches) {
+        if (cgDrawerPopularSearches == null) return;
+        cgDrawerPopularSearches.removeAllViews();
+        if (searches == null || searches.isEmpty()) return;
+        for (String query : searches) {
+            Chip chip = createWeb3PillChip(query, () -> {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                launchSearchResult(query);
+            });
+            cgDrawerPopularSearches.addView(chip);
+        }
+    }
+
+    private Chip createWeb3PillChip(String text, Runnable onClick) {
+        Chip chip = new Chip(this);
+        chip.setText(text);
+        chip.setChipCornerRadius(28f);
+        chip.setChipBackgroundColorResource(R.color.surface_variant);
+        chip.setTextColor(ContextCompat.getColor(this, R.color.text_primary));
+        chip.setChipStrokeColorResource(R.color.border);
+        chip.setChipStrokeWidth(1.5f);
+        chip.setTextSize(12f);
+        chip.setOnClickListener(v -> onClick.run());
+        return chip;
     }
 
     private void showLogoutConfirmation() {

@@ -76,10 +76,30 @@ public class TaxonomyRepository {
                     HomeFeedResponse feed = response.body().getData();
 
                     List<TaxonomyItem> allItems = new ArrayList<>();
-                    if (feed.getSubjects() != null) allItems.addAll(feed.getSubjects());
-                    if (feed.getTopics() != null) allItems.addAll(feed.getTopics());
-                    if (feed.getCategories() != null) allItems.addAll(feed.getCategories());
-                    if (feed.getTags() != null) allItems.addAll(feed.getTags());
+                    if (feed.getSubjects() != null) {
+                        for (TaxonomyItem item : feed.getSubjects()) {
+                            item.setType("subject");
+                            allItems.add(item);
+                        }
+                    }
+                    if (feed.getTopics() != null) {
+                        for (TaxonomyItem item : feed.getTopics()) {
+                            item.setType("topic");
+                            allItems.add(item);
+                        }
+                    }
+                    if (feed.getCategories() != null) {
+                        for (TaxonomyItem item : feed.getCategories()) {
+                            item.setType("category");
+                            allItems.add(item);
+                        }
+                    }
+                    if (feed.getTags() != null) {
+                        for (TaxonomyItem item : feed.getTags()) {
+                            item.setType("tag");
+                            allItems.add(item);
+                        }
+                    }
 
                     AppDatabase.databaseWriteExecutor.execute(() -> taxonomyDao.insertOrReplaceAll(allItems));
 

@@ -40,7 +40,7 @@ import java.util.concurrent.Executors;
                 AppConfigEntity.class,
                 User.class
         },
-        version = 1,
+        version = 2,
         exportSchema = false
 )
 @TypeConverters({Converters.class})

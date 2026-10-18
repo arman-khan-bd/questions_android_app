@@ -227,10 +227,27 @@ public class HomeFragment extends Fragment {
             public void onSuccess(HomeFeedResponse response) {
                 if (isAdded()) {
                     swipeRefresh.setRefreshing(false);
-                    if (response != null && response.getBanners() != null) {
-                        bannerAdapter.setBanners(response.getBanners());
-                        carouselHandler.removeCallbacks(carouselRunnable);
-                        carouselHandler.postDelayed(carouselRunnable, 4000);
+                    if (response != null) {
+                        if (response.getBanners() != null) {
+                            bannerAdapter.setBanners(response.getBanners());
+                            carouselHandler.removeCallbacks(carouselRunnable);
+                            carouselHandler.postDelayed(carouselRunnable, 4000);
+                        }
+                        if (response.getSubjects() != null && !response.getSubjects().isEmpty()) {
+                            subjectAdapter.setSubjects(response.getSubjects());
+                            tvSubjectsCountBadge.setText(response.getSubjects().size() + " Subjects");
+                            populateTaxonomyMultiSelectChips(response.getSubjects(), null);
+                        }
+                        if (response.getTopics() != null && !response.getTopics().isEmpty()) {
+                            topicAdapter.setTopics(response.getTopics());
+                        }
+                        if (response.getCategories() != null && !response.getCategories().isEmpty()) {
+                            populateCategoryChips(response.getCategories());
+                        }
+                        if (response.getTags() != null && !response.getTags().isEmpty()) {
+                            populateTagChips(response.getTags());
+                            populateTaxonomyMultiSelectChips(null, response.getTags());
+                        }
                     }
                 }
             }

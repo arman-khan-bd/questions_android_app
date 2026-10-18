@@ -1,7 +1,7 @@
 package com.questions.govt.data.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -10,10 +10,9 @@ import java.io.Serializable;
 /**
  * Represents Subjects, Topics, Categories, or Tags in the taxonomy hierarchy.
  */
-@Entity(tableName = "taxonomies")
+@Entity(tableName = "taxonomies", primaryKeys = {"id", "type"})
 public class TaxonomyItem implements Serializable {
 
-    @PrimaryKey
     @SerializedName("id")
     private long id;
 
@@ -29,8 +28,9 @@ public class TaxonomyItem implements Serializable {
     @SerializedName("slug")
     private String slug;
 
+    @NonNull
     @SerializedName("type")
-    private String type; // "subject", "topic", "category", "tag"
+    private String type = "subject"; // "subject", "topic", "category", "tag"
 
     @SerializedName("icon_url")
     private String iconUrl;

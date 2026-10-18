@@ -176,7 +176,8 @@ public class ProfileFragment extends Fragment {
         boolean hasAcademic = false;
         if (user.getUniversity() != null && !user.getUniversity().isEmpty()) {
             tvInstitution.setVisibility(View.VISIBLE);
-            tvInstitution.setText(String.format("🏛️ %s", user.getUniversity()));
+            String uni = user.getUniversity().replaceAll("^[🏛️🎓📞\\s]+", "");
+            tvInstitution.setText(uni);
             hasAcademic = true;
         } else {
             tvInstitution.setVisibility(View.GONE);
@@ -184,7 +185,8 @@ public class ProfileFragment extends Fragment {
 
         if (user.getGraduationYear() != null && !user.getGraduationYear().isEmpty()) {
             tvDegreeAndYear.setVisibility(View.VISIBLE);
-            tvDegreeAndYear.setText(String.format(Locale.getDefault(), "🎓 Class of %s", user.getGraduationYear()));
+            String year = user.getGraduationYear().replaceAll("^[🏛️🎓📞\\s]+", "");
+            tvDegreeAndYear.setText(String.format(Locale.getDefault(), "Class of %s", year));
             hasAcademic = true;
         } else {
             tvDegreeAndYear.setVisibility(View.GONE);
@@ -192,7 +194,8 @@ public class ProfileFragment extends Fragment {
 
         if (user.getPhone() != null && !user.getPhone().isEmpty() && !user.isPhonePrivate()) {
             tvPhone.setVisibility(View.VISIBLE);
-            tvPhone.setText(String.format("📞 %s", user.getPhone()));
+            String phone = user.getPhone().replaceAll("^[🏛️🎓📞\\s]+", "");
+            tvPhone.setText(phone);
             hasAcademic = true;
         } else {
             tvPhone.setVisibility(View.GONE);

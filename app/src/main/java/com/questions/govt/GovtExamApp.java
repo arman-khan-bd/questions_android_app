@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
 import com.google.android.gms.security.ProviderInstaller;
@@ -28,6 +29,12 @@ public class GovtExamApp extends MultiDexApplication {
 
         // Initialize Session Manager
         SessionManager.init(this);
+
+        // Apply Dark / Light mode preference on startup
+        boolean isDark = SessionManager.getInstance().isDarkMode();
+        AppCompatDelegate.setDefaultNightMode(
+                isDark ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+        );
 
         // Safeguard for Android 5.0 (API 21): Install modern TLS Provider
         installTls12Provider();
