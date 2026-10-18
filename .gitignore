@@ -30,3 +30,8 @@ signing.properties
 # Native symbols & profiling
 .cxx/
 capture/
+
+# Screenshots & Local Test Assets
+*.jpg
+*.png
+

@@ -121,272 +121,295 @@
             android:scaleType="fitCenter"
             android:visibility="gone" />
 
-        <!-- Option A -->
+        <!-- Adaptive Options Rows -->
+        <!-- Row AB -->
         <LinearLayout
-            android:id="@+id/layoutOptionA"
+            android:id="@+id/layoutRowAB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_option_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="vertical"
-            android:padding="12dp">
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
 
+            <!-- Option A -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/layoutOptionA"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_option_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-                <TextView
-                    android:id="@+id/tvLabelA"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:background="@drawable/bg_dialog_rounded"
-                    android:backgroundTint="@color/surface_variant"
-                    android:gravity="center"
-                    android:text="A"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvOptionA"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    tools:text="US Dollar (USD)" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvPctA"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
+                    <TextView
+                        android:id="@+id/tvLabelA"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:background="@drawable/bg_dialog_rounded"
+                        android:backgroundTint="@color/surface_variant"
+                        android:gravity="center"
+                        android:text="A"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvOptionA"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        tools:text="US Dollar (USD)" />
+
+                    <TextView
+                        android:id="@+id/tvPctA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:visibility="gone"
+                        tools:text="68%"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/pbOptionA"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:minHeight="4dp"
+                    android:maxHeight="4dp"
+                    android:max="100"
+                    android:layout_marginTop="4dp"
+                    android:progressBackgroundTint="@color/divider"
+                    android:progressTint="@color/primary"
                     android:visibility="gone"
-                    tools:text="68%"
+                    tools:progress="68"
                     tools:visibility="visible" />
             </LinearLayout>
 
-            <ProgressBar
-                android:id="@+id/pbOptionA"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:minHeight="6dp"
-                android:maxHeight="6dp"
-                android:max="100"
-                android:layout_marginTop="6dp"
-                android:progressBackgroundTint="@color/divider"
-                android:progressTint="@color/primary"
-                android:visibility="gone"
-                tools:progress="68"
-                tools:visibility="visible" />
+            <!-- Option B -->
+            <LinearLayout
+                android:id="@+id/layoutOptionB"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_option_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvLabelB"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:background="@drawable/bg_dialog_rounded"
+                        android:backgroundTint="@color/surface_variant"
+                        android:gravity="center"
+                        android:text="B"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvOptionB"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        tools:text="Chinese Yuan (RMB)" />
+
+                    <TextView
+                        android:id="@+id/tvPctB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:visibility="gone"
+                        tools:text="22%"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/pbOptionB"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:minHeight="4dp"
+                    android:maxHeight="4dp"
+                    android:max="100"
+                    android:layout_marginTop="4dp"
+                    android:progressBackgroundTint="@color/divider"
+                    android:progressTint="@color/primary"
+                    android:visibility="gone"
+                    tools:progress="22"
+                    tools:visibility="visible" />
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Option B -->
+        <!-- Row CD -->
         <LinearLayout
-            android:id="@+id/layoutOptionB"
+            android:id="@+id/layoutRowCD"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_option_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="vertical"
-            android:padding="12dp">
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal">
 
+            <!-- Option C -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/layoutOptionC"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_option_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-                <TextView
-                    android:id="@+id/tvLabelB"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:background="@drawable/bg_dialog_rounded"
-                    android:backgroundTint="@color/surface_variant"
-                    android:gravity="center"
-                    android:text="B"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvOptionB"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    tools:text="Chinese Yuan (RMB)" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvPctB"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
+                    <TextView
+                        android:id="@+id/tvLabelC"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:background="@drawable/bg_dialog_rounded"
+                        android:backgroundTint="@color/surface_variant"
+                        android:gravity="center"
+                        android:text="C"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvOptionC"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        tools:text="Special Drawing Rights (SDR)" />
+
+                    <TextView
+                        android:id="@+id/tvPctC"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:visibility="gone"
+                        tools:text="7%"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/pbOptionC"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:minHeight="4dp"
+                    android:maxHeight="4dp"
+                    android:max="100"
+                    android:layout_marginTop="4dp"
+                    android:progressBackgroundTint="@color/divider"
+                    android:progressTint="@color/primary"
                     android:visibility="gone"
-                    tools:text="22%"
+                    tools:progress="7"
                     tools:visibility="visible" />
             </LinearLayout>
 
-            <ProgressBar
-                android:id="@+id/pbOptionB"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:minHeight="6dp"
-                android:maxHeight="6dp"
-                android:max="100"
-                android:layout_marginTop="6dp"
-                android:progressBackgroundTint="@color/divider"
-                android:progressTint="@color/primary"
-                android:visibility="gone"
-                tools:progress="22"
-                tools:visibility="visible" />
-        </LinearLayout>
-
-        <!-- Option C -->
-        <LinearLayout
-            android:id="@+id/layoutOptionC"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_option_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="vertical"
-            android:padding="12dp">
-
+            <!-- Option D -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/layoutOptionD"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_option_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-                <TextView
-                    android:id="@+id/tvLabelC"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:background="@drawable/bg_dialog_rounded"
-                    android:backgroundTint="@color/surface_variant"
-                    android:gravity="center"
-                    android:text="C"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvOptionC"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    tools:text="Special Drawing Rights (SDR)" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvPctC"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
+                    <TextView
+                        android:id="@+id/tvLabelD"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:background="@drawable/bg_dialog_rounded"
+                        android:backgroundTint="@color/surface_variant"
+                        android:gravity="center"
+                        android:text="D"
+                        android:textColor="@color/text_primary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvOptionD"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        tools:text="Euro (EUR)" />
+
+                    <TextView
+                        android:id="@+id/tvPctD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:visibility="gone"
+                        tools:text="3%"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/pbOptionD"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:minHeight="4dp"
+                    android:maxHeight="4dp"
+                    android:max="100"
+                    android:layout_marginTop="4dp"
+                    android:progressBackgroundTint="@color/divider"
+                    android:progressTint="@color/primary"
                     android:visibility="gone"
-                    tools:text="7%"
+                    tools:progress="3"
                     tools:visibility="visible" />
             </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/pbOptionC"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:minHeight="6dp"
-                android:maxHeight="6dp"
-                android:max="100"
-                android:layout_marginTop="6dp"
-                android:progressBackgroundTint="@color/divider"
-                android:progressTint="@color/primary"
-                android:visibility="gone"
-                tools:progress="7"
-                tools:visibility="visible" />
-        </LinearLayout>
-
-        <!-- Option D -->
-        <LinearLayout
-            android:id="@+id/layoutOptionD"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_option_card"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="vertical"
-            android:padding="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvLabelD"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:background="@drawable/bg_dialog_rounded"
-                    android:backgroundTint="@color/surface_variant"
-                    android:gravity="center"
-                    android:text="D"
-                    android:textColor="@color/text_primary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvOptionD"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp"
-                    tools:text="Euro (EUR)" />
-
-                <TextView
-                    android:id="@+id/tvPctD"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    tools:text="3%"
-                    tools:visibility="visible" />
-            </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/pbOptionD"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:minHeight="6dp"
-                android:maxHeight="6dp"
-                android:max="100"
-                android:layout_marginTop="6dp"
-                android:progressBackgroundTint="@color/divider"
-                android:progressTint="@color/primary"
-                android:visibility="gone"
-                tools:progress="3"
-                tools:visibility="visible" />
         </LinearLayout>
 
         <!-- Explanation Card (Revealed on check or creator reveal) -->

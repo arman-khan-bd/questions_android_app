@@ -201,6 +201,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void setLoading(boolean isLoading) {
         btnRegister.setEnabled(!isLoading);
+        btnRegister.setText(isLoading ? "" : getString(R.string.register_button));
         pbRegister.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
 }

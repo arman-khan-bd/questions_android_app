@@ -1,5 +1,6 @@
 package com.questions.govt.ui.search;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -147,7 +148,9 @@ public class SearchResultActivity extends AppCompatActivity {
         adapter = new SearchResultAdapter(this, question -> {
             // Record view telemetry
             questionRepository.recordQuestionView(question.getId());
-            Toast.makeText(SearchResultActivity.this, "Question: " + question.getQuestionText(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(SearchResultActivity.this, com.questions.govt.ui.question.QuestionDetailActivity.class);
+            intent.putExtra(com.questions.govt.ui.question.QuestionDetailActivity.EXTRA_QUESTION_ID, question.getId());
+            startActivity(intent);
         });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

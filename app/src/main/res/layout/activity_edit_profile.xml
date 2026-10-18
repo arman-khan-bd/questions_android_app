@@ -215,28 +215,33 @@
                         android:textColor="@color/text_primary" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Save Changes Button -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSaveProfile"
-                    style="@style/Widget.MaterialComponents.Button"
+                <!-- Save Changes Button with Inside Loading Spinner -->
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/save_profile"
-                    android:textAllCaps="false"
-                    android:textColor="@color/text_white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:backgroundTint="@color/primary"
-                    app:cornerRadius="10dp" />
-
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    android:visibility="gone" />
+                    android:layout_marginTop="24dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveProfile"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="54dp"
+                        android:text="@string/save_profile"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text_white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/primary"
+                        app:cornerRadius="10dp" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center"
+                        android:indeterminateTint="@color/text_white"
+                        android:visibility="gone" />
+                </FrameLayout>
 
             </LinearLayout>
         </LinearLayout>

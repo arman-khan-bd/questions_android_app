@@ -87,6 +87,13 @@ public class ProfileTabContentFragment extends Fragment {
         return root;
     }
 
+    public void updateData(Serializable newData) {
+        this.dataList = newData;
+        if (isAdded() && rvTabContent != null) {
+            bindTabAdapter();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private void bindTabAdapter() {
         switch (tabIndex) {

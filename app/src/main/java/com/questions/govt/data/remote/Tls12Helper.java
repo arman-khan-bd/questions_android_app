@@ -77,14 +77,14 @@ public class Tls12Helper {
                 }
             });
 
-            // Allow Modern TLS, Compatible TLS, and Cleartext fallback
-            ConnectionSpec modernTls = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .tlsVersions(TlsVersion.TLS_1_3, TlsVersion.TLS_1_2)
+            // Allow Modern TLS across all enabled versions (TLS 1.2, TLS 1.3) and platform cipher suites
+            ConnectionSpec allTls = new ConnectionSpec.Builder(true)
+                    .allEnabledTlsVersions()
+                    .allEnabledCipherSuites()
                     .build();
 
             List<ConnectionSpec> specs = new ArrayList<>();
-            specs.add(modernTls);
-            specs.add(ConnectionSpec.COMPATIBLE_TLS);
+            specs.add(allTls);
             specs.add(ConnectionSpec.CLEARTEXT);
 
             client.connectionSpecs(specs);

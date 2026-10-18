@@ -171,6 +171,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setLoading(boolean isLoading) {
         btnLogin.setEnabled(!isLoading);
+        btnLogin.setText(isLoading ? "" : getString(R.string.login_button));
         pbLogin.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
 }

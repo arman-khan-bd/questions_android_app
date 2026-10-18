@@ -27,6 +27,7 @@ import com.questions.govt.data.remote.ApiClient;
 import com.questions.govt.data.remote.response.ApiResponse;
 import com.questions.govt.data.repository.TaxonomyRepository;
 import com.questions.govt.util.FeatureFlagManager;
+import com.questions.govt.util.NetworkErrorParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -275,14 +276,16 @@ public class CreateQuestionActivity extends AppCompatActivity {
                     Toast.makeText(CreateQuestionActivity.this, msg, Toast.LENGTH_LONG).show();
                     finish();
                 } else {
-                    Toast.makeText(CreateQuestionActivity.this, "Failed to submit question. Please verify fields.", Toast.LENGTH_SHORT).show();
+                    String error = NetworkErrorParser.parseError(response, "Failed to submit question. Please verify fields.");
+                    Toast.makeText(CreateQuestionActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Question>> call, Throwable t) {
                 setLoading(false);
-                Toast.makeText(CreateQuestionActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show();
+                String error = NetworkErrorParser.parseFailure(t, getString(R.string.network_error));
+                Toast.makeText(CreateQuestionActivity.this, error, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -293,6 +296,7 @@ public class CreateQuestionActivity extends AppCompatActivity {
 
     private void setLoading(boolean isLoading) {
         btnSubmitQuestion.setEnabled(!isLoading);
+        btnSubmitQuestion.setText(isLoading ? "" : "Submit Question");
         pbSubmitQuestion.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
 }

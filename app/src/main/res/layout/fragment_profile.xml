@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@color/surface"
+            app:titleEnabled="false"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -74,7 +75,7 @@
                         android:src="@drawable/ic_app_logo" />
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Web3 Profile Action Buttons -->
+                <!-- Web3 Profile Action Buttons (Compact Small Buttons) -->
                 <LinearLayout
                     android:id="@+id/layoutProfileActions"
                     android:layout_width="wrap_content"
@@ -90,16 +91,21 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnProfileCreateQuestion"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
+                        android:layout_height="32dp"
                         android:layout_marginEnd="6dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
                         android:text="@string/create_question"
                         android:textAllCaps="false"
                         android:textColor="@color/text_white"
-                        android:textSize="12sp"
+                        android:textSize="11sp"
                         app:backgroundTint="@color/primary"
-                        app:cornerRadius="20dp"
+                        app:cornerRadius="16dp"
                         app:icon="@drawable/ic_lucide_plus"
-                        app:iconSize="16dp"
+                        app:iconPadding="4dp"
+                        app:iconSize="13dp"
                         app:iconTint="@color/text_white" />
 
                     <!-- Edit Profile Action Button -->
@@ -107,17 +113,22 @@
                         android:id="@+id/btnEditProfile"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
+                        android:layout_height="32dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
                         android:text="@string/edit_profile"
                         android:textAllCaps="false"
                         android:textColor="@color/primary"
-                        android:textSize="12sp"
-                        app:cornerRadius="20dp"
+                        android:textSize="11sp"
+                        app:cornerRadius="16dp"
                         app:icon="@drawable/ic_lucide_edit"
-                        app:iconSize="16dp"
+                        app:iconPadding="4dp"
+                        app:iconSize="13dp"
                         app:iconTint="@color/primary"
                         app:strokeColor="@color/border"
-                        app:strokeWidth="1.5dp" />
+                        app:strokeWidth="1dp" />
                 </LinearLayout>
 
                 <!-- User Name -->
@@ -408,7 +419,6 @@
                 app:layout_collapseMode="pin"
                 app:navigationIcon="@drawable/ic_arrow_back"
                 app:navigationIconTint="@color/text_primary"
-                app:title="@string/profile_title"
                 app:titleTextColor="@color/text_primary" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -428,10 +438,17 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPagerProfile"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshProfile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPagerProfile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

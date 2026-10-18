@@ -18,63 +18,152 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Top Header Bar -->
+            <!-- Streamlined Top Header Bar: Sort/Filter on Left, Search + Select All on Right -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="6dp">
+                android:paddingHorizontal="14dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="8dp">
 
-                <LinearLayout
+                <!-- Filter & Sort Trigger Button (Left) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnFilterAndSort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="@color/surface_variant"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/border"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="10dp">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:contentDescription="Filters"
+                            app:srcCompat="@drawable/ic_filter"
+                            app:tint="@color/text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="Sort / Filter"
+                            android:textColor="@color/text_primary"
+                            android:textSize="12sp" />
+
+                        <!-- Active Filter Counter Badge -->
+                        <TextView
+                            android:id="@+id/tvActiveFilterBadge"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/bg_dialog_rounded"
+                            android:backgroundTint="@color/primary"
+                            android:fontFamily="sans-serif-bold"
+                            android:gravity="center"
+                            android:text="1"
+                            android:textColor="@color/text_white"
+                            android:textSize="10sp"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Active Filter Tags (Scrollable Chips) -->
+                <HorizontalScrollView
+                    android:id="@+id/hsvActiveFilters"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
 
-                    <TextView
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/cgActiveFilterChips"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-black"
-                        android:text="@string/all_questions_title"
-                        android:textColor="@color/text_primary"
-                        android:textSize="20sp" />
+                        app:singleLine="true">
 
-                    <TextView
-                        android:id="@+id/tvQuestionsCountSubtitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:fontFamily="sans-serif"
-                        android:text="@string/all_questions_subtitle"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-                </LinearLayout>
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipActiveDifficulty"
+                            style="@style/Widget.MaterialComponents.Chip.Entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:text="Medium"
+                            android:textSize="10sp"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
 
-                <!-- Search Toggle Icon Button -->
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipActiveSubject"
+                            style="@style/Widget.MaterialComponents.Chip.Entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:text="Subject"
+                            android:textSize="10sp"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipActiveSort"
+                            style="@style/Widget.MaterialComponents.Chip.Entry"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:text="Popular"
+                            android:textSize="10sp"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                    </com.google.android.material.chip.ChipGroup>
+                </HorizontalScrollView>
+
+                <!-- Search Toggle Icon Button (Right) -->
                 <ImageView
                     android:id="@+id/btnToggleSearch"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Search Questions"
-                    android:padding="8dp"
+                    android:padding="7dp"
                     app:srcCompat="@drawable/ic_search"
                     app:tint="@color/text_primary" />
+
+                <!-- Select All / Clear Selection Button (Right) -->
+                <TextView
+                    android:id="@+id/btnSelectAllToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:fontFamily="sans-serif-bold"
+                    android:gravity="center"
+                    android:paddingHorizontal="8dp"
+                    android:text="Select All"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp" />
 
                 <!-- Refresh Button -->
                 <ImageView
                     android:id="@+id/btnRefreshQuestions"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Refresh Questions"
-                    android:padding="8dp"
+                    android:padding="7dp"
                     app:srcCompat="@drawable/ic_refresh"
-                    app:tint="@color/text_secondary" />
+                    app:tint="@color/text_muted" />
             </LinearLayout>
 
             <!-- Collapsible Search Input Box (Default Gone) -->
@@ -82,8 +171,7 @@
                 android:id="@+id/layoutSearchContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginHorizontal="14dp"
                 android:layout_marginBottom="8dp"
                 android:visibility="gone"
                 app:cardBackgroundColor="@color/surface_variant"
@@ -95,14 +183,14 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="42dp"
+                    android:layout_height="40dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="12dp">
 
                     <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
                         android:contentDescription="Search"
                         app:srcCompat="@drawable/ic_search"
                         app:tint="@color/text_muted" />
@@ -125,153 +213,27 @@
 
                     <ImageView
                         android:id="@+id/btnClearSearch"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="Clear Search"
-                        android:padding="4dp"
+                        android:padding="3dp"
                         android:visibility="gone"
                         app:srcCompat="@drawable/ic_close"
                         app:tint="@color/text_muted" />
 
                     <ImageView
                         android:id="@+id/btnCloseSearch"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_marginStart="4dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="Close Search"
-                        android:padding="4dp"
+                        android:padding="3dp"
                         app:srcCompat="@drawable/ic_close"
                         app:tint="@color/text_secondary" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- Compact Filter & Sort Bar -->
-            <LinearLayout
-                android:id="@+id/layoutFilterBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="16dp"
-                android:paddingBottom="10dp">
-
-                <!-- Filter & Sort Trigger Button -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnFilterAndSort"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardBackgroundColor="@color/surface_variant"
-                    app:cardCornerRadius="18dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="@color/border"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="12dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:contentDescription="Filters"
-                            app:srcCompat="@drawable/ic_filter"
-                            app:tint="@color/text_primary" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:fontFamily="sans-serif-bold"
-                            android:text="Filter &amp; Sort"
-                            android:textColor="@color/text_primary"
-                            android:textSize="12sp" />
-
-                        <!-- Active Filter Counter Badge -->
-                        <TextView
-                            android:id="@+id/tvActiveFilterBadge"
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:layout_marginStart="6dp"
-                            android:background="@drawable/bg_dialog_rounded"
-                            android:backgroundTint="@color/primary"
-                            android:fontFamily="sans-serif-bold"
-                            android:gravity="center"
-                            android:text="1"
-                            android:textColor="@color/text_white"
-                            android:textSize="10sp"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Active Filter Tags (Scrollable Chips) -->
-                <HorizontalScrollView
-                    android:id="@+id/hsvActiveFilters"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:overScrollMode="never"
-                    android:scrollbars="none">
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/cgActiveFilterChips"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:singleLine="true">
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipActiveDifficulty"
-                            style="@style/Widget.MaterialComponents.Chip.Entry"
-                            android:layout_width="wrap_content"
-                            android:layout_height="32dp"
-                            android:text="Medium"
-                            android:textSize="11sp"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipActiveSubject"
-                            style="@style/Widget.MaterialComponents.Chip.Entry"
-                            android:layout_width="wrap_content"
-                            android:layout_height="32dp"
-                            android:text="Subject"
-                            android:textSize="11sp"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipActiveSort"
-                            style="@style/Widget.MaterialComponents.Chip.Entry"
-                            android:layout_width="wrap_content"
-                            android:layout_height="32dp"
-                            android:text="Popular"
-                            android:textSize="11sp"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
-                    </com.google.android.material.chip.ChipGroup>
-                </HorizontalScrollView>
-
-                <!-- Quick Select All / Clear Selection Button -->
-                <TextView
-                    android:id="@+id/btnSelectAllToggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"
-                    android:paddingHorizontal="8dp"
-                    android:text="Select All"
-                    android:textColor="@color/primary"
-                    android:textSize="12sp" />
-            </LinearLayout>
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -364,7 +326,7 @@
         </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <!-- Compact Floating Pill: Exam from Questions (Docked above bottom bar at 72dp) -->
+    <!-- Conditionally Visible Floating Action Button: Create Self-Exam (Only visible when >= 1 questions selected) -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabCreateExamFromQuestions"
         android:layout_width="wrap_content"
@@ -372,10 +334,12 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="72dp"
-        android:contentDescription="Self Exam"
-        android:text="Self Exam"
+        android:contentDescription="Create Self-Exam"
+        android:text="Create Self-Exam"
         android:textColor="@color/text_white"
         android:textSize="12sp"
+        android:visibility="gone"
+        tools:visibility="visible"
         app:backgroundTint="@color/accent"
         app:elevation="6dp"
         app:icon="@drawable/ic_trophy"

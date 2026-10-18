@@ -119,10 +119,8 @@ public class NotificationActivity extends AppCompatActivity {
 
         // Navigate if question-related
         if (notification.getQuestionId() != null && notification.getQuestionId() > 0) {
-            Intent intent = new Intent(this, SearchResultActivity.class);
-            intent.putExtra("type", "question_id");
-            intent.putExtra("id", notification.getQuestionId());
-            intent.putExtra("title", "Question #" + notification.getQuestionId());
+            Intent intent = new Intent(this, com.questions.govt.ui.question.QuestionDetailActivity.class);
+            intent.putExtra(com.questions.govt.ui.question.QuestionDetailActivity.EXTRA_QUESTION_ID, notification.getQuestionId());
             startActivity(intent);
         } else {
             Toast.makeText(this, notification.getTitle(), Toast.LENGTH_SHORT).show();

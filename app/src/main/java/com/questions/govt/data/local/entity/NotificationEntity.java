@@ -12,20 +12,10 @@ import java.io.Serializable;
  * Local Room Entity for notifications with strict composite anti-duplication index.
  * Matches backend composite UNIQUE constraint on (recipient_id, actor_id, question_id, type).
  */
-@Entity(
-        tableName = "notifications",
-        indices = {
-                @Index(
-                        value = {"recipientId", "actorId", "questionId", "type"},
-                        unique = true
-                )
-        }
-)
+@Entity(tableName = "notifications")
 public class NotificationEntity implements Serializable {
 
-    @PrimaryKey(autoGenerate = true)
-    private long localId;
-
+    @PrimaryKey
     @SerializedName("id")
     private long id; // Remote backend ID
 
@@ -67,8 +57,8 @@ public class NotificationEntity implements Serializable {
     public NotificationEntity() {
     }
 
-    public long getLocalId() { return localId; }
-    public void setLocalId(long localId) { this.localId = localId; }
+    public long getLocalId() { return id; }
+    public void setLocalId(long localId) { this.id = localId; }
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }

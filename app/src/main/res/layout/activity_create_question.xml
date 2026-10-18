@@ -303,24 +303,28 @@
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Submit Button -->
-            <Button
-                android:id="@+id/btnSubmitQuestion"
-                style="@style/Widget.GovtExam.Button.Primary"
+            <!-- Submit Button Container with Inside Loading Spinner -->
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
-                android:layout_marginBottom="40dp"
-                android:text="Submit Question" />
+                android:layout_marginBottom="40dp">
 
-            <ProgressBar
-                android:id="@+id/pbSubmitQuestion"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="24dp"
-                android:indeterminateTint="@color/primary"
-                android:visibility="gone" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSubmitQuestion"
+                    style="@style/Widget.GovtExam.Button.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="Submit Question" />
+
+                <ProgressBar
+                    android:id="@+id/pbSubmitQuestion"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/text_white"
+                    android:visibility="gone" />
+            </FrameLayout>
 
         </LinearLayout>
     </ScrollView>

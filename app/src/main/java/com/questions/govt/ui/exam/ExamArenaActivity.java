@@ -106,14 +106,14 @@ public class ExamArenaActivity extends AppCompatActivity {
         tvArenaQuestionText = findViewById(R.id.tvArenaQuestionText);
         ivArenaQuestionImage = findViewById(R.id.ivArenaQuestionImage);
 
-        layoutOptionA = findViewById(R.id.layoutOptionA);
-        tvOptionA = findViewById(R.id.tvOptionA);
-        layoutOptionB = findViewById(R.id.layoutOptionB);
-        tvOptionB = findViewById(R.id.tvOptionB);
-        layoutOptionC = findViewById(R.id.layoutOptionC);
-        tvOptionC = findViewById(R.id.tvOptionC);
-        layoutOptionD = findViewById(R.id.layoutOptionD);
-        tvOptionD = findViewById(R.id.tvOptionD);
+        layoutOptionA = findViewById(R.id.layoutArenaOptionA);
+        tvOptionA = findViewById(R.id.tvArenaOptionA);
+        layoutOptionB = findViewById(R.id.layoutArenaOptionB);
+        tvOptionB = findViewById(R.id.tvArenaOptionB);
+        layoutOptionC = findViewById(R.id.layoutArenaOptionC);
+        tvOptionC = findViewById(R.id.tvArenaOptionC);
+        layoutOptionD = findViewById(R.id.layoutArenaOptionD);
+        tvOptionD = findViewById(R.id.tvArenaOptionD);
         btnClearAnswer = findViewById(R.id.btnClearAnswer);
 
         btnPreviousQuestion = findViewById(R.id.btnPreviousQuestion);

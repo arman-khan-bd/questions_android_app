@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarQuestionDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        app:elevation="2dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarQuestionDetail"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/text_primary"
+            app:title="Question Details"
+            app:titleTextColor="@color/text_primary">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/btnStarDetail"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Star Question"
+                    android:padding="9dp"
+                    app:srcCompat="@drawable/ic_star"
+                    app:tint="@color/text_muted" />
+
+                <ImageView
+                    android:id="@+id/btnReportDetail"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Report Question"
+                    android:padding="10dp"
+                    app:srcCompat="@drawable/ic_flag"
+                    app:tint="@color/text_muted" />
+            </LinearLayout>
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollQuestionDetail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="90dp">
+
+            <!-- Question Card Container -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Metadata Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvSubjectBadgeDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_dialog_rounded"
+                            android:backgroundTint="@color/primary_surface"
+                            android:paddingStart="8dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="3dp"
+                            android:textColor="@color/primary"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="Bangladesh Affairs" />
+
+                        <TextView
+                            android:id="@+id/tvDifficultyBadgeDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/bg_dialog_rounded"
+                            android:backgroundTint="@color/surface_variant"
+                            android:paddingStart="8dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="3dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="11sp"
+                            tools:text="MEDIUM" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tvAuthorDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_muted"
+                            android:textSize="11sp"
+                            tools:text="@admin" />
+                    </LinearLayout>
+
+                    <!-- Question Text -->
+                    <TextView
+                        android:id="@+id/tvQuestionTextDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        tools:text="What is the official currency of the Asian Infrastructure Investment Bank (AIIB)?" />
+
+                    <!-- Diagram Image -->
+                    <ImageView
+                        android:id="@+id/ivQuestionImageDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:layout_marginTop="12dp"
+                        android:contentDescription="Question Diagram"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone" />
+
+                    <!-- Adaptive Options Rows -->
+                    <!-- Row AB -->
+                    <LinearLayout
+                        android:id="@+id/layoutRowABDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <!-- Option A -->
+                        <LinearLayout
+                            android:id="@+id/layoutOptionADetail"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/bg_option_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvLabelADetail"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:background="@drawable/bg_dialog_rounded"
+                                    android:backgroundTint="@color/surface_variant"
+                                    android:gravity="center"
+                                    android:text="A"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvOptionADetail"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="13sp"
+                                    tools:text="US Dollar (USD)" />
+
+                                <TextView
+                                    android:id="@+id/tvPctADetail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="11sp"
+                                    android:visibility="gone"
+                                    tools:text="68%" />
+                            </LinearLayout>
+
+                            <ProgressBar
+                                android:id="@+id/pbOptionADetail"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="4dp"
+                                android:max="100"
+                                android:layout_marginTop="4dp"
+                                android:progressBackgroundTint="@color/divider"
+                                android:progressTint="@color/primary"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <!-- Option B -->
+                        <LinearLayout
+                            android:id="@+id/layoutOptionBDetail"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:background="@drawable/bg_option_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvLabelBDetail"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:background="@drawable/bg_dialog_rounded"
+                                    android:backgroundTint="@color/surface_variant"
+                                    android:gravity="center"
+                                    android:text="B"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvOptionBDetail"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="13sp"
+                                    tools:text="Chinese Yuan (RMB)" />
+
+                                <TextView
+                                    android:id="@+id/tvPctBDetail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="11sp"
+                                    android:visibility="gone"
+                                    tools:text="22%" />
+                            </LinearLayout>
+
+                            <ProgressBar
+                                android:id="@+id/pbOptionBDetail"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="4dp"
+                                android:max="100"
+                                android:layout_marginTop="4dp"
+                                android:progressBackgroundTint="@color/divider"
+                                android:progressTint="@color/primary"
+                                android:visibility="gone" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Row CD -->
+                    <LinearLayout
+                        android:id="@+id/layoutRowCDDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:orientation="horizontal">
+
+                        <!-- Option C -->
+                        <LinearLayout
+                            android:id="@+id/layoutOptionCDetail"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/bg_option_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvLabelCDetail"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:background="@drawable/bg_dialog_rounded"
+                                    android:backgroundTint="@color/surface_variant"
+                                    android:gravity="center"
+                                    android:text="C"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvOptionCDetail"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="13sp"
+                                    tools:text="Special Drawing Rights (SDR)" />
+
+                                <TextView
+                                    android:id="@+id/tvPctCDetail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="11sp"
+                                    android:visibility="gone"
+                                    tools:text="7%" />
+                            </LinearLayout>
+
+                            <ProgressBar
+                                android:id="@+id/pbOptionCDetail"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="4dp"
+                                android:max="100"
+                                android:layout_marginTop="4dp"
+                                android:progressBackgroundTint="@color/divider"
+                                android:progressTint="@color/primary"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <!-- Option D -->
+                        <LinearLayout
+                            android:id="@+id/layoutOptionDDetail"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:background="@drawable/bg_option_card"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvLabelDDetail"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:background="@drawable/bg_dialog_rounded"
+                                    android:backgroundTint="@color/surface_variant"
+                                    android:gravity="center"
+                                    android:text="D"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvOptionDDetail"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/text_primary"
+                                    android:textSize="13sp"
+                                    tools:text="Euro (EUR)" />
+
+                                <TextView
+                                    android:id="@+id/tvPctDDetail"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="11sp"
+                                    android:visibility="gone"
+                                    tools:text="3%" />
+                            </LinearLayout>
+
+                            <ProgressBar
+                                android:id="@+id/pbOptionDDetail"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="4dp"
+                                android:max="100"
+                                android:layout_marginTop="4dp"
+                                android:progressBackgroundTint="@color/divider"
+                                android:progressTint="@color/primary"
+                                android:visibility="gone" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Explanation Card (Revealed after check) -->
+                    <LinearLayout
+                        android:id="@+id/layoutExplanationDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/bg_dialog_rounded"
+                        android:backgroundTint="@color/surface_variant"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tvCorrectAnswerHeaderDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-bold"
+                            android:textColor="@color/primary"
+                            android:textSize="13sp"
+                            tools:text="Correct Answer: Option A (USD)" />
+
+                        <TextView
+                            android:id="@+id/tvExplanationTextDetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:lineSpacingExtra="3dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            tools:text="Although AIIB is based in Beijing, its official accounting and transaction currency is the US Dollar (USD)." />
+                    </LinearLayout>
+
+                    <!-- Vote / Unvote Bar -->
+                    <LinearLayout
+                        android:id="@+id/layoutVotingDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <!-- Upvote / Vote Button -->
+                        <LinearLayout
+                            android:id="@+id/btnUpvoteDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_dialog_rounded"
+                            android:backgroundTint="@color/surface_variant"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp">
+
+                            <ImageView
+                                android:id="@+id/ivUpvoteDetail"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                app:srcCompat="@drawable/ic_thumb_up"
+                                app:tint="@color/text_secondary" />
+
+                            <TextView
+                                android:id="@+id/tvUpvoteCountDetail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp"
+                                tools:text="24" />
+                        </LinearLayout>
+
+                        <!-- Downvote Button -->
+                        <LinearLayout
+                            android:id="@+id/btnDownvoteDetail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_dialog_rounded"
+                            android:backgroundTint="@color/surface_variant"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp">
+
+                            <ImageView
+                                android:id="@+id/ivDownvoteDetail"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                app:srcCompat="@drawable/ic_thumb_down"
+                                app:tint="@color/text_secondary" />
+
+                            <TextView
+                                android:id="@+id/tvDownvoteCountDetail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="sans-serif-medium"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="12sp"
+                                tools:text="2" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <!-- Comment Count Indicator -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                app:srcCompat="@drawable/ic_comment"
+                                app:tint="@color/text_muted" />
+
+                            <TextView
+                                android:id="@+id/tvTotalCommentsHeader"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:textColor="@color/text_muted"
+                                android:textSize="12sp"
+                                tools:text="5 comments" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Nested Comments Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-black"
+                android:text="Discussion &amp; Solutions"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp" />
+
+            <!-- Comments RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvDetailComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_comment" />
+
+            <TextView
+                android:id="@+id/tvEmptyComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="No comments yet. Be the first to share an explanation!"
+                android:textColor="@color/text_muted"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/pbCommentsLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Comment Input Box (Docked at Bottom) -->
+    <LinearLayout
+        android:id="@+id/layoutBottomInputContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/surface"
+        android:elevation="8dp"
+        android:orientation="vertical">
+
+        <!-- Replying To Banner -->
+        <LinearLayout
+            android:id="@+id/layoutReplyingToDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/surface_variant"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="6dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvReplyingToDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                tools:text="Replying to @tanvir" />
+
+            <ImageView
+                android:id="@+id/ivCancelReplyDetail"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Cancel Reply"
+                app:srcCompat="@drawable/ic_close"
+                app:tint="@color/text_secondary" />
+        </LinearLayout>
+
+        <!-- Input Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <EditText
+                android:id="@+id/etCommentInputDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_dialog_rounded"
+                android:backgroundTint="@color/surface_variant"
+                android:hint="Add a helpful explanation or comment..."
+                android:imeOptions="actionSend"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="4"
+                android:paddingStart="14dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="10dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_muted"
+                android:textSize="13sp" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnSendCommentDetail"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_button_gradient"
+                android:contentDescription="Send Comment"
+                android:padding="10dp"
+                app:srcCompat="@drawable/ic_send"
+                app:tint="@color/text_white" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

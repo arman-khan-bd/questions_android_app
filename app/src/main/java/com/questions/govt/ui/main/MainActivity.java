@@ -386,8 +386,8 @@ public class MainActivity extends AppCompatActivity {
 
         cardCustomExam.setOnClickListener(v -> {
             dialog.dismiss();
-            loadFragment(new HomeFragment());
-            Toast.makeText(MainActivity.this, "Configure your custom exam below!", Toast.LENGTH_SHORT).show();
+            bottomNav.setSelectedItemId(R.id.nav_questions);
+            loadFragment(QuestionsFragment.newInstance(true));
         });
 
         cardCreateQuestion.setOnClickListener(v -> {

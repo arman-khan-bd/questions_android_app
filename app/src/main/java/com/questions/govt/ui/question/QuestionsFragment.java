@@ -116,6 +116,16 @@ public class QuestionsFragment extends Fragment {
     private final Handler searchDebounceHandler = new Handler(Looper.getMainLooper());
     private Runnable searchDebounceRunnable;
 
+    public static final String ARG_OPEN_BUILDER = "arg_open_builder";
+
+    public static QuestionsFragment newInstance(boolean openSelfTestBuilder) {
+        QuestionsFragment fragment = new QuestionsFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_OPEN_BUILDER, openSelfTestBuilder);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -135,6 +145,10 @@ public class QuestionsFragment extends Fragment {
         setupFilterBar();
         loadSubjects();
         loadQuestions(1, true);
+
+        if (getArguments() != null && getArguments().getBoolean(ARG_OPEN_BUILDER, false)) {
+            view.post(this::showSelfTestBuilderBottomSheet);
+        }
     }
 
     private void initViews(View view) {
@@ -173,7 +187,10 @@ public class QuestionsFragment extends Fragment {
         swipeRefresh.setOnRefreshListener(() -> loadQuestions(1, true));
 
         // Floating Exam Pill Click -> Opens Self-Test Builder Bottom Sheet
-        fabCreateExamFromQuestions.setOnClickListener(v -> showSelfTestBuilderBottomSheet());
+        if (fabCreateExamFromQuestions != null) {
+            fabCreateExamFromQuestions.hide();
+            fabCreateExamFromQuestions.setOnClickListener(v -> showSelfTestBuilderBottomSheet());
+        }
     }
 
     private void setupRecyclerView() {
@@ -217,7 +234,12 @@ public class QuestionsFragment extends Fragment {
             btnSelectAllToggle.setText(selectedCount > 0 ? "Clear (" + selectedCount + ")" : "Select All");
         }
         if (fabCreateExamFromQuestions != null) {
-            fabCreateExamFromQuestions.setText(selectedCount > 0 ? "Self Exam (" + selectedCount + ")" : "Self Exam");
+            if (selectedCount > 0) {
+                fabCreateExamFromQuestions.setText("Create Self-Exam (" + selectedCount + ")");
+                fabCreateExamFromQuestions.show();
+            } else {
+                fabCreateExamFromQuestions.hide();
+            }
         }
     }
 

@@ -176,11 +176,12 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Map<String, RequestBody> fields = new HashMap<>();
         fields.put("name", createPartFromString(name));
-        if (!phone.isEmpty()) fields.put("phone", createPartFromString(phone));
-        if (!bio.isEmpty()) fields.put("bio", createPartFromString(bio));
-        if (!institution.isEmpty()) fields.put("university", createPartFromString(institution));
-        if (!degree.isEmpty()) fields.put("target_exam", createPartFromString(degree));
-        if (!passingYear.isEmpty()) fields.put("education_level", createPartFromString(passingYear));
+        fields.put("phone", createPartFromString(phone));
+        fields.put("bio", createPartFromString(bio));
+        fields.put("university", createPartFromString(institution));
+        fields.put("target_exam", createPartFromString(degree));
+        fields.put("education_level", createPartFromString(passingYear));
+        fields.put("graduation_year", createPartFromString(passingYear));
 
         MultipartBody.Part avatarPart = prepareFilePart("avatar", selectedAvatarUri);
         MultipartBody.Part coverPart = prepareFilePart("cover_photo", selectedCoverUri);
@@ -229,6 +230,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void setLoading(boolean isLoading) {
         btnSaveProfile.setEnabled(!isLoading);
+        btnSaveProfile.setText(isLoading ? "" : getString(R.string.save_profile));
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
 }

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class ProfilePagerAdapter extends FragmentStateAdapter {
 
     private UserProfileResponse profileData;
+    private final android.util.SparseArray<ProfileTabContentFragment> activeFragments = new android.util.SparseArray<>();
 
     public ProfilePagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
@@ -24,24 +25,36 @@ public class ProfilePagerAdapter extends FragmentStateAdapter {
 
     public void setProfileData(UserProfileResponse data) {
         this.profileData = data;
+        for (int i = 0; i < activeFragments.size(); i++) {
+            int pos = activeFragments.keyAt(i);
+            ProfileTabContentFragment fragment = activeFragments.valueAt(i);
+            if (fragment != null) {
+                fragment.updateData(getDataForPosition(pos));
+            }
+        }
         notifyDataSetChanged();
+    }
+
+    public Serializable getDataForPosition(int position) {
+        if (profileData == null) return new ArrayList<>();
+        switch (position) {
+            case 0: return (Serializable) profileData.getMyExams();
+            case 1: return (Serializable) profileData.getCreatedQuestions();
+            case 2: return (Serializable) profileData.getCustomExams();
+            case 3: return (Serializable) profileData.getStarredQuestions();
+            case 4: return (Serializable) profileData.getReportedQuestions();
+            case 5: return (Serializable) profileData.getMistakeNotebook();
+            default: return new ArrayList<>();
+        }
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        Serializable dataList = new ArrayList<>();
-        if (profileData != null) {
-            switch (position) {
-                case 0: dataList = (Serializable) profileData.getMyExams(); break;
-                case 1: dataList = (Serializable) profileData.getCreatedQuestions(); break;
-                case 2: dataList = (Serializable) profileData.getCustomExams(); break;
-                case 3: dataList = (Serializable) profileData.getStarredQuestions(); break;
-                case 4: dataList = (Serializable) profileData.getReportedQuestions(); break;
-                case 5: dataList = (Serializable) profileData.getMistakeNotebook(); break;
-            }
-        }
-        return ProfileTabContentFragment.newInstance(position, dataList);
+        Serializable dataList = getDataForPosition(position);
+        ProfileTabContentFragment fragment = ProfileTabContentFragment.newInstance(position, dataList);
+        activeFragments.put(position, fragment);
+        return fragment;
     }
 
     @Override

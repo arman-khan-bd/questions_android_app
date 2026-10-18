@@ -71,6 +71,13 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- Dedicated Single Question Detail Screen -->
+        <activity
+            android:name=".ui.question.QuestionDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Dedicated Subject Detail / Explorer Screen -->
         <activity
             android:name=".ui.subject.SubjectDetailActivity"

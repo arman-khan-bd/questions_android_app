@@ -16,7 +16,7 @@ public class ApiResponse<T> implements Serializable {
     @SerializedName("message")
     private String message;
 
-    @SerializedName("data")
+    @SerializedName(value = "data", alternate = {"user", "question", "comment", "result"})
     private T data;
 
     @SerializedName("errors")

@@ -87,7 +87,7 @@ public interface ApiService {
     @POST(AppConfig.ENDPOINT_QUESTIONS)
     Call<ApiResponse<Question>> createQuestion(
             @PartMap Map<String, RequestBody> fields,
-            @Part MultipartBody.Part image
+            @androidx.annotation.Nullable @Part MultipartBody.Part image
     );
 
     @GET(AppConfig.ENDPOINT_QUESTION_DETAIL)
@@ -168,8 +168,8 @@ public interface ApiService {
     @POST(AppConfig.ENDPOINT_PROFILE_UPDATE)
     Call<ApiResponse<User>> updateProfile(
             @PartMap Map<String, RequestBody> fields,
-            @Part MultipartBody.Part avatar,
-            @Part MultipartBody.Part coverPhoto
+            @androidx.annotation.Nullable @Part MultipartBody.Part avatar,
+            @androidx.annotation.Nullable @Part MultipartBody.Part coverPhoto
     );
 
     // 11. Push & In-App Notifications

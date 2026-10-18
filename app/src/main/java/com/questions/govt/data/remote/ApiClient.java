@@ -72,7 +72,6 @@ public class ApiClient {
                 .retryOnConnectionFailure(true)
                 .connectionSpecs(Arrays.asList(
                         ConnectionSpec.MODERN_TLS,
-                        ConnectionSpec.COMPATIBLE_TLS,
                         ConnectionSpec.CLEARTEXT
                 ))
                 .addInterceptor(new AuthInterceptor())

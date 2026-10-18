@@ -193,11 +193,17 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             holder.ivQuestionImage.setVisibility(View.GONE);
         }
 
-        // 4. Option Texts
+        // 4. Option Texts & Adaptive Layout
         holder.tvOptionA.setText(question.getOptionA());
         holder.tvOptionB.setText(question.getOptionB());
         holder.tvOptionC.setText(question.getOptionC());
         holder.tvOptionD.setText(question.getOptionD());
+
+        boolean isShort = isShortOption(question.getOptionA()) &&
+                isShortOption(question.getOptionB()) &&
+                isShortOption(question.getOptionC()) &&
+                isShortOption(question.getOptionD());
+        configureAdaptiveOptions(holder, isShort, context);
 
         // 5. Star Icon
         bindStar(holder.btnStar, question.isStarred(), context);
@@ -466,6 +472,54 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
     }
 
+    private boolean isShortOption(String text) {
+        return text != null && text.trim().length() <= 24 && !text.contains("\n");
+    }
+
+    private void configureAdaptiveOptions(CardViewHolder holder, boolean isShort, Context context) {
+        if (holder.layoutRowAB == null || holder.layoutRowCD == null) return;
+        int margin4dp = (int) (4 * context.getResources().getDisplayMetrics().density);
+        int margin6dp = (int) (6 * context.getResources().getDisplayMetrics().density);
+
+        if (isShort) {
+            holder.layoutRowAB.setOrientation(LinearLayout.HORIZONTAL);
+            holder.layoutRowCD.setOrientation(LinearLayout.HORIZONTAL);
+
+            LinearLayout.LayoutParams lpA = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            lpA.setMarginEnd(margin4dp);
+            holder.layoutOptionA.setLayoutParams(lpA);
+
+            LinearLayout.LayoutParams lpB = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            lpB.setMarginStart(margin4dp);
+            holder.layoutOptionB.setLayoutParams(lpB);
+
+            LinearLayout.LayoutParams lpC = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            lpC.setMarginEnd(margin4dp);
+            holder.layoutOptionC.setLayoutParams(lpC);
+
+            LinearLayout.LayoutParams lpD = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            lpD.setMarginStart(margin4dp);
+            holder.layoutOptionD.setLayoutParams(lpD);
+        } else {
+            holder.layoutRowAB.setOrientation(LinearLayout.VERTICAL);
+            holder.layoutRowCD.setOrientation(LinearLayout.VERTICAL);
+
+            LinearLayout.LayoutParams lpA = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            holder.layoutOptionA.setLayoutParams(lpA);
+
+            LinearLayout.LayoutParams lpB = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lpB.topMargin = margin6dp;
+            holder.layoutOptionB.setLayoutParams(lpB);
+
+            LinearLayout.LayoutParams lpC = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            holder.layoutOptionC.setLayoutParams(lpC);
+
+            LinearLayout.LayoutParams lpD = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lpD.topMargin = margin6dp;
+            holder.layoutOptionD.setLayoutParams(lpD);
+        }
+    }
+
     private void bindStar(ImageView ivStar, boolean isStarred, Context context) {
         ivStar.setColorFilter(ContextCompat.getColor(context, isStarred ? R.color.amber_accent : R.color.text_muted));
     }
@@ -483,6 +537,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         ImageView btnStar;
         TextView tvQuestionText;
         ImageView ivQuestionImage;
+
+        LinearLayout layoutRowAB;
+        LinearLayout layoutRowCD;
 
         LinearLayout layoutOptionA;
         TextView tvOptionA;
@@ -528,6 +585,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             btnStar = itemView.findViewById(R.id.btnStar);
             tvQuestionText = itemView.findViewById(R.id.tvQuestionText);
             ivQuestionImage = itemView.findViewById(R.id.ivQuestionImage);
+            layoutRowAB = itemView.findViewById(R.id.layoutRowAB);
+            layoutRowCD = itemView.findViewById(R.id.layoutRowCD);
 
             layoutOptionA = itemView.findViewById(R.id.layoutOptionA);
             tvOptionA = itemView.findViewById(R.id.tvOptionA);
