@@ -18,6 +18,8 @@
 *.p12
 *.key
 signing.properties
+*firebase-adminsdk*.json
+*service-account*.json
 
 # Android Studio Navigation editor temp files
 .navigation/

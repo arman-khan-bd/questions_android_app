@@ -1,13 +1,14 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
-    namespace 'com.govtexam.prep'
+    namespace 'com.questions.govt'
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.govtexam.prep"
+        applicationId "com.questions.govt"
         minSdk 21
         targetSdk 36
         versionCode 1

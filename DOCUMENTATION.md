@@ -108,7 +108,7 @@ Open `app/src/main/res/values/strings.xml` and edit:
        // ...
    }
    ```
-2. In Android Studio, right click the package `com.govtexam.prep` in the Project panel -> **Refactor** -> **Rename** -> **Rename Package**.
+2. In Android Studio, right click the package `com.questions.govt` in the Project panel -> **Refactor** -> **Rename** -> **Rename Package**.
 
 ### C. Change App Theme & Colors (Rebranding in 2 Minutes)
 Open `app/src/main/res/values/colors.xml` and update the primary palette:

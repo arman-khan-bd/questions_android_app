@@ -12,8 +12,8 @@
 -keepclassmembers class * {
     @com.google.gson.annotations.SerializedName <fields>;
 }
--keep class com.govtexam.prep.data.model.** { *; }
--keep class com.govtexam.prep.data.remote.response.** { *; }
+-keep class com.questions.govt.data.model.** { *; }
+-keep class com.questions.govt.data.remote.response.** { *; }
 
 # Room
 -keep class * extends androidx.room.RoomDatabase
