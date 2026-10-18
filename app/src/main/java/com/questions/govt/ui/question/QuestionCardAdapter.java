@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.questions.govt.GovtExamApp;
 import com.questions.govt.R;
 import com.questions.govt.data.local.SessionManager;
 import com.questions.govt.data.model.Question;
@@ -48,7 +49,8 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
     }
 
     public QuestionCardAdapter(Context context, FragmentManager fragmentManager) {
-        this.questionRepository = QuestionRepository.getInstance(context);
+        Context appContext = context != null ? context : GovtExamApp.getInstance();
+        this.questionRepository = QuestionRepository.getInstance(appContext);
         this.fragmentManager = fragmentManager;
         this.currentUser = SessionManager.getInstance().getUser();
     }

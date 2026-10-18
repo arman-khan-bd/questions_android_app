@@ -83,9 +83,8 @@ public class QuestionRepository {
      * Toggles star status with optimistic UI update in Room and syncs with backend.
      */
     public void toggleStar(Question question, RepositoryCallback<Boolean> callback) {
-        boolean newStarred = !question.isStarred();
-        int newCount = question.getStarsCount() + (newStarred ? 1 : -1);
-        if (newCount < 0) newCount = 0;
+        final boolean newStarred = !question.isStarred();
+        final int newCount = Math.max(0, question.getStarsCount() + (newStarred ? 1 : -1));
 
         question.setStarred(newStarred);
         question.setStarsCount(newCount);
