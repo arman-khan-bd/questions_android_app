@@ -7,6 +7,7 @@
     <color name="primary_surface">#EFF6FF</color>
 
     <!-- Accent Colors -->
+    <color name="accent">#0D9488</color>
     <color name="secondary">#0D9488</color>
     <color name="secondary_variant">#0F766E</color>
     <color name="amber_accent">#F59E0B</color>
