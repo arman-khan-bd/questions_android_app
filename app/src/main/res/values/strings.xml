@@ -50,10 +50,24 @@
 
     <!-- Navigation -->
     <string name="nav_home">Home</string>
+    <string name="nav_questions">Questions</string>
     <string name="nav_statistics">Statistics</string>
     <string name="nav_exam_plus">Exam</string>
     <string name="nav_profile">Profile</string>
     <string name="nav_menu">Menu</string>
+
+    <!-- All Questions Screen -->
+    <string name="all_questions_title">Question Bank</string>
+    <string name="all_questions_subtitle">Practice verified preliminary exam MCQs</string>
+    <string name="filter_all">All</string>
+    <string name="filter_easy">Easy</string>
+    <string name="filter_medium">Medium</string>
+    <string name="filter_hard">Hard</string>
+    <string name="sort_latest">Latest</string>
+    <string name="sort_popular">Popular</string>
+    <string name="sort_attempts">Most Attempted</string>
+    <string name="no_questions_found">No questions found matching your filters.</string>
+    <string name="search_questions_hint">Search in questions or explanations…</string>
 
     <!-- Drawer Sections -->
     <string name="drawer_popular_searches">Popular Searches</string>

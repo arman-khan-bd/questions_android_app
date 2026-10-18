@@ -67,6 +67,14 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         notifyDataSetChanged();
     }
 
+    public void addQuestions(List<Question> moreQuestions) {
+        if (moreQuestions != null && !moreQuestions.isEmpty()) {
+            int startPos = questionList.size();
+            questionList.addAll(moreQuestions);
+            notifyItemRangeInserted(startPos, moreQuestions.size());
+        }
+    }
+
     @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

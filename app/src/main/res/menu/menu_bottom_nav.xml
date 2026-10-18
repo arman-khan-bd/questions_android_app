@@ -6,9 +6,9 @@
         android:title="@string/nav_home" />
 
     <item
-        android:id="@+id/nav_statistics"
-        android:icon="@drawable/ic_nav_statistics"
-        android:title="@string/nav_statistics" />
+        android:id="@+id/nav_questions"
+        android:icon="@drawable/ic_nav_questions"
+        android:title="@string/nav_questions" />
 
     <item
         android:id="@+id/nav_exam_plus"
@@ -16,12 +16,12 @@
         android:title="@string/nav_exam_plus" />
 
     <item
+        android:id="@+id/nav_statistics"
+        android:icon="@drawable/ic_nav_statistics"
+        android:title="@string/nav_statistics" />
+
+    <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_nav_profile"
         android:title="@string/nav_profile" />
-
-    <item
-        android:id="@+id/nav_menu"
-        android:icon="@drawable/ic_nav_menu"
-        android:title="@string/nav_menu" />
 </menu>

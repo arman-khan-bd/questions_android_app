@@ -57,6 +57,7 @@ import com.questions.govt.ui.leaderboard.LeaderboardFragment;
 import com.questions.govt.ui.notification.NotificationActivity;
 import com.questions.govt.ui.profile.ProfileFragment;
 import com.questions.govt.ui.question.CreateQuestionActivity;
+import com.questions.govt.ui.question.QuestionsFragment;
 import com.questions.govt.ui.search.SearchResultActivity;
 import com.questions.govt.ui.search.SearchSuggestionAdapter;
 import com.questions.govt.ui.statistics.StatisticsFragment;
@@ -261,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Top Bar Shortcuts
+        ivHeaderLogo.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
         btnLeaderboardShortcut.setOnClickListener(v -> loadFragment(new LeaderboardFragment()));
 
         layoutNotificationContainer.setOnClickListener(v -> {
@@ -326,6 +328,9 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.nav_home) {
                 loadFragment(new HomeFragment());
                 return true;
+            } else if (itemId == R.id.nav_questions) {
+                loadFragment(new QuestionsFragment());
+                return true;
             } else if (itemId == R.id.nav_statistics) {
                 loadFragment(new StatisticsFragment());
                 return true;
@@ -350,6 +355,7 @@ public class MainActivity extends AppCompatActivity {
 
         View cardCustomExam = sheetView.findViewById(R.id.cardOptionCustomExam);
         View cardCreateQuestion = sheetView.findViewById(R.id.cardOptionCreateQuestion);
+        View cardOptionAllQuestions = sheetView.findViewById(R.id.cardOptionAllQuestions);
 
         // Feature flag: hide community question creation if disabled by Admin
         boolean canCreateQuestion = FeatureFlagManager.getInstance().isCommunityQuestionCreationEnabled();
@@ -366,6 +372,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, CreateQuestionActivity.class);
             startActivity(intent);
         });
+
+        if (cardOptionAllQuestions != null) {
+            cardOptionAllQuestions.setOnClickListener(v -> {
+                dialog.dismiss();
+                bottomNav.setSelectedItemId(R.id.nav_questions);
+            });
+        }
 
         dialog.show();
     }
