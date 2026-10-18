@@ -36,6 +36,7 @@ import retrofit2.Response;
 public class SearchResultActivity extends AppCompatActivity {
 
     public static final String EXTRA_QUERY = "extra_query";
+    public static final String EXTRA_TITLE = "extra_title";
     public static final String EXTRA_SUBJECT_ID = "extra_subject_id";
     public static final String EXTRA_TOPIC_ID = "extra_topic_id";
     public static final String EXTRA_CATEGORY_ID = "extra_category_id";
@@ -52,6 +53,7 @@ public class SearchResultActivity extends AppCompatActivity {
     private SearchResultAdapter adapter;
     private QuestionRepository questionRepository;
 
+    private String currentTitle = "";
     private String currentQuery = "";
     private long currentSubjectId = -1;
     private long currentTopicId = -1;
@@ -84,14 +86,24 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     private void extractIntentParameters() {
+        if (getIntent().hasExtra(EXTRA_TITLE)) {
+            currentTitle = getIntent().getStringExtra(EXTRA_TITLE);
+        }
         if (getIntent().hasExtra(EXTRA_QUERY)) {
             currentQuery = getIntent().getStringExtra(EXTRA_QUERY);
+            if (currentQuery != null && currentQuery.trim().startsWith("#")) {
+                currentTag = currentQuery.trim().replaceFirst("^#", "").trim();
+                currentQuery = "";
+            }
         }
         currentSubjectId = getIntent().getLongExtra(EXTRA_SUBJECT_ID, -1);
         currentTopicId = getIntent().getLongExtra(EXTRA_TOPIC_ID, -1);
         currentCategoryId = getIntent().getLongExtra(EXTRA_CATEGORY_ID, -1);
         if (getIntent().hasExtra(EXTRA_TAG)) {
             currentTag = getIntent().getStringExtra(EXTRA_TAG);
+            if (currentTag != null) {
+                currentTag = currentTag.replaceFirst("^#", "").trim();
+            }
         }
         isStarredOnly = getIntent().getBooleanExtra(EXTRA_IS_STARRED, false);
     }
@@ -109,10 +121,13 @@ public class SearchResultActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             if (isStarredOnly) {
                 getSupportActionBar().setTitle("Saved Questions");
+            } else if (!TextUtils.isEmpty(currentTitle)) {
+                getSupportActionBar().setTitle(currentTitle);
             } else if (!TextUtils.isEmpty(currentQuery)) {
                 getSupportActionBar().setTitle("Search: " + currentQuery);
             } else if (!TextUtils.isEmpty(currentTag)) {
-                getSupportActionBar().setTitle("Tag: #" + currentTag);
+                String cleanTag = currentTag.startsWith("#") ? currentTag : ("#" + currentTag);
+                getSupportActionBar().setTitle("Tag: " + cleanTag);
             } else {
                 getSupportActionBar().setTitle("Browse Questions");
             }

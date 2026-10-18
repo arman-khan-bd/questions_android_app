@@ -708,7 +708,7 @@ public class QuestionsFragment extends Fragment {
                 Toast.makeText(getContext(), errorMsg, Toast.LENGTH_SHORT).show();
 
                 if (reset && (adapter.getItemCount() == 0)) {
-                    layoutEmptyState.setVisibility(View.VISIBLE);
+                    fallbackToOfflineQuestions();
                 }
             }
         });
@@ -718,8 +718,25 @@ public class QuestionsFragment extends Fragment {
         String msg = NetworkErrorParser.parseError(response, "Unable to load questions.");
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
         if (adapter.getItemCount() == 0) {
-            layoutEmptyState.setVisibility(View.VISIBLE);
+            fallbackToOfflineQuestions();
         }
+    }
+
+    private void fallbackToOfflineQuestions() {
+        if (!isAdded()) return;
+        questionRepository.searchQuestionsOffline(searchQuery != null ? searchQuery : "").observe(getViewLifecycleOwner(), cached -> {
+            if (cached != null && !cached.isEmpty()) {
+                adapter.setQuestions(cached);
+                layoutEmptyState.setVisibility(View.GONE);
+                rvQuestions.setVisibility(View.VISIBLE);
+                totalQuestions = cached.size();
+                updateSubtitleCounter();
+                Toast.makeText(getContext(), "Showing " + cached.size() + " offline cached questions", Toast.LENGTH_SHORT).show();
+            } else {
+                layoutEmptyState.setVisibility(View.VISIBLE);
+                rvQuestions.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void updateSubtitleCounter() {

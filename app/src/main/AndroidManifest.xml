@@ -71,6 +71,12 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- Dedicated Subject Detail / Explorer Screen -->
+        <activity
+            android:name=".ui.subject.SubjectDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <!-- Question Creation -->
         <activity
             android:name=".ui.question.CreateQuestionActivity"

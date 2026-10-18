@@ -65,15 +65,43 @@ public class TaxonomyRepository {
         return taxonomyDao.getTags();
     }
 
+    private static final long HOME_CACHE_EXPIRATION_MS = 10 * 60 * 1000L; // 10 minutes cache
+    private HomeFeedResponse cachedHomeFeed = null;
+    private long lastHomeFeedFetchTime = 0L;
+
+    public void clearHomeFeedCache() {
+        cachedHomeFeed = null;
+        lastHomeFeedFetchTime = 0L;
+    }
+
+    public boolean isHomeFeedCacheValid() {
+        return cachedHomeFeed != null && (System.currentTimeMillis() - lastHomeFeedFetchTime < HOME_CACHE_EXPIRATION_MS);
+    }
+
     /**
      * Synchronizes Home Feed from network and caches taxonomy items in SQLite Room.
+     * Uses in-memory cache valid for 10 minutes unless forceRefresh is true.
      */
     public void fetchHomeFeed(HomeFeedCallback callback) {
+        fetchHomeFeed(false, callback);
+    }
+
+    public void fetchHomeFeed(boolean forceRefresh, HomeFeedCallback callback) {
+        if (!forceRefresh && isHomeFeedCacheValid()) {
+            Log.d(TAG, "Serving Home Feed from 10-minute in-memory cache.");
+            if (callback != null) {
+                callback.onSuccess(cachedHomeFeed);
+            }
+            return;
+        }
+
         apiService.getHomeFeed().enqueue(new Callback<ApiResponse<HomeFeedResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<HomeFeedResponse>> call, Response<ApiResponse<HomeFeedResponse>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     HomeFeedResponse feed = response.body().getData();
+                    cachedHomeFeed = feed;
+                    lastHomeFeedFetchTime = System.currentTimeMillis();
 
                     List<TaxonomyItem> allItems = new ArrayList<>();
                     if (feed.getSubjects() != null) {
@@ -105,14 +133,22 @@ public class TaxonomyRepository {
 
                     if (callback != null) callback.onSuccess(feed);
                 } else {
-                    if (callback != null) callback.onError("Failed to fetch home feed.");
+                    if (cachedHomeFeed != null && callback != null) {
+                        callback.onSuccess(cachedHomeFeed);
+                    } else if (callback != null) {
+                        callback.onError("Failed to fetch home feed.");
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<HomeFeedResponse>> call, Throwable t) {
-                Log.w(TAG, "Network failure fetching home feed, serving from Room cache: " + t.getMessage());
-                if (callback != null) callback.onError(t.getMessage());
+                Log.w(TAG, "Network failure fetching home feed, serving from cache: " + t.getMessage());
+                if (cachedHomeFeed != null && callback != null) {
+                    callback.onSuccess(cachedHomeFeed);
+                } else if (callback != null) {
+                    callback.onError(t.getMessage());
+                }
             }
         });
     }

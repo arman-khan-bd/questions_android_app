@@ -32,6 +32,7 @@ import com.questions.govt.data.remote.response.HomeFeedResponse;
 import com.questions.govt.data.repository.TaxonomyRepository;
 import com.questions.govt.ui.exam.ExamArenaActivity;
 import com.questions.govt.ui.search.SearchResultActivity;
+import com.questions.govt.ui.subject.SubjectDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +78,7 @@ public class HomeFragment extends Fragment {
         initViews(view);
         setupAdapters();
         observeTaxonomyData();
-        loadHomeFeedData();
+        loadHomeFeedData(false);
     }
 
     private void initViews(View view) {
@@ -88,7 +89,7 @@ public class HomeFragment extends Fragment {
         tvSubjectsCountBadge = view.findViewById(R.id.tvSubjectsCountBadge);
         cgCategoriesAndTags = view.findViewById(R.id.cgCategoriesAndTags);
 
-        swipeRefresh.setOnRefreshListener(this::loadHomeFeedData);
+        swipeRefresh.setOnRefreshListener(() -> loadHomeFeedData(true));
     }
 
     private void setupAdapters() {
@@ -101,7 +102,7 @@ public class HomeFragment extends Fragment {
         topicAdapter = new TopicAdapter(topic -> {
             Intent intent = new Intent(requireContext(), SearchResultActivity.class);
             intent.putExtra(SearchResultActivity.EXTRA_TOPIC_ID, topic.getId());
-            intent.putExtra(SearchResultActivity.EXTRA_QUERY, topic.getTitle());
+            intent.putExtra(SearchResultActivity.EXTRA_TITLE, topic.getTitle());
             startActivity(intent);
         });
         rvTopics.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -109,9 +110,10 @@ public class HomeFragment extends Fragment {
 
         // Subjects (2-column Grid)
         subjectAdapter = new SubjectGridAdapter(subject -> {
-            Intent intent = new Intent(requireContext(), SearchResultActivity.class);
-            intent.putExtra(SearchResultActivity.EXTRA_SUBJECT_ID, subject.getId());
-            intent.putExtra(SearchResultActivity.EXTRA_QUERY, subject.getTitle());
+            Intent intent = new Intent(requireContext(), SubjectDetailActivity.class);
+            intent.putExtra(SubjectDetailActivity.EXTRA_SUBJECT_ID, subject.getId());
+            intent.putExtra(SubjectDetailActivity.EXTRA_SUBJECT_NAME, subject.getTitle());
+            intent.putExtra(SubjectDetailActivity.EXTRA_SUBJECT_COLOR, subject.getColor());
             startActivity(intent);
         });
         rvSubjects.setLayoutManager(new GridLayoutManager(requireContext(), 2));
@@ -141,8 +143,9 @@ public class HomeFragment extends Fragment {
             intent.putExtra(ExamArenaActivity.EXTRA_EXAM_ID, targetId);
             startActivity(intent);
         } else if ("subject".equalsIgnoreCase(type) && targetId > 0) {
-            Intent intent = new Intent(requireContext(), SearchResultActivity.class);
-            intent.putExtra(SearchResultActivity.EXTRA_SUBJECT_ID, targetId);
+            Intent intent = new Intent(requireContext(), SubjectDetailActivity.class);
+            intent.putExtra(SubjectDetailActivity.EXTRA_SUBJECT_ID, targetId);
+            intent.putExtra(SubjectDetailActivity.EXTRA_SUBJECT_NAME, banner.getTitle());
             startActivity(intent);
         } else if ("category".equalsIgnoreCase(type) && targetId > 0) {
             Intent intent = new Intent(requireContext(), SearchResultActivity.class);
@@ -184,9 +187,11 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void loadHomeFeedData() {
-        swipeRefresh.setRefreshing(true);
-        taxonomyRepository.fetchHomeFeed(new TaxonomyRepository.HomeFeedCallback() {
+    private void loadHomeFeedData(boolean forceRefresh) {
+        if (forceRefresh || !taxonomyRepository.isHomeFeedCacheValid()) {
+            swipeRefresh.setRefreshing(true);
+        }
+        taxonomyRepository.fetchHomeFeed(forceRefresh, new TaxonomyRepository.HomeFeedCallback() {
             @Override
             public void onSuccess(HomeFeedResponse response) {
                 if (isAdded()) {
@@ -233,7 +238,7 @@ public class HomeFragment extends Fragment {
             chip.setOnClickListener(v -> {
                 Intent intent = new Intent(requireContext(), SearchResultActivity.class);
                 intent.putExtra(SearchResultActivity.EXTRA_CATEGORY_ID, cat.getId());
-                intent.putExtra(SearchResultActivity.EXTRA_QUERY, cat.getTitle());
+                intent.putExtra(SearchResultActivity.EXTRA_TITLE, cat.getTitle());
                 startActivity(intent);
             });
             cgCategoriesAndTags.addView(chip);
@@ -242,13 +247,15 @@ public class HomeFragment extends Fragment {
 
     private void populateTagChips(List<TaxonomyItem> tags) {
         for (TaxonomyItem tag : tags) {
+            String cleanTag = tag.getTitle() != null ? tag.getTitle().replaceFirst("^#", "").trim() : "";
             Chip chip = new Chip(requireContext());
-            chip.setText("#" + tag.getTitle());
+            chip.setText("#" + cleanTag);
             chip.setChipBackgroundColorResource(R.color.surface_variant);
             chip.setTextColor(getResources().getColor(R.color.text_secondary));
             chip.setOnClickListener(v -> {
                 Intent intent = new Intent(requireContext(), SearchResultActivity.class);
-                intent.putExtra(SearchResultActivity.EXTRA_TAG, tag.getTitle());
+                intent.putExtra(SearchResultActivity.EXTRA_TAG, cleanTag);
+                intent.putExtra(SearchResultActivity.EXTRA_TITLE, "#" + cleanTag);
                 startActivity(intent);
             });
             cgCategoriesAndTags.addView(chip);

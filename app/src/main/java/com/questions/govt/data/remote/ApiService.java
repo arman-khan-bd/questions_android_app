@@ -22,6 +22,7 @@ import com.questions.govt.data.remote.response.PaginatedList;
 import com.questions.govt.data.remote.response.SearchSuggestionsResponse;
 import com.questions.govt.data.remote.response.StarResponse;
 import com.questions.govt.data.remote.response.StatisticsResponse;
+import com.questions.govt.data.remote.response.SubjectDetailsResponse;
 import com.questions.govt.data.remote.response.UserProfileResponse;
 import com.questions.govt.data.remote.response.VoteResponse;
 
@@ -70,6 +71,9 @@ public interface ApiService {
     // 3. Home Feed & Taxonomy
     @GET(AppConfig.ENDPOINT_HOME_FEED)
     Call<ApiResponse<HomeFeedResponse>> getHomeFeed();
+
+    @GET(AppConfig.ENDPOINT_SUBJECT_DETAILS)
+    Call<ApiResponse<SubjectDetailsResponse>> getSubjectDetails(@Path("id") long id);
 
     // 4. Search & Suggestions
     @GET(AppConfig.ENDPOINT_SEARCH_SUGGESTIONS)

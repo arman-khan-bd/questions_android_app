@@ -61,6 +61,7 @@ import com.questions.govt.ui.question.CreateQuestionActivity;
 import com.questions.govt.ui.question.QuestionsFragment;
 import com.questions.govt.ui.search.SearchResultActivity;
 import com.questions.govt.ui.search.SearchSuggestionAdapter;
+import com.questions.govt.ui.subject.SubjectDetailActivity;
 import com.questions.govt.ui.statistics.StatisticsFragment;
 import com.questions.govt.util.AccountStatusDialogHelper;
 import com.questions.govt.util.FeatureFlagManager;
@@ -307,11 +308,13 @@ public class MainActivity extends AppCompatActivity {
                     if (data.getTags() != null) {
                         for (String tag : data.getTags()) {
                             Chip chip = new Chip(MainActivity.this);
-                            chip.setText("#" + tag);
+                            String displayTag = tag.startsWith("#") ? tag : "#" + tag;
+                            String cleanTag = tag.replaceFirst("^#", "").trim();
+                            chip.setText(displayTag);
                             chip.setChipBackgroundColorResource(R.color.surface_variant);
                             chip.setOnClickListener(v -> {
                                 hideSearchDropdown();
-                                launchSearchResult(tag);
+                                launchSearchTag(cleanTag);
                             });
                             cgSearchTags.addView(chip);
                         }
@@ -326,7 +329,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchSearchResult(String query) {
         Intent intent = new Intent(this, SearchResultActivity.class);
-        intent.putExtra(SearchResultActivity.EXTRA_QUERY, query);
+        if (query != null && query.trim().startsWith("#")) {
+            String cleanTag = query.trim().substring(1).trim();
+            intent.putExtra(SearchResultActivity.EXTRA_TAG, cleanTag);
+            intent.putExtra(SearchResultActivity.EXTRA_TITLE, "#" + cleanTag);
+        } else {
+            intent.putExtra(SearchResultActivity.EXTRA_QUERY, query);
+            intent.putExtra(SearchResultActivity.EXTRA_TITLE, query);
+        }
+        startActivity(intent);
+    }
+
+    private void launchSearchTag(String tag) {
+        String cleanTag = tag != null ? tag.replaceFirst("^#", "").trim() : "";
+        Intent intent = new Intent(this, SearchResultActivity.class);
+        intent.putExtra(SearchResultActivity.EXTRA_TAG, cleanTag);
+        intent.putExtra(SearchResultActivity.EXTRA_TITLE, "#" + cleanTag);
         startActivity(intent);
     }
 
@@ -392,9 +410,10 @@ public class MainActivity extends AppCompatActivity {
         // 1. Subjects (Modern Web3 2-column Card View)
         drawerSubjectsCardAdapter = new DrawerSubjectCardAdapter(sub -> {
             drawerLayout.closeDrawer(GravityCompat.START);
-            Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
-            intent.putExtra(SearchResultActivity.EXTRA_SUBJECT_ID, sub.getId());
-            intent.putExtra(SearchResultActivity.EXTRA_QUERY, sub.getTitle());
+            Intent intent = new Intent(MainActivity.this, SubjectDetailActivity.class);
+            intent.putExtra(SubjectDetailActivity.EXTRA_SUBJECT_ID, sub.getId());
+            intent.putExtra(SubjectDetailActivity.EXTRA_SUBJECT_NAME, sub.getTitle());
+            intent.putExtra(SubjectDetailActivity.EXTRA_SUBJECT_COLOR, sub.getColor());
             startActivity(intent);
         });
         rvDrawerSubjects.setLayoutManager(new GridLayoutManager(this, 2));
@@ -436,6 +455,7 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
             Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
             intent.putExtra(SearchResultActivity.EXTRA_IS_STARRED, true);
+            intent.putExtra(SearchResultActivity.EXTRA_TITLE, "Saved Questions");
             startActivity(intent);
         });
 
@@ -459,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.closeDrawer(GravityCompat.START);
                 Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
                 intent.putExtra(SearchResultActivity.EXTRA_TOPIC_ID, topic.getId());
-                intent.putExtra(SearchResultActivity.EXTRA_QUERY, topic.getTitle());
+                intent.putExtra(SearchResultActivity.EXTRA_TITLE, topic.getTitle());
                 startActivity(intent);
             });
             cgDrawerTopics.addView(chip);
@@ -475,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.closeDrawer(GravityCompat.START);
                 Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
                 intent.putExtra(SearchResultActivity.EXTRA_CATEGORY_ID, cat.getId());
-                intent.putExtra(SearchResultActivity.EXTRA_QUERY, cat.getTitle());
+                intent.putExtra(SearchResultActivity.EXTRA_TITLE, cat.getTitle());
                 startActivity(intent);
             });
             cgDrawerCategories.addView(chip);
@@ -487,11 +507,10 @@ public class MainActivity extends AppCompatActivity {
         cgDrawerTags.removeAllViews();
         if (tags == null || tags.isEmpty()) return;
         for (TaxonomyItem tag : tags) {
-            Chip chip = createWeb3PillChip("#" + tag.getTitle(), () -> {
+            String cleanTag = tag.getTitle() != null ? tag.getTitle().replaceFirst("^#", "").trim() : "";
+            Chip chip = createWeb3PillChip("#" + cleanTag, () -> {
                 drawerLayout.closeDrawer(GravityCompat.START);
-                Intent intent = new Intent(MainActivity.this, SearchResultActivity.class);
-                intent.putExtra(SearchResultActivity.EXTRA_TAG, tag.getTitle());
-                startActivity(intent);
+                launchSearchTag(cleanTag);
             });
             cgDrawerTags.addView(chip);
         }

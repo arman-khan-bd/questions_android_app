@@ -47,6 +47,9 @@ public final class AppConfig {
     /** Dynamic Home feed (banners, daily quotes, trending subjects, popular categories) */
     public static final String ENDPOINT_HOME_FEED = API_PREFIX + "home-feed";
 
+    /** Subject details with topics, categories, and tags */
+    public static final String ENDPOINT_SUBJECT_DETAILS = API_PREFIX + "subjects/{id}";
+
     // --- Authentication & Account Management ---
     /** Student registration (name, username, phone, email, password) */
     public static final String ENDPOINT_REGISTER = API_PREFIX + "auth/register";
