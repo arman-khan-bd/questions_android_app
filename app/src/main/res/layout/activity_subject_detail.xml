@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/surface"
-            app:navigationIcon="@drawable/ic_lucide_arrow_left"
+            app:navigationIcon="@drawable/ic_arrow_back"
             app:titleTextColor="@color/text_primary"
             tools:title="General Science" />
     </com.google.android.material.appbar.AppBarLayout>
@@ -131,7 +131,8 @@
                                 android:textSize="13sp"
                                 app:backgroundTint="@color/primary"
                                 app:cornerRadius="14dp"
-                                app:icon="@drawable/ic_lucide_arrow_right"
+                                app:icon="@drawable/ic_arrow_forward"
+                                app:iconTint="@color/text_white"
                                 app:iconGravity="textEnd"
                                 app:iconSize="16dp" />
                         </LinearLayout>
