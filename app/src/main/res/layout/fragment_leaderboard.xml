@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        app:elevation="2dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarLeaderboard"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/leaderboard_title"
+            app:titleTextColor="@color/text_primary" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayoutLeaderboard"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/primary"
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/primary"
+            app:tabTextColor="@color/text_secondary" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="4dp"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupTimeframe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipToday"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timeframe_daily"
+                    app:chipBackgroundColor="@color/surface_variant" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipWeekly"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/timeframe_weekly"
+                    app:chipBackgroundColor="@color/surface_variant" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAllTime"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timeframe_all_time"
+                    app:chipBackgroundColor="@color/surface_variant" />
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="24dp">
+
+                <!-- Top 3 Podium Header -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardPodium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:cardBackgroundColor="@color/primary_variant"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <!-- 2nd Place (Silver) -->
+                        <LinearLayout
+                            android:id="@+id/layoutRank2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/layoutRank1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="2nd"
+                                android:textColor="@color/silver"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/imgPodiumAvatar2"
+                                android:layout_width="54dp"
+                                android:layout_height="54dp"
+                                android:layout_marginTop="4dp"
+                                android:background="@drawable/bg_dialog_rounded"
+                                android:backgroundTint="@color/silver"
+                                android:contentDescription="Rank 2 Avatar"
+                                android:padding="2dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/ic_app_logo" />
+
+                            <TextView
+                                android:id="@+id/tvPodiumName2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/text_white"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                tools:text="Nusrat Jahan" />
+
+                            <TextView
+                                android:id="@+id/tvPodiumScore2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/silver"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="215 pts" />
+                        </LinearLayout>
+
+                        <!-- 1st Place (Gold - Center & Elevated) -->
+                        <LinearLayout
+                            android:id="@+id/layoutRank1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/layoutRank3"
+                            app:layout_constraintStart_toEndOf="@id/layoutRank2"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:contentDescription="Crown"
+                                android:src="@drawable/ic_trophy"
+                                app:tint="@color/gold" />
+
+                            <ImageView
+                                android:id="@+id/imgPodiumAvatar1"
+                                android:layout_width="68dp"
+                                android:layout_height="68dp"
+                                android:layout_marginTop="4dp"
+                                android:background="@drawable/bg_dialog_rounded"
+                                android:backgroundTint="@color/gold"
+                                android:contentDescription="Rank 1 Avatar"
+                                android:padding="3dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/ic_app_logo" />
+
+                            <TextView
+                                android:id="@+id/tvPodiumName1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/text_white"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="Tariqul Islam" />
+
+                            <TextView
+                                android:id="@+id/tvPodiumScore1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/gold"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                tools:text="245.5 pts" />
+                        </LinearLayout>
+
+                        <!-- 3rd Place (Bronze) -->
+                        <LinearLayout
+                            android:id="@+id/layoutRank3"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/layoutRank1"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="3rd"
+                                android:textColor="@color/amber_accent"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/imgPodiumAvatar3"
+                                android:layout_width="54dp"
+                                android:layout_height="54dp"
+                                android:layout_marginTop="4dp"
+                                android:background="@drawable/bg_dialog_rounded"
+                                android:backgroundTint="@color/bronze"
+                                android:contentDescription="Rank 3 Avatar"
+                                android:padding="2dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/ic_app_logo" />
+
+                            <TextView
+                                android:id="@+id/tvPodiumName3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/text_white"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                tools:text="Farhana Akter" />
+
+                            <TextView
+                                android:id="@+id/tvPodiumScore3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/amber_accent"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="198 pts" />
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Current User Sticky Rank Banner -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardCurrentUserStanding"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_marginVertical="4dp"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="@color/primary_surface"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="@color/primary_light"
+                    app:strokeWidth="1dp"
+                    tools:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvMyRank"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="#14" />
+
+                        <ImageView
+                            android:id="@+id/imgMyAvatar"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginStart="8dp"
+                            android:contentDescription="My Avatar"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_app_logo" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Your Standing"
+                                android:textColor="@color/text_primary"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvMyTier"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="11sp"
+                                tools:text="Master Aspirant • 18 exams" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvMyScore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="142.5 pts" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Rest of Leaderboard (Rank 4+) -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvLeaderboard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingTop="4dp"
+                    tools:listitem="@layout/item_leaderboard" />
+
+                <!-- Empty State -->
+                <LinearLayout
+                    android:id="@+id/layoutLeaderboardEmpty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="48dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:contentDescription="Empty"
+                        android:src="@drawable/ic_trophy"
+                        app:tint="@color/text_muted" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="No rankings available for this filter."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="32dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

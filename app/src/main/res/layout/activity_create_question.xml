@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/surface"
+        app:elevation="2dp"
+        app:navigationIcon="@drawable/ic_arrow_forward"
+        app:title="Create MCQ Question"
+        app:titleTextColor="@color/text_primary" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Publication Status Banner -->
+            <TextView
+                android:id="@+id/tvPublishStatusBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_dialog_rounded"
+                android:backgroundTint="@color/primary_surface"
+                android:lineSpacingExtra="2dp"
+                android:padding="12dp"
+                android:textColor="@color/primary"
+                android:textSize="13sp"
+                tools:text="Notice: Your question will be submitted for Admin Review before being published." />
+
+            <!-- Question Text -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.GovtExam.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Question Text *">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etQuestionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:lines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Attach Image Button and Preview -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnAttachImage"
+                    style="@style/Widget.GovtExam.Button.Outlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Attach Diagram / Photo"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:id="@+id/ivQuestionPreview"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="14dp"
+                    android:contentDescription="Preview"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/btnRemoveImage"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="8dp"
+                    android:contentDescription="Remove Image"
+                    android:padding="4dp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_close"
+                    app:tint="@color/error" />
+            </LinearLayout>
+
+            <!-- Option A -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.GovtExam.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Option A *">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etOptionA"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Option B -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.GovtExam.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Option B *">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etOptionB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Option C -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.GovtExam.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Option C *">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etOptionC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Option D -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.GovtExam.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Option D *">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etOptionD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Correct Option Selector -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-bold"
+                android:text="Select Correct Option *"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgCorrectOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipOptA"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Option A" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipOptB"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Option B" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipOptC"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Option C" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipOptD"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Option D" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Detailed Explanation -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.GovtExam.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Detailed Explanation *">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etExplanation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:lines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Difficulty Selector -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-bold"
+                android:text="Difficulty Level *"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgQuestionDifficulty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDiffEasy"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Easy" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDiffMedium"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Medium" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipDiffHard"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hard" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Subject Dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Subject *">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actvSubject"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Category Dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Category *">
+
+                <AutoCompleteTextView
+                    android:id="@+id/actvCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Tags Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.GovtExam.TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Tags (comma separated, e.g. BCS, 46th BCS, History)">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTagsInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/btnSubmitQuestion"
+                style="@style/Widget.GovtExam.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="40dp"
+                android:text="Submit Question" />
+
+            <ProgressBar
+                android:id="@+id/pbSubmitQuestion"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp"
+                android:indeterminateTint="@color/primary"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

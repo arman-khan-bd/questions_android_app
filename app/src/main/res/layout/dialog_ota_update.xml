@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_rounded"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Icon -->
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/update_available_title"
+        app:srcCompat="@drawable/ic_system_update"
+        app:tint="@color/primary" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvUpdateTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-bold"
+        android:gravity="center"
+        android:text="@string/update_available_title"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp" />
+
+    <!-- Version Info -->
+    <TextView
+        android:id="@+id/tvVersionInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
+        tools:text="Version 1.2.0 is available" />
+
+    <!-- Scrollable Release Notes -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_dialog_rounded"
+        android:backgroundTint="@color/surface_variant"
+        android:maxHeight="160dp"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvReleaseNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            tools:text="• Added real-time leaderboard ranking\n• Improved WebP image decoding on Android 5.0\n• Fixed minor bugs in exam timer" />
+    </ScrollView>
+
+    <!-- Download Progress (shown during APK download) -->
+    <LinearLayout
+        android:id="@+id/layoutDownloadProgress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ProgressBar
+            android:id="@+id/progressBarDownload"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/primary" />
+
+        <TextView
+            android:id="@+id/tvProgressPercent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            tools:text="Downloading update… 45%" />
+    </LinearLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnLater"
+            style="@style/Widget.GovtExam.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/update_later" />
+
+        <Button
+            android:id="@+id/btnUpdateNow"
+            style="@style/Widget.GovtExam.Button.Primary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update_now" />
+    </LinearLayout>
+
+</LinearLayout>

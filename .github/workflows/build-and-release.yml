@@ -1,0 +1,140 @@
+name: Build & Release Android APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Publish as a GitHub Release?'
+        required: true
+        type: boolean
+        default: true
+      release_tag:
+        description: 'Release Tag (leave blank for automatic v1.0.0-timestamp)'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Publish APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Make Gradle Executable
+        run: chmod +x gradlew
+
+      - name: Build Release & Debug APKs
+        run: ./gradlew assembleRelease assembleDebug --stacktrace
+
+      - name: Sign & Prepare Release Artifacts
+        env:
+          KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          mkdir -p release-artifacts
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | tail -n 1)
+          APKSIGNER="$BUILD_TOOLS_DIR/apksigner"
+          
+          UNSIGNED_APK="app/build/outputs/apk/release/app-release-unsigned.apk"
+          DEBUG_APK="app/build/outputs/apk/debug/app-debug.apk"
+
+          # 1. Copy Debug APK (already signed with Android debug keystore)
+          if [ -f "$DEBUG_APK" ]; then
+            cp "$DEBUG_APK" release-artifacts/GovtExamPrep-debug.apk
+            echo "Copied Debug APK -> GovtExamPrep-debug.apk"
+          fi
+
+          # 2. Sign Release APK
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ]; then
+            echo "Signing with repository secret keystore..."
+            echo "$KEYSTORE_BASE64" | base64 -d > release.keystore
+            $APKSIGNER sign --ks release.keystore \
+              --ks-pass "pass:$KEYSTORE_PASSWORD" \
+              --ks-key-alias "$KEY_ALIAS" \
+              --key-pass "pass:${KEY_PASSWORD:-$KEYSTORE_PASSWORD}" \
+              --out release-artifacts/GovtExamPrep-release.apk \
+              "$UNSIGNED_APK"
+            rm -f release.keystore
+          else
+            echo "No SIGNING_KEYSTORE_BASE64 secret provided. Generating signing certificate for installable APK..."
+            keytool -genkeypair -v -keystore ci-release.jks -alias releaseKey -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass android -keypass android -dname "CN=GovtJobPrep, OU=App, O=GovtExam, L=Dhaka, ST=Dhaka, C=BD"
+            $APKSIGNER sign --ks ci-release.jks \
+              --ks-pass pass:android \
+              --ks-key-alias releaseKey \
+              --key-pass pass:android \
+              --out release-artifacts/GovtExamPrep-release.apk \
+              "$UNSIGNED_APK"
+            rm -f ci-release.jks
+          fi
+
+          # 3. Verify signature
+          echo "Verifying Release APK signature..."
+          $APKSIGNER verify --verbose release-artifacts/GovtExamPrep-release.apk
+
+          # 4. Generate Checksums
+          cd release-artifacts
+          sha256sum GovtExamPrep-*.apk > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+          cd ..
+
+      - name: Upload Artifacts to Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: GovtExamPrep-APKs
+          path: release-artifacts/
+          retention-days: 14
+
+      - name: Determine Release Tag
+        id: release_info
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.release_tag }}" ]; then
+            TAG="${{ inputs.release_tag }}"
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          else
+            TAG="v1.0.0-$(date +'%Y%m%d%H%M')-${GITHUB_SHA::7}"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Release tag determined: $TAG"
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.create_release)
+        with:
+          tag_name: ${{ steps.release_info.outputs.tag }}
+          name: "Govt Job MCQ Exam Prep ${{ steps.release_info.outputs.tag }}"
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            release-artifacts/GovtExamPrep-release.apk
+            release-artifacts/GovtExamPrep-debug.apk
+            release-artifacts/SHA256SUMS.txt

@@ -1,0 +1,30 @@
+# Android build artifacts
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+*/build
+
+# Keystore and signing keys
+*.jks
+*.keystore
+*.p12
+*.key
+signing.properties
+
+# Android Studio Navigation editor temp files
+.navigation/
+
+# Log files
+*.log
+
+# Native symbols & profiling
+.cxx/
+capture/

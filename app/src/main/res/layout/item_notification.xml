@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardNotification"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/card_background"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp"
+    app:strokeColor="@color/divider"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/imgActorAvatar"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:contentDescription="Actor Avatar"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_app_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imgTypeBadge"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:background="@drawable/bg_dialog_rounded"
+            android:contentDescription="Badge"
+            android:padding="2dp"
+            android:src="@drawable/ic_star"
+            app:layout_constraintBottom_toBottomOf="@id/imgActorAvatar"
+            app:layout_constraintEnd_toEndOf="@id/imgActorAvatar"
+            app:tint="@color/primary" />
+
+        <TextView
+            android:id="@+id/tvNotificationTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/viewUnreadDot"
+            app:layout_constraintStart_toEndOf="@id/imgActorAvatar"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Tanvir Ahmed starred your question" />
+
+        <TextView
+            android:id="@+id/tvNotificationMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toStartOf="@id/viewUnreadDot"
+            app:layout_constraintStart_toEndOf="@id/imgActorAvatar"
+            app:layout_constraintTop_toBottomOf="@id/tvNotificationTitle"
+            tools:text="&quot;Which river in Bangladesh is declared as national fish sanctuary?&quot;" />
+
+        <TextView
+            android:id="@+id/tvNotificationTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/text_muted"
+            android:textSize="11sp"
+            app:layout_constraintStart_toEndOf="@id/imgActorAvatar"
+            app:layout_constraintTop_toBottomOf="@id/tvNotificationMessage"
+            tools:text="10 minutes ago" />
+
+        <View
+            android:id="@+id/viewUnreadDot"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="@drawable/bg_dialog_rounded"
+            android:backgroundTint="@color/primary_light"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

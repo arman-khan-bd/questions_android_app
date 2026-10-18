@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="@color/surface"
+    app:cardCornerRadius="@dimen/corner_radius_lg"
+    app:cardElevation="@dimen/elevation_sm"
+    app:strokeColor="@color/border"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Top Metadata & Star -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSubjectBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_dialog_rounded"
+                android:backgroundTint="@color/primary_surface"
+                android:paddingStart="8dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="3dp"
+                android:textColor="@color/primary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="Bangladesh Affairs" />
+
+            <TextView
+                android:id="@+id/tvDifficultyBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_dialog_rounded"
+                android:backgroundTint="@color/surface_variant"
+                android:paddingStart="8dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="3dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                tools:text="Medium" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Creator Direct Reveal Button -->
+            <Button
+                android:id="@+id/btnCreatorReveal"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:text="Reveal (Creator)"
+                android:textColor="@color/secondary"
+                android:textSize="11sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <!-- Star Toggle -->
+            <ImageView
+                android:id="@+id/btnStar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Star"
+                android:padding="6dp"
+                app:srcCompat="@drawable/ic_star"
+                app:tint="@color/text_muted" />
+        </LinearLayout>
+
+        <!-- Question Text -->
+        <TextView
+            android:id="@+id/tvQuestionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="sans-serif-medium"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            tools:text="What is the official currency of the Asian Infrastructure Investment Bank (AIIB)?" />
+
+        <!-- Optional Question Diagram / Image -->
+        <ImageView
+            android:id="@+id/ivQuestionImage"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="Question Diagram"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+        <!-- Option A -->
+        <LinearLayout
+            android:id="@+id/layoutOptionA"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_option_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvLabelA"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:background="@drawable/bg_dialog_rounded"
+                    android:backgroundTint="@color/surface_variant"
+                    android:gravity="center"
+                    android:text="A"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvOptionA"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    tools:text="US Dollar (USD)" />
+
+                <TextView
+                    android:id="@+id/tvPctA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:text="68%"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/pbOptionA"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:progressTint="@color/primary"
+                android:visibility="gone"
+                tools:progress="68"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <!-- Option B -->
+        <LinearLayout
+            android:id="@+id/layoutOptionB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_option_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvLabelB"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:background="@drawable/bg_dialog_rounded"
+                    android:backgroundTint="@color/surface_variant"
+                    android:gravity="center"
+                    android:text="B"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvOptionB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    tools:text="Chinese Yuan (RMB)" />
+
+                <TextView
+                    android:id="@+id/tvPctB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:text="22%"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/pbOptionB"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:progressTint="@color/primary"
+                android:visibility="gone"
+                tools:progress="22"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <!-- Option C -->
+        <LinearLayout
+            android:id="@+id/layoutOptionC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_option_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvLabelC"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:background="@drawable/bg_dialog_rounded"
+                    android:backgroundTint="@color/surface_variant"
+                    android:gravity="center"
+                    android:text="C"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvOptionC"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    tools:text="Special Drawing Rights (SDR)" />
+
+                <TextView
+                    android:id="@+id/tvPctC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:text="7%"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/pbOptionC"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:progressTint="@color/primary"
+                android:visibility="gone"
+                tools:progress="7"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <!-- Option D -->
+        <LinearLayout
+            android:id="@+id/layoutOptionD"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_option_card"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvLabelD"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:background="@drawable/bg_dialog_rounded"
+                    android:backgroundTint="@color/surface_variant"
+                    android:gravity="center"
+                    android:text="D"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvOptionD"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    tools:text="Euro (EUR)" />
+
+                <TextView
+                    android:id="@+id/tvPctD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:text="3%"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/pbOptionD"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:progressTint="@color/primary"
+                android:visibility="gone"
+                tools:progress="3"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <!-- Explanation Card (Revealed on check or creator reveal) -->
+        <LinearLayout
+            android:id="@+id/layoutExplanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_dialog_rounded"
+            android:backgroundTint="@color/surface_variant"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tvCorrectAnswerHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-bold"
+                android:textColor="@color/success"
+                android:textSize="14sp"
+                tools:text="Correct Answer: Option A" />
+
+            <TextView
+                android:id="@+id/tvExplanationText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:lineSpacingExtra="3dp"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                tools:text="Although headquartered in Beijing, the Asian Infrastructure Investment Bank operates primarily in US Dollars." />
+
+            <ImageView
+                android:id="@+id/ivExplanationImage"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="Explanation Diagram"
+                android:scaleType="fitCenter"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Bottom Action Bar: Voting, Comments & Report -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Rank-Neutral Accuracy Voting -->
+            <LinearLayout
+                android:id="@+id/layoutVoting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/btnUpvote"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Upvote"
+                    android:padding="4dp"
+                    app:srcCompat="@drawable/ic_thumb_up"
+                    app:tint="@color/text_muted" />
+
+                <TextView
+                    android:id="@+id/tvUpvotes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    tools:text="48" />
+
+                <ImageView
+                    android:id="@+id/btnDownvote"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Downvote"
+                    android:padding="4dp"
+                    app:srcCompat="@drawable/ic_thumb_down"
+                    app:tint="@color/text_muted" />
+
+                <TextView
+                    android:id="@+id/tvDownvotes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    tools:text="2" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Comments Icon & Count -->
+            <LinearLayout
+                android:id="@+id/btnComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <ImageView
+                    android:id="@+id/ivCommentIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="Comments"
+                    app:srcCompat="@drawable/ic_comment"
+                    app:tint="@color/text_muted" />
+
+                <TextView
+                    android:id="@+id/tvCommentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    tools:text="14" />
+            </LinearLayout>
+
+            <!-- Report Flag -->
+            <ImageView
+                android:id="@+id/btnReport"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Report Question"
+                android:padding="4dp"
+                app:srcCompat="@drawable/ic_flag"
+                app:tint="@color/text_muted" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

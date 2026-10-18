@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_rounded"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="Report"
+            app:srcCompat="@drawable/ic_flag"
+            app:tint="@color/error" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="sans-serif-bold"
+            android:text="Report Question Dispute"
+            android:textColor="@color/text_primary"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Your report will be reviewed by administrators and sent to the author for correction."
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <!-- Reason Selector RadioGroup -->
+    <RadioGroup
+        android:id="@+id/rgReportReasons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp">
+
+        <RadioButton
+            android:id="@+id/rbWrongKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Wrong Answer Key"
+            android:textSize="13sp" />
+
+        <RadioButton
+            android:id="@+id/rbTypo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Typo / Grammatical Mistake"
+            android:textSize="13sp" />
+
+        <RadioButton
+            android:id="@+id/rbOutdated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Outdated / Changed Information"
+            android:textSize="13sp" />
+
+        <RadioButton
+            android:id="@+id/rbDuplicate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Duplicate Question"
+            android:textSize="13sp" />
+
+        <RadioButton
+            android:id="@+id/rbSpam"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Spam / Irrelevant Content"
+            android:textSize="13sp" />
+    </RadioGroup>
+
+    <!-- Additional Note -->
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.GovtExam.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Explanation / Reference (Optional)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etReportNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:lines="3" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCancelReport"
+            style="@style/Widget.GovtExam.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/btnSubmitReport"
+            style="@style/Widget.GovtExam.Button.Primary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit Report" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Details -->
+    <string name="app_name">Govt Exam Prep</string>
+    <string name="app_default_tagline">Master Preliminary MCQ Exams with Precision</string>
+
+    <!-- General -->
+    <string name="loading">Loading, please wait…</string>
+    <string name="retry">Retry</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="save">Save</string>
+    <string name="submit">Submit</string>
+    <string name="search_hint">Search topics, subjects, tags…</string>
+    <string name="network_error">Unable to connect. Please check your internet connection.</string>
+    <string name="server_error">Server error occurred. Please try again later.</string>
+
+    <!-- Maintenance Mode -->
+    <string name="maintenance_title">System Under Maintenance</string>
+    <string name="maintenance_default_msg">We are currently upgrading our servers to serve you better. We will be back shortly!</string>
+    <string name="maintenance_est_time">Estimated completion: %1$s</string>
+
+    <!-- Version Updates -->
+    <string name="update_available_title">New Update Available</string>
+    <string name="update_required_title">Mandatory Update Required</string>
+    <string name="update_now">Update Now</string>
+    <string name="update_later">Later</string>
+    <string name="downloading_update">Downloading update… %1$d%%</string>
+
+    <!-- Account Status -->
+    <string name="account_suspended_title">Account Suspended</string>
+    <string name="account_suspended_msg">Your account has been suspended by the administrator.</string>
+    <string name="suspension_reason">Reason: %1$s</string>
+    <string name="suspension_expires">Expires: %1$s</string>
+    <string name="account_disabled_title">Account Disabled</string>
+    <string name="account_disabled_msg">Your account has been permanently disabled. Please contact support.</string>
+
+    <!-- Auth -->
+    <string name="login_title">Welcome Back</string>
+    <string name="login_subtitle">Sign in to continue your preparation</string>
+    <string name="identifier_label">Phone Number or Email</string>
+    <string name="password_label">Password</string>
+    <string name="login_button">Login</string>
+    <string name="register_prompt">Don\'t have an account? Sign Up</string>
+    <string name="register_title">Create Account</string>
+    <string name="register_subtitle">Instant sign-up without OTP</string>
+    <string name="name_label">Full Name</string>
+    <string name="register_button">Register</string>
+    <string name="username_preview">Your unique handle: %1$s</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_statistics">Statistics</string>
+    <string name="nav_exam_plus">Exam</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_menu">Menu</string>
+
+    <!-- Drawer Sections -->
+    <string name="drawer_popular_searches">Popular Searches</string>
+    <string name="drawer_topics">Topics</string>
+    <string name="drawer_tags">Tags</string>
+    <string name="drawer_categories">Categories</string>
+    <string name="drawer_subjects">Subjects</string>
+    <string name="drawer_saved_questions">Saved Questions</string>
+    <string name="drawer_dark_mode">Dark Mode</string>
+    <string name="drawer_logout">Logout</string>
+    <string name="app_version_format">Version %1$s (%2$d)</string>
+
+    <!-- Exam Arena -->
+    <string name="exam_time_remaining">Time Left: %1$s</string>
+    <string name="exam_submit_prompt">Are you sure you want to finish the exam?</string>
+    <string name="custom_exam_title_hint">Exam Title (e.g. 46th BCS Model Test)</string>
+    <string name="start_exam">Start Custom Exam</string>
+
+    <!-- Notifications -->
+    <string name="title_notifications">Notifications</string>
+    <string name="mark_all_read">Mark all as read</string>
+    <string name="no_notifications_title">All Caught Up!</string>
+    <string name="no_notifications_desc">You do not have any new notifications at this time.</string>
+
+    <!-- Leaderboard -->
+    <string name="leaderboard_title">Leaderboard</string>
+    <string name="tab_easy">Easy</string>
+    <string name="tab_medium">Medium</string>
+    <string name="tab_hard">Hard</string>
+    <string name="tab_custom">Custom Exams</string>
+    <string name="timeframe_daily">Daily</string>
+    <string name="timeframe_weekly">Weekly</string>
+    <string name="timeframe_all_time">All Time</string>
+    <string name="rank_format">#%1$d</string>
+    <string name="score_format">%1$.1f pts</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">Performance Analytics</string>
+    <string name="practice_weakest_topics">Practice Weakest Topics</string>
+    <string name="stat_total_exams">Exams Taken</string>
+    <string name="stat_avg_accuracy">Average Accuracy</string>
+    <string name="stat_pass_rate">Pass Rate</string>
+    <string name="stat_rank_score">Rank Score</string>
+    <string name="chart_exam_trend">Exam Score Trend (Last 15)</string>
+    <string name="chart_difficulty_dist">Difficulty Distribution</string>
+    <string name="chart_subject_mastery">Subject Mastery (%)</string>
+
+    <!-- Profile & Edit Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="save_profile">Save Changes</string>
+    <string name="about_student">About Student</string>
+    <string name="academic_information">Academic Information</string>
+    <string name="institution_hint">University / College</string>
+    <string name="degree_hint">Degree / Major (e.g. B.Sc. in CSE)</string>
+    <string name="passing_year_hint">Passing Year (e.g. 2024)</string>
+    <string name="bio_hint">Short Bio (e.g. Aspiring BCS Cadre)</string>
+    <string name="phone_hint">Phone Number</string>
+    <string name="tab_my_exams">Exams</string>
+    <string name="tab_created_questions">Created</string>
+    <string name="tab_custom_exams">Custom Tests</string>
+    <string name="tab_starred">Starred</string>
+    <string name="tab_reported">Reported</string>
+    <string name="tab_mistakes">Mistake Book</string>
+    <string name="change_avatar">Change Avatar</string>
+    <string name="change_cover">Change Cover</string>
+    <string name="fix_report">Resolve &amp; Edit Question</string>
+
+    <!-- Support & Legal Compliance -->
+    <string name="support_email_label">Contact Support</string>
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="terms_title">Terms of Service</string>
+</resources>

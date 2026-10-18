@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTabContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="48dp" />
+
+    <LinearLayout
+        android:id="@+id/layoutTabEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/imgTabEmpty"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:contentDescription="Empty"
+            android:src="@drawable/ic_trophy"
+            app:tint="@color/text_muted" />
+
+        <TextView
+            android:id="@+id/tvTabEmptyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="No records yet" />
+
+        <TextView
+            android:id="@+id/tvTabEmptySubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:maxWidth="260dp"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            tools:text="Items for this category will appear here as you participate." />
+    </LinearLayout>
+
+</FrameLayout>

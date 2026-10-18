@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <!-- Parent / Top-Level Comment -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivCommentAvatar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription="Avatar"
+            app:srcCompat="@drawable/ic_nav_profile" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_dialog_rounded"
+            android:backgroundTint="@color/surface_variant"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvCommentUser"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif-bold"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    tools:text="Tanvir Ahmed (@tanvir_203)" />
+
+                <TextView
+                    android:id="@+id/tvCommentDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_muted"
+                    android:textSize="11sp"
+                    tools:text="2h ago" />
+            </LinearLayout>
+
+            <!-- Bad-word Moderation Status Badge -->
+            <TextView
+                android:id="@+id/tvModerationBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_dialog_rounded"
+                android:backgroundTint="@color/warning_light"
+                android:paddingStart="6dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="2dp"
+                android:text="Held for Admin Review (Flagged Words Detected)"
+                android:textColor="@color/warning"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <!-- Comment Content -->
+            <TextView
+                android:id="@+id/tvCommentBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:lineSpacingExtra="2dp"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                tools:text="Could someone please verify the source for Option A?" />
+
+            <!-- Reply Button -->
+            <TextView
+                android:id="@+id/btnReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:padding="2dp"
+                android:text="Reply"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Nested Replies (Level 2) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvReplies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="6dp"
+        android:nestedScrollingEnabled="false"
+        android:visibility="gone" />
+
+</LinearLayout>
