@@ -82,6 +82,8 @@ public class NetworkErrorParser {
             return defaultNetworkError;
         }
 
+        Log.e(TAG, "parseFailure caught: " + t.getClass().getSimpleName() + ": " + t.getMessage(), t);
+
         if (t instanceof SocketTimeoutException) {
             return "Connection timed out. Please check your internet connection.";
         } else if (t instanceof UnknownHostException) {
@@ -89,7 +91,10 @@ public class NetworkErrorParser {
         } else if (t instanceof ConnectException) {
             return "Server refused connection. Please ensure the server is online.";
         } else if (t instanceof SSLException) {
-            return "Secure connection failed (SSL/TLS certificate error).";
+            String detail = t.getLocalizedMessage();
+            return !TextUtils.isEmpty(detail)
+                    ? "Secure connection failed (SSL/TLS error: " + detail + ")"
+                    : "Secure connection failed (SSL/TLS certificate error).";
         }
 
         String msg = t.getLocalizedMessage();

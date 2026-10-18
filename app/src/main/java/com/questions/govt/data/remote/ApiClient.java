@@ -91,7 +91,7 @@ public class ApiClient {
         logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
         builder.addInterceptor(logging);
 
-        // Safeguard for Android 5.0 (API 21) TLS 1.2 Handshake
+        // Safeguard for SSL / TLS 1.2+ & certificate validation across all Android versions
         Tls12Helper.enableTls12(builder);
 
         return builder.build();
