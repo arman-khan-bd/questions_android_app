@@ -42,11 +42,26 @@ public class NotificationItem implements Serializable {
     @SerializedName("is_read")
     private boolean isRead;
 
-    @SerializedName("created_at")
-    private String createdAt;
+    @SerializedName("target_type")
+    private String targetType;
+
+    @SerializedName("target_id")
+    private String targetId;
+
+    @SerializedName("target_url")
+    private String targetUrl;
 
     public NotificationItem() {
     }
+
+    public String getTargetType() { return targetType; }
+    public void setTargetType(String targetType) { this.targetType = targetType; }
+
+    public String getTargetId() { return targetId; }
+    public void setTargetId(String targetId) { this.targetId = targetId; }
+
+    public String getTargetUrl() { return targetUrl; }
+    public void setTargetUrl(String targetUrl) { this.targetUrl = targetUrl; }
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }

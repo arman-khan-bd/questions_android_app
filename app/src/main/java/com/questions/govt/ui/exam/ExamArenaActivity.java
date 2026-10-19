@@ -96,6 +96,15 @@ public class ExamArenaActivity extends AppCompatActivity {
         loadExamData();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        ExamSessionManager.getInstance().clear();
+    }
+
     private void initViews() {
         tvExamTitle = findViewById(R.id.tvExamTitle);
         tvTimer = findViewById(R.id.tvTimer);
@@ -171,6 +180,51 @@ public class ExamArenaActivity extends AppCompatActivity {
                     @Override
                     public void onError(String message) {
                         Toast.makeText(ExamArenaActivity.this, message, Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
+                return;
+            }
+        }
+
+        if (getIntent().hasExtra(EXTRA_EXAM_ID)) {
+            long targetExamId = 0;
+            try {
+                targetExamId = getIntent().getLongExtra(EXTRA_EXAM_ID, 0);
+            } catch (Exception ignored) {}
+            if (targetExamId == 0) {
+                try {
+                    targetExamId = getIntent().getIntExtra(EXTRA_EXAM_ID, 0);
+                } catch (Exception ignored) {}
+            }
+            if (targetExamId == 0) {
+                try {
+                    String strId = getIntent().getStringExtra(EXTRA_EXAM_ID);
+                    if (strId != null) targetExamId = Long.parseLong(strId);
+                } catch (Exception ignored) {}
+            }
+
+            if (targetExamId > 0) {
+                tvExamTitle.setText(R.string.loading);
+                examRepository.getExamDetail(targetExamId, new ExamRepository.ExamCallback<com.questions.govt.data.remote.response.ExamDetailResponse>() {
+                    @Override
+                    public void onSuccess(com.questions.govt.data.remote.response.ExamDetailResponse response) {
+                        if (response != null && response.getQuestions() != null && !response.getQuestions().isEmpty()) {
+                            examId = response.getId();
+                            examTitle = response.getTitle() != null ? response.getTitle() : "Exam #" + examId;
+                            durationMinutes = response.getDurationMinutes() > 0 ? response.getDurationMinutes() : 20;
+                            questionList.clear();
+                            questionList.addAll(response.getQuestions());
+                            initArenaSession();
+                        } else {
+                            Toast.makeText(ExamArenaActivity.this, "No exam questions found for this exam.", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(ExamArenaActivity.this, message != null ? message : "Failed to load exam.", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });

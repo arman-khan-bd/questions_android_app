@@ -79,6 +79,24 @@ public class AppConfigData implements Serializable {
     @SerializedName("auto_publish_user_questions")
     private boolean autoPublishUserQuestions = false;
 
+    @SerializedName("enable_mistake_notebook")
+    private boolean enableMistakeNotebook = true;
+
+    @SerializedName("enable_social_share")
+    private boolean enableSocialShare = true;
+
+    @SerializedName("enable_exam_timer")
+    private boolean enableExamTimer = true;
+
+    @SerializedName("enable_negative_marking")
+    private boolean enableNegativeMarking = true;
+
+    @SerializedName("enable_question_reporting")
+    private boolean enableQuestionReporting = true;
+
+    @SerializedName("enable_bookmarking")
+    private boolean enableBookmarking = true;
+
     // 5. Dynamic Exam & Leaderboard Multipliers
     @SerializedName("easy_multiplier")
     private double easyMultiplier = 1.0;
@@ -162,6 +180,24 @@ public class AppConfigData implements Serializable {
 
     public boolean isAutoPublishUserQuestions() { return autoPublishUserQuestions; }
     public void setAutoPublishUserQuestions(boolean autoPublishUserQuestions) { this.autoPublishUserQuestions = autoPublishUserQuestions; }
+
+    public boolean isEnableMistakeNotebook() { return enableMistakeNotebook; }
+    public void setEnableMistakeNotebook(boolean enableMistakeNotebook) { this.enableMistakeNotebook = enableMistakeNotebook; }
+
+    public boolean isEnableSocialShare() { return enableSocialShare; }
+    public void setEnableSocialShare(boolean enableSocialShare) { this.enableSocialShare = enableSocialShare; }
+
+    public boolean isEnableExamTimer() { return enableExamTimer; }
+    public void setEnableExamTimer(boolean enableExamTimer) { this.enableExamTimer = enableExamTimer; }
+
+    public boolean isEnableNegativeMarking() { return enableNegativeMarking; }
+    public void setEnableNegativeMarking(boolean enableNegativeMarking) { this.enableNegativeMarking = enableNegativeMarking; }
+
+    public boolean isEnableQuestionReporting() { return enableQuestionReporting; }
+    public void setEnableQuestionReporting(boolean enableQuestionReporting) { this.enableQuestionReporting = enableQuestionReporting; }
+
+    public boolean isEnableBookmarking() { return enableBookmarking; }
+    public void setEnableBookmarking(boolean enableBookmarking) { this.enableBookmarking = enableBookmarking; }
 
     public double getEasyMultiplier() { return easyMultiplier > 0 ? easyMultiplier : 1.0; }
     public void setEasyMultiplier(double easyMultiplier) { this.easyMultiplier = easyMultiplier; }

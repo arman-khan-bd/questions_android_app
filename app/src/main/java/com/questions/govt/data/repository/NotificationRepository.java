@@ -93,6 +93,9 @@ public class NotificationRepository {
                         entity.setActorAvatarUrl(item.getActorAvatarUrl());
                         entity.setQuestionId(item.getQuestionId());
                         entity.setType(item.getType());
+                        entity.setTargetType(item.getTargetType());
+                        entity.setTargetId(item.getTargetId());
+                        entity.setTargetUrl(item.getTargetUrl());
                         entity.setTitle(item.getTitle());
                         entity.setMessage(item.getMessage());
                         entity.setRead(item.isRead());
@@ -134,6 +137,18 @@ public class NotificationRepository {
 
     public void markAllAsRead() {
         AppDatabase.databaseWriteExecutor.execute(notificationDao::markAllAsRead);
+
+        apiService.markAllNotificationsRead().enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                Log.d(TAG, "All notifications marked read on server.");
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                Log.w(TAG, "Failed to mark all read on server, updated in local Room.", t);
+            }
+        });
     }
 
     public interface NotificationSyncCallback {

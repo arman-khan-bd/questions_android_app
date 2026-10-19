@@ -179,7 +179,11 @@ public class SplashActivity extends AppCompatActivity {
         int remoteVersionCode = config.getLatestVersionCode();
         String updateMode = config.getUpdateMode();
 
-        if (remoteVersionCode > localVersionCode && !"none".equalsIgnoreCase(updateMode)) {
+        boolean isUpdateDisabled = TextUtils.isEmpty(updateMode)
+                || "off".equalsIgnoreCase(updateMode)
+                || "none".equalsIgnoreCase(updateMode);
+
+        if (remoteVersionCode > localVersionCode && !isUpdateDisabled) {
             showUpdateDialog(config, "force".equalsIgnoreCase(updateMode));
         } else {
             proceedToNextScreen();

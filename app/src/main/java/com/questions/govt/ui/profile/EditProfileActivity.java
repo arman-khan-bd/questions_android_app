@@ -1,8 +1,12 @@
 package com.questions.govt.ui.profile;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -17,6 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.questions.govt.R;
@@ -37,9 +42,12 @@ import okhttp3.RequestBody;
  * Edit Student Profile Activity:
  * - Update personal bio, target exam, institution, phone
  * - Pick and preview new Avatar and 16:9 Cover Photo
- * - Uploads multi-part WebP encoded assets to backend API
+ * - High-speed JSON fallback when no image attachments are selected
+ * - Safe image downsampling and JPEG compression to eliminate payload errors
  */
 public class EditProfileActivity extends AppCompatActivity {
+
+    private static final String TAG = "EditProfileActivity";
 
     private MaterialToolbar toolbarEditProfile;
     private ImageView imgEditCover;
@@ -59,6 +67,10 @@ public class EditProfileActivity extends AppCompatActivity {
     private TextInputEditText etDegree;
     private TextInputLayout tilPassingYear;
     private TextInputEditText etPassingYear;
+
+    private SwitchMaterial switchEditPhonePrivate;
+    private SwitchMaterial switchEditEmailPrivate;
+    private MaterialButton btnOpenSettingsFromEdit;
 
     private MaterialButton btnSaveProfile;
     private ProgressBar progressBar;
@@ -117,6 +129,10 @@ public class EditProfileActivity extends AppCompatActivity {
         tilPassingYear = findViewById(R.id.tilPassingYear);
         etPassingYear = findViewById(R.id.etPassingYear);
 
+        switchEditPhonePrivate = findViewById(R.id.switchEditPhonePrivate);
+        switchEditEmailPrivate = findViewById(R.id.switchEditEmailPrivate);
+        btnOpenSettingsFromEdit = findViewById(R.id.btnOpenSettingsFromEdit);
+
         btnSaveProfile = findViewById(R.id.btnSaveProfile);
         progressBar = findViewById(R.id.progressBar);
 
@@ -125,6 +141,13 @@ public class EditProfileActivity extends AppCompatActivity {
         btnPickAvatar.setOnClickListener(v -> avatarPickerLauncher.launch("image/*"));
         btnPickCover.setOnClickListener(v -> coverPickerLauncher.launch("image/*"));
         btnSaveProfile.setOnClickListener(v -> saveProfileChanges());
+
+        if (btnOpenSettingsFromEdit != null) {
+            btnOpenSettingsFromEdit.setOnClickListener(v -> {
+                Intent intent = new Intent(this, UserSettingsActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
     private void populateUserData() {
@@ -137,6 +160,9 @@ public class EditProfileActivity extends AppCompatActivity {
         if (user.getUniversity() != null) etInstitution.setText(user.getUniversity());
         if (user.getTargetExam() != null) etDegree.setText(user.getTargetExam());
         if (user.getGraduationYear() != null) etPassingYear.setText(user.getGraduationYear());
+
+        if (switchEditPhonePrivate != null) switchEditPhonePrivate.setChecked(user.isPhonePrivate());
+        if (switchEditEmailPrivate != null) switchEditEmailPrivate.setChecked(user.isEmailPrivate());
 
         // Load existing images
         if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
@@ -172,21 +198,15 @@ public class EditProfileActivity extends AppCompatActivity {
         String degree = etDegree.getText() != null ? etDegree.getText().toString().trim() : "";
         String passingYear = etPassingYear.getText() != null ? etPassingYear.getText().toString().trim() : "";
 
-        setLoading(true);
+        boolean isPhonePrivate = switchEditPhonePrivate != null && switchEditPhonePrivate.isChecked();
+        boolean isEmailPrivate = switchEditEmailPrivate != null && switchEditEmailPrivate.isChecked();
 
-        Map<String, RequestBody> fields = new HashMap<>();
-        fields.put("name", createPartFromString(name));
-        fields.put("phone", createPartFromString(phone));
-        fields.put("bio", createPartFromString(bio));
-        fields.put("university", createPartFromString(institution));
-        fields.put("target_exam", createPartFromString(degree));
-        fields.put("education_level", createPartFromString(passingYear));
-        fields.put("graduation_year", createPartFromString(passingYear));
+        setLoading(true);
 
         MultipartBody.Part avatarPart = prepareFilePart("avatar", selectedAvatarUri);
         MultipartBody.Part coverPart = prepareFilePart("cover_photo", selectedCoverUri);
 
-        UserRepository.getInstance(this).updateProfile(fields, avatarPart, coverPart, new UserRepository.UserUpdateCallback() {
+        UserRepository.UserUpdateCallback callback = new UserRepository.UserUpdateCallback() {
             @Override
             public void onSuccess(User updatedUser) {
                 setLoading(false);
@@ -200,7 +220,39 @@ public class EditProfileActivity extends AppCompatActivity {
                 setLoading(false);
                 Toast.makeText(EditProfileActivity.this, message != null ? message : "Profile update failed.", Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+
+        if (avatarPart == null && coverPart == null) {
+            // Pure text update: Send clean JSON payload to avoid multipart boundaries and transport errors
+            Map<String, Object> jsonFields = new HashMap<>();
+            jsonFields.put("name", name);
+            if (!TextUtils.isEmpty(phone)) {
+                jsonFields.put("phone", phone);
+            }
+            jsonFields.put("bio", bio);
+            jsonFields.put("university", institution);
+            jsonFields.put("target_exam", degree);
+            jsonFields.put("education_level", passingYear);
+            jsonFields.put("graduation_year", passingYear);
+            jsonFields.put("is_phone_private", isPhonePrivate);
+            jsonFields.put("is_email_private", isEmailPrivate);
+
+            UserRepository.getInstance(this).updateProfileJson(jsonFields, callback);
+        } else {
+            // Multipart payload with compressed image attachments
+            Map<String, RequestBody> fields = new HashMap<>();
+            fields.put("name", createPartFromString(name));
+            fields.put("phone", createPartFromString(phone));
+            fields.put("bio", createPartFromString(bio));
+            fields.put("university", createPartFromString(institution));
+            fields.put("target_exam", createPartFromString(degree));
+            fields.put("education_level", createPartFromString(passingYear));
+            fields.put("graduation_year", createPartFromString(passingYear));
+            fields.put("is_phone_private", createPartFromString(String.valueOf(isPhonePrivate)));
+            fields.put("is_email_private", createPartFromString(String.valueOf(isEmailPrivate)));
+
+            UserRepository.getInstance(this).updateProfile(fields, avatarPart, coverPart, callback);
+        }
     }
 
     private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
@@ -208,24 +260,36 @@ public class EditProfileActivity extends AppCompatActivity {
 
         try {
             InputStream inputStream = getContentResolver().openInputStream(fileUri);
-            if (inputStream != null) {
-                ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = inputStream.read(buffer)) != -1) {
-                    byteBuffer.write(buffer, 0, len);
-                }
-                byte[] bytes = byteBuffer.toByteArray();
-                RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), bytes);
-                return MultipartBody.Part.createFormData(partName, partName + ".jpg", requestFile);
+            if (inputStream == null) return null;
+
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            inputStream.close();
+            if (bitmap == null) return null;
+
+            // Safe downsample if dimensions exceed 1200px
+            int maxDimension = 1200;
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            if (width > maxDimension || height > maxDimension) {
+                float ratio = Math.min((float) maxDimension / width, (float) maxDimension / height);
+                width = Math.round(ratio * width);
+                height = Math.round(ratio * height);
+                bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
             }
-        } catch (Exception ignored) {
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 82, outputStream);
+            byte[] bytes = outputStream.toByteArray();
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
+            return MultipartBody.Part.createFormData(partName, partName + ".jpg", requestFile);
+        } catch (Exception e) {
+            Log.e(TAG, "prepareFilePart error: " + e.getMessage());
         }
         return null;
     }
 
     private RequestBody createPartFromString(String value) {
-        return RequestBody.create(MediaType.parse("text/plain"), value);
+        return RequestBody.create(MediaType.parse("text/plain"), value != null ? value : "");
     }
 
     private void setLoading(boolean isLoading) {

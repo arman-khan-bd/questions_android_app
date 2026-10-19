@@ -119,6 +119,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".ui.profile.UserSettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Notifications Screen -->
         <activity
             android:name=".ui.notification.NotificationActivity"

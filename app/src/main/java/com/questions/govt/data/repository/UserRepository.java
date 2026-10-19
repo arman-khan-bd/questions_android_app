@@ -104,6 +104,93 @@ public class UserRepository {
         });
     }
 
+    public void updateProfileJson(
+            Map<String, Object> fields,
+            UserUpdateCallback callback
+    ) {
+        apiService.updateProfileJson(fields).enqueue(new Callback<ApiResponse<User>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    User updatedUser = response.body().getData();
+                    SessionManager.getInstance().saveUser(updatedUser);
+                    AppDatabase.databaseWriteExecutor.execute(() -> userDao.insertOrReplace(updatedUser));
+                    callback.onSuccess(updatedUser);
+                } else {
+                    String error = com.questions.govt.util.NetworkErrorParser.parseError(response, "Profile update failed.");
+                    callback.onError(error);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
+                String error = com.questions.govt.util.NetworkErrorParser.parseFailure(t, "Network error updating profile.");
+                callback.onError(error);
+            }
+        });
+    }
+
+    public void changePassword(
+            String currentPassword,
+            String newPassword,
+            String confirmPassword,
+            PasswordChangeCallback callback
+    ) {
+        Map<String, String> body = new HashMap<>();
+        body.put("current_password", currentPassword);
+        body.put("password", newPassword);
+        body.put("password_confirmation", confirmPassword);
+
+        apiService.changePassword(body).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess("Password updated successfully.");
+                } else {
+                    String error = com.questions.govt.util.NetworkErrorParser.parseError(response, "Failed to change password.");
+                    callback.onError(error);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                String error = com.questions.govt.util.NetworkErrorParser.parseFailure(t, "Network error changing password.");
+                callback.onError(error);
+            }
+        });
+    }
+
+    public void updatePrivacy(
+            boolean isPhonePrivate,
+            boolean isEmailPrivate,
+            UserUpdateCallback callback
+    ) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("is_phone_private", isPhonePrivate);
+        body.put("is_email_private", isEmailPrivate);
+
+        apiService.updatePrivacy(body).enqueue(new Callback<ApiResponse<User>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    User updatedUser = response.body().getData();
+                    SessionManager.getInstance().saveUser(updatedUser);
+                    AppDatabase.databaseWriteExecutor.execute(() -> userDao.insertOrReplace(updatedUser));
+                    callback.onSuccess(updatedUser);
+                } else {
+                    String error = com.questions.govt.util.NetworkErrorParser.parseError(response, "Failed to update privacy settings.");
+                    callback.onError(error);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
+                String error = com.questions.govt.util.NetworkErrorParser.parseFailure(t, "Network error updating privacy settings.");
+                callback.onError(error);
+            }
+        });
+    }
+
     public interface UserProfileCallback {
         void onSuccess(UserProfileResponse response);
         void onError(String message);
@@ -111,6 +198,11 @@ public class UserRepository {
 
     public interface UserUpdateCallback {
         void onSuccess(User user);
+        void onError(String message);
+    }
+
+    public interface PasswordChangeCallback {
+        void onSuccess(String message);
         void onError(String message);
     }
 }

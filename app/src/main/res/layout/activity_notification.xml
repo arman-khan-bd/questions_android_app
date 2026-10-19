@@ -20,20 +20,8 @@
             app:navigationIcon="@drawable/ic_arrow_back"
             app:navigationIconTint="@color/text_primary"
             app:title="@string/title_notifications"
-            app:titleTextColor="@color/text_primary">
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnMarkAllRead"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="end"
-                android:layout_marginEnd="12dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/mark_all_read"
-                android:padding="8dp"
-                app:srcCompat="@drawable/ic_done_all"
-                app:tint="@color/primary" />
-        </com.google.android.material.appbar.MaterialToolbar>
+            app:titleTextColor="@color/text_primary"
+            app:menu="@menu/menu_notification" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -46,6 +34,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!-- Skeleton Loader layout displayed before notifications finish loading -->
+            <LinearLayout
+                android:id="@+id/layoutSkeleton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:visibility="gone">
+
+                <include layout="@layout/item_notification_skeleton" />
+                <include layout="@layout/item_notification_skeleton" />
+                <include layout="@layout/item_notification_skeleton" />
+                <include layout="@layout/item_notification_skeleton" />
+                <include layout="@layout/item_notification_skeleton" />
+            </LinearLayout>
+
+            <!-- Notifications RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvNotifications"
                 android:layout_width="match_parent"
@@ -55,6 +60,7 @@
                 android:paddingBottom="16dp"
                 tools:listitem="@layout/item_notification" />
 
+            <!-- Empty State -->
             <LinearLayout
                 android:id="@+id/layoutEmpty"
                 android:layout_width="wrap_content"

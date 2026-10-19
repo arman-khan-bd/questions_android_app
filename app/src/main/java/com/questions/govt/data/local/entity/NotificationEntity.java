@@ -52,10 +52,28 @@ public class NotificationEntity implements Serializable {
     @SerializedName("created_at")
     private String createdAt;
 
+    @SerializedName("target_type")
+    private String targetType;
+
+    @SerializedName("target_id")
+    private String targetId;
+
+    @SerializedName("target_url")
+    private String targetUrl;
+
     private long timestamp = System.currentTimeMillis();
 
     public NotificationEntity() {
     }
+
+    public String getTargetType() { return targetType != null ? targetType : type; }
+    public void setTargetType(String targetType) { this.targetType = targetType; }
+
+    public String getTargetId() { return targetId; }
+    public void setTargetId(String targetId) { this.targetId = targetId; }
+
+    public String getTargetUrl() { return targetUrl; }
+    public void setTargetUrl(String targetUrl) { this.targetUrl = targetUrl; }
 
     public long getLocalId() { return id; }
     public void setLocalId(long localId) { this.id = localId; }

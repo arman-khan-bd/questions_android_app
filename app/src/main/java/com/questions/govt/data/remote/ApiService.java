@@ -172,10 +172,22 @@ public interface ApiService {
             @androidx.annotation.Nullable @Part MultipartBody.Part coverPhoto
     );
 
+    @POST(AppConfig.ENDPOINT_PROFILE_UPDATE)
+    Call<ApiResponse<User>> updateProfileJson(@Body Map<String, Object> fields);
+
+    @POST(AppConfig.ENDPOINT_CHANGE_PASSWORD)
+    Call<ApiResponse<Void>> changePassword(@Body Map<String, String> body);
+
+    @POST(AppConfig.ENDPOINT_PRIVACY_UPDATE)
+    Call<ApiResponse<User>> updatePrivacy(@Body Map<String, Object> body);
+
     // 11. Push & In-App Notifications
     @GET(AppConfig.ENDPOINT_NOTIFICATIONS)
     Call<ApiResponse<List<NotificationItem>>> getNotifications();
 
     @POST(AppConfig.ENDPOINT_NOTIFICATION_READ)
     Call<ApiResponse<Void>> markNotificationRead(@Path("id") long notificationId);
+
+    @POST(AppConfig.ENDPOINT_NOTIFICATION_READ_ALL)
+    Call<ApiResponse<Void>> markAllNotificationsRead();
 }

@@ -132,11 +132,20 @@ public final class AppConfig {
     /** Update student bio, academic history, target exam, and avatar */
     public static final String ENDPOINT_PROFILE_UPDATE = API_PREFIX + "profile/update";
 
+    /** Student change password with current password verification */
+    public static final String ENDPOINT_CHANGE_PASSWORD = API_PREFIX + "profile/change-password";
+
+    /** Student privacy settings toggle (hide phone, hide email) */
+    public static final String ENDPOINT_PRIVACY_UPDATE = API_PREFIX + "profile/privacy";
+
     /** In-app notifications with unread counter */
     public static final String ENDPOINT_NOTIFICATIONS = API_PREFIX + "notifications";
 
     /** Mark notification as read */
     public static final String ENDPOINT_NOTIFICATION_READ = API_PREFIX + "notifications/{id}/read";
+
+    /** Mark all notifications as read */
+    public static final String ENDPOINT_NOTIFICATION_READ_ALL = API_PREFIX + "notifications/read-all";
 
     // =====================================================================================
     // 3. NETWORK & HTTP CLIENT SETTINGS

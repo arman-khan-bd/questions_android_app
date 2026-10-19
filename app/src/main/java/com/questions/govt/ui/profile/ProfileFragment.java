@@ -45,6 +45,7 @@ public class ProfileFragment extends Fragment {
     private ImageView imgCoverPhoto;
     private ImageView imgAvatar;
     private MaterialButton btnEditProfile;
+    private MaterialButton btnProfileSettings;
     private MaterialButton btnProfileCreateQuestion;
     private TextView tvProfileName;
     private TextView tvProfileUsername;
@@ -129,6 +130,14 @@ public class ProfileFragment extends Fragment {
         if (btnProfileCreateQuestion != null) {
             btnProfileCreateQuestion.setOnClickListener(v -> {
                 Intent intent = new Intent(requireContext(), CreateQuestionActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        btnProfileSettings = root.findViewById(R.id.btnProfileSettings);
+        if (btnProfileSettings != null) {
+            btnProfileSettings.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), UserSettingsActivity.class);
                 startActivity(intent);
             });
         }

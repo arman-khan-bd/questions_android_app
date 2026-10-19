@@ -85,6 +85,30 @@ public class FeatureFlagManager {
         return currentConfig.isAutoPublishUserQuestions();
     }
 
+    public boolean isMistakeNotebookEnabled() {
+        return currentConfig.isEnableMistakeNotebook();
+    }
+
+    public boolean isSocialShareEnabled() {
+        return currentConfig.isEnableSocialShare();
+    }
+
+    public boolean isExamTimerEnabled() {
+        return currentConfig.isEnableExamTimer();
+    }
+
+    public boolean isNegativeMarkingEnabled() {
+        return currentConfig.isEnableNegativeMarking();
+    }
+
+    public boolean isQuestionReportingEnabled() {
+        return currentConfig.isEnableQuestionReporting();
+    }
+
+    public boolean isBookmarkingEnabled() {
+        return currentConfig.isEnableBookmarking();
+    }
+
     // Multipliers & Presets
     public double getEasyMultiplier() {
         return currentConfig.getEasyMultiplier();

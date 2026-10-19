@@ -99,6 +99,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if (data.containsKey("question_id")) {
                     entity.setQuestionId(Long.parseLong(data.get("question_id")));
                 }
+                if (data.containsKey("target_type")) {
+                    entity.setTargetType(data.get("target_type"));
+                } else if (data.containsKey("type")) {
+                    entity.setTargetType(data.get("type"));
+                }
+                if (data.containsKey("target_id")) {
+                    entity.setTargetId(data.get("target_id"));
+                } else if (data.containsKey("question_id")) {
+                    entity.setTargetId(data.get("question_id"));
+                }
+                if (data.containsKey("target_url")) {
+                    entity.setTargetUrl(data.get("target_url"));
+                }
                 entity.setActorName(data.get("actor_name"));
                 entity.setActorUsername(data.get("actor_username"));
                 entity.setActorAvatarUrl(data.get("actor_avatar_url"));
@@ -114,23 +127,49 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
         }
 
-        showNotification(title, body, notifKey.hashCode());
+        showNotification(title, body, data, notifKey.hashCode());
     }
 
-    private void showNotification(String title, String messageBody, int notificationId) {
-        Intent intent = new Intent(this, NotificationActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    private void showNotification(String title, String messageBody, Map<String, String> data, int notificationId) {
+        Intent intent;
+        String targetType = data != null ? (data.get("target_type") != null ? data.get("target_type") : data.get("type")) : null;
+        String targetId = data != null ? (data.get("target_id") != null ? data.get("target_id") : data.get("question_id")) : null;
+        String targetUrl = data != null ? data.get("target_url") : null;
+
+        if ("exam".equalsIgnoreCase(targetType) && targetId != null) {
+            intent = new Intent(this, com.questions.govt.ui.exam.ExamArenaActivity.class);
+            try {
+                intent.putExtra(com.questions.govt.ui.exam.ExamArenaActivity.EXTRA_EXAM_ID, Long.parseLong(targetId));
+            } catch (Exception e) {
+                intent.putExtra(com.questions.govt.ui.exam.ExamArenaActivity.EXTRA_EXAM_ID, targetId);
+            }
+        } else if (("question".equalsIgnoreCase(targetType) || (data != null && data.containsKey("question_id"))) && targetId != null) {
+            intent = new Intent(this, com.questions.govt.ui.question.QuestionDetailActivity.class);
+            try {
+                intent.putExtra(com.questions.govt.ui.question.QuestionDetailActivity.EXTRA_QUESTION_ID, Long.parseLong(targetId));
+            } catch (Exception ignored) {}
+        } else if ("url".equalsIgnoreCase(targetType) && targetUrl != null) {
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl));
+        } else {
+            intent = new Intent(this, NotificationActivity.class);
+        }
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(
-                this, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE
+                this, notificationId, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, GovtExamApp.NOTIFICATION_CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_app_logo)
+                        .setSmallIcon(R.drawable.ic_notification_small)
+                        .setColor(androidx.core.content.ContextCompat.getColor(this, R.color.primary))
                         .setContentTitle(title)
                         .setContentText(messageBody)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(messageBody))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setDefaults(NotificationCompat.DEFAULT_ALL)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
