@@ -51,6 +51,9 @@ public class NotificationItem implements Serializable {
     @SerializedName("target_url")
     private String targetUrl;
 
+    @SerializedName("created_at")
+    private String createdAt;
+
     public NotificationItem() {
     }
 

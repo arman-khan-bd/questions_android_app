@@ -127,12 +127,4 @@ public class ExamResultActivity extends AppCompatActivity {
         tvResultRank.setText(examResult.getGlobalRank() > 0 ? "#" + examResult.getGlobalRank() : "Unranked");
         tvResultPoints.setText(String.format(Locale.getDefault(), "+%.0f pts", examResult.getPointsEarned()));
     }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
 }

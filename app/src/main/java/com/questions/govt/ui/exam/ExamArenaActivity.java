@@ -522,7 +522,7 @@ public class ExamArenaActivity extends AppCompatActivity {
             com.questions.govt.data.model.ExamQuestionPreview p = new com.questions.govt.data.model.ExamQuestionPreview();
             p.setQuestionId(q.getId());
             p.setQuestionText(q.getTitle());
-            p.setImageUrl(q.getImage());
+            p.setImageUrl(q.getImageUrl());
             p.setOptionA(q.getOptionA());
             p.setOptionB(q.getOptionB());
             p.setOptionC(q.getOptionC());
@@ -533,13 +533,12 @@ public class ExamArenaActivity extends AppCompatActivity {
             boolean isCorr = chosen != null && chosen.equalsIgnoreCase(q.getCorrectOption());
             p.setCorrect(isCorr);
             p.setExplanation(q.getExplanation());
-            p.setExplanationImageUrl(q.getImage());
+            p.setExplanationImageUrl(q.getExplanationImageUrl() != null ? q.getExplanationImageUrl() : q.getImageUrl());
             p.setStarred(q.isStarred());
-            int attempts = q.getTotalAttempts() > 0 ? q.getTotalAttempts() : 1;
-            p.setOptionAPct(Math.round((q.getOptionACount() * 100f) / attempts));
-            p.setOptionBPct(Math.round((q.getOptionBCount() * 100f) / attempts));
-            p.setOptionCPct(Math.round((q.getOptionCCount() * 100f) / attempts));
-            p.setOptionDPct(Math.round((q.getOptionDCount() * 100f) / attempts));
+            p.setOptionAPct(q.getOptionAPct());
+            p.setOptionBPct(q.getOptionBPct());
+            p.setOptionCPct(q.getOptionCPct());
+            p.setOptionDPct(q.getOptionDPct());
             list.add(p);
         }
         return list;
@@ -568,14 +567,6 @@ public class ExamArenaActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         confirmFinishExam();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
     }
 
     // Question Palette Adapter
