@@ -20,6 +20,13 @@ public class ExamResult implements Serializable {
     @SerializedName("exam_id")
     private long examId;
 
+    @SerializedName("attempt_id")
+    private long attemptId;
+
+    @androidx.room.Ignore
+    @SerializedName("answer_sheet")
+    private java.util.ArrayList<ExamQuestionPreview> answerSheet;
+
     @SerializedName("title")
     private String title;
 
@@ -73,6 +80,12 @@ public class ExamResult implements Serializable {
 
     public long getExamId() { return examId > 0 ? examId : id; }
     public void setExamId(long examId) { this.examId = examId; }
+
+    public long getAttemptId() { return attemptId > 0 ? attemptId : id; }
+    public void setAttemptId(long attemptId) { this.attemptId = attemptId; }
+
+    public java.util.ArrayList<ExamQuestionPreview> getAnswerSheet() { return answerSheet; }
+    public void setAnswerSheet(java.util.ArrayList<ExamQuestionPreview> answerSheet) { this.answerSheet = answerSheet; }
 
     public String getTitle() { return title != null ? title : "Exam Result"; }
     public void setTitle(String title) { this.title = title; }

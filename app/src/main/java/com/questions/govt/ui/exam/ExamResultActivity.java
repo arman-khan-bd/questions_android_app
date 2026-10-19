@@ -71,16 +71,26 @@ public class ExamResultActivity extends AppCompatActivity {
             if (examResult != null) {
                 Intent intent = new Intent(ExamResultActivity.this, ExamAnswerPreviewActivity.class);
                 intent.putExtra(ExamAnswerPreviewActivity.EXTRA_EXAM_ID, examResult.getExamId());
+                intent.putExtra(ExamAnswerPreviewActivity.EXTRA_ATTEMPT_ID, examResult.getAttemptId());
+                intent.putExtra(ExamAnswerPreviewActivity.EXTRA_EXAM_RESULT, examResult);
                 startActivity(intent);
             }
         });
 
-        btnBackHome.setOnClickListener(v -> {
-            Intent intent = new Intent(ExamResultActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        });
+        btnBackHome.setOnClickListener(v -> navigateBackHome());
+    }
+
+    @Override
+    public void onBackPressed() {
+        navigateBackHome();
+    }
+
+    private void navigateBackHome() {
+        Intent intent = new Intent(ExamResultActivity.this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_SHOW_SPLASH_LOADING, true);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void bindData() {

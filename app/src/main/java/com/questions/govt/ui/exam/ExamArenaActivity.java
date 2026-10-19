@@ -102,7 +102,6 @@ public class ExamArenaActivity extends AppCompatActivity {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-        ExamSessionManager.getInstance().clear();
     }
 
     private void initViews() {
@@ -418,9 +417,13 @@ public class ExamArenaActivity extends AppCompatActivity {
             float accuracy = total > 0 ? ((float) correct / total) * 100f : 0f;
             boolean isPassed = accuracy >= 50f;
 
+            java.util.ArrayList<com.questions.govt.data.model.ExamQuestionPreview> preview = generatePreviewList();
+            ExamSessionManager.getInstance().setLastPreviewList(preview);
+
             ExamResult result = new ExamResult();
             result.setId(examId > 0 ? examId : System.currentTimeMillis() % 100000);
             result.setExamId(result.getId());
+            result.setAttemptId(result.getId());
             result.setTitle(examTitle);
             result.setTotalQuestions(total);
             result.setAttemptedCount(correct + wrong);
@@ -435,6 +438,7 @@ public class ExamArenaActivity extends AppCompatActivity {
             result.setPassed(isPassed);
             result.setPointsEarned(correct * 5.0);
             result.setCompletedAt(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+            result.setAnswerSheet(preview);
 
             // Cache result in Room database
             com.questions.govt.data.local.AppDatabase.databaseWriteExecutor.execute(() -> {
@@ -448,9 +452,17 @@ public class ExamArenaActivity extends AppCompatActivity {
             return;
         }
 
+        java.util.ArrayList<com.questions.govt.data.model.ExamQuestionPreview> localPreview = generatePreviewList();
+        ExamSessionManager.getInstance().setLastPreviewList(localPreview);
+
         examRepository.submitExam(examId, examTitle, userAnswers, timeSpentSeconds, new ExamRepository.ExamCallback<ExamResult>() {
             @Override
             public void onSuccess(ExamResult result) {
+                if (result.getAnswerSheet() == null || result.getAnswerSheet().isEmpty()) {
+                    result.setAnswerSheet(localPreview);
+                } else {
+                    ExamSessionManager.getInstance().setLastPreviewList(result.getAnswerSheet());
+                }
                 Intent intent = new Intent(ExamArenaActivity.this, ExamResultActivity.class);
                 intent.putExtra(ExamResultActivity.EXTRA_RESULT, result);
                 startActivity(intent);
@@ -459,10 +471,78 @@ public class ExamArenaActivity extends AppCompatActivity {
 
             @Override
             public void onError(String message) {
-                Toast.makeText(ExamArenaActivity.this, "Submission completed.", Toast.LENGTH_SHORT).show();
+                int total = questionList.size();
+                int correct = 0;
+                int wrong = 0;
+                int unattempted = 0;
+                for (Question q : questionList) {
+                    String chosen = userAnswers.get(q.getId());
+                    String answer = q.getCorrectOption();
+                    if (TextUtils.isEmpty(chosen)) {
+                        unattempted++;
+                    } else if (chosen.equalsIgnoreCase(answer)) {
+                        correct++;
+                    } else {
+                        wrong++;
+                    }
+                }
+                double finalScore = Math.max(0, (correct * 1.0) - (wrong * 0.25));
+                float accuracy = total > 0 ? ((float) correct / total) * 100f : 0f;
+
+                ExamResult result = new ExamResult();
+                result.setId(examId > 0 ? examId : System.currentTimeMillis() % 100000);
+                result.setExamId(result.getId());
+                result.setAttemptId(result.getId());
+                result.setTitle(examTitle);
+                result.setTotalQuestions(total);
+                result.setAttemptedCount(correct + wrong);
+                result.setCorrectCount(correct);
+                result.setWrongCount(wrong);
+                result.setSkippedCount(unattempted);
+                result.setRawScore(correct * 1.0);
+                result.setFinalScore(finalScore);
+                result.setAccuracyPercentage(accuracy);
+                result.setTimeSpentSeconds(timeSpentSeconds);
+                result.setPassed(accuracy >= 50f);
+                result.setPointsEarned(correct * 5.0);
+                result.setCompletedAt(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                result.setAnswerSheet(localPreview);
+
+                Intent intent = new Intent(ExamArenaActivity.this, ExamResultActivity.class);
+                intent.putExtra(ExamResultActivity.EXTRA_RESULT, result);
+                startActivity(intent);
                 finish();
             }
         });
+    }
+
+    private java.util.ArrayList<com.questions.govt.data.model.ExamQuestionPreview> generatePreviewList() {
+        java.util.ArrayList<com.questions.govt.data.model.ExamQuestionPreview> list = new java.util.ArrayList<>();
+        for (Question q : questionList) {
+            com.questions.govt.data.model.ExamQuestionPreview p = new com.questions.govt.data.model.ExamQuestionPreview();
+            p.setQuestionId(q.getId());
+            p.setQuestionText(q.getTitle());
+            p.setImageUrl(q.getImage());
+            p.setOptionA(q.getOptionA());
+            p.setOptionB(q.getOptionB());
+            p.setOptionC(q.getOptionC());
+            p.setOptionD(q.getOptionD());
+            p.setCorrectOption(q.getCorrectOption());
+            String chosen = userAnswers.get(q.getId());
+            p.setUserSelectedOption(chosen);
+            boolean isCorr = chosen != null && chosen.equalsIgnoreCase(q.getCorrectOption());
+            p.setCorrect(isCorr);
+            p.setExplanation(q.getExplanation());
+            p.setExplanationImageUrl(q.getImage());
+            p.setStarred(q.isStarred());
+            int attempts = q.getTotalAttempts() > 0 ? q.getTotalAttempts() : 1;
+            p.setOptionAPct(Math.round((q.getOptionACount() * 100f) / attempts));
+            p.setOptionBPct(Math.round((q.getOptionBCount() * 100f) / attempts));
+            p.setOptionCPct(Math.round((q.getOptionCCount() * 100f) / attempts));
+            p.setOptionDPct(Math.round((q.getOptionDCount() * 100f) / attempts));
+            list.add(p);
+        }
+        return list;
     }
 
     private void showQuestionPaletteDialog() {

@@ -244,6 +244,61 @@
             app:labelVisibilityMode="labeled"
             app:menu="@menu/menu_bottom_nav" />
 
+        <!-- Full-screen Splash / Home Loading Overlay with App Logo -->
+        <FrameLayout
+            android:id="@+id/layoutSplashLoadingHome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="30dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <ImageView
+                    android:id="@+id/ivSplashLoadingLogo"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:contentDescription="@string/app_name"
+                    app:srcCompat="@drawable/ic_app_logo" />
+
+                <TextView
+                    android:id="@+id/tvSplashLoadingTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-black"
+                    android:text="@string/app_name"
+                    android:textColor="@color/text_primary"
+                    android:textSize="20sp" />
+
+                <ProgressBar
+                    android:id="@+id/pbSplashLoading"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginTop="20dp"
+                    android:indeterminateTint="@color/primary" />
+
+                <TextView
+                    android:id="@+id/tvSplashLoadingMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Loading home dashboard..."
+                    android:textColor="@color/text_muted"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </FrameLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!-- Left-Side Navigation Drawer (Triggered by Menu Button) -->

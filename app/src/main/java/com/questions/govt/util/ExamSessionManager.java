@@ -18,6 +18,7 @@ public class ExamSessionManager {
     private CustomExamGenerateResponse currentSession;
     private boolean isSelfTestExam = false;
     private final List<Question> selectedQuestionBank = new ArrayList<>();
+    private final List<com.questions.govt.data.model.ExamQuestionPreview> lastPreviewList = new ArrayList<>();
 
     private ExamSessionManager() {
     }
@@ -81,6 +82,21 @@ public class ExamSessionManager {
 
     public synchronized void clearSelectedQuestions() {
         selectedQuestionBank.clear();
+    }
+
+    public synchronized void setLastPreviewList(List<com.questions.govt.data.model.ExamQuestionPreview> previews) {
+        lastPreviewList.clear();
+        if (previews != null) {
+            lastPreviewList.addAll(previews);
+        }
+    }
+
+    public synchronized List<com.questions.govt.data.model.ExamQuestionPreview> getLastPreviewList() {
+        return new ArrayList<>(lastPreviewList);
+    }
+
+    public synchronized void clearLastPreviewList() {
+        lastPreviewList.clear();
     }
 
     public synchronized void clear() {

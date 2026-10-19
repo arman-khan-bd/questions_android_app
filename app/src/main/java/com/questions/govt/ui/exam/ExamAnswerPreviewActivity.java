@@ -38,6 +38,7 @@ import java.util.List;
 public class ExamAnswerPreviewActivity extends AppCompatActivity {
 
     public static final String EXTRA_EXAM_ID = "extra_exam_id";
+    public static final String EXTRA_ATTEMPT_ID = "extra_attempt_id";
     public static final String EXTRA_EXAM_RESULT = "extra_exam_result";
 
     private Toolbar toolbar;
@@ -78,21 +79,48 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
     }
 
     private void loadAnswersPreview() {
+        // 1. Check in-memory preview list first (Instant, zero-network lag)
+        List<ExamQuestionPreview> inMemory = com.questions.govt.util.ExamSessionManager.getInstance().getLastPreviewList();
+        if (inMemory != null && !inMemory.isEmpty()) {
+            previewList.clear();
+            previewList.addAll(inMemory);
+            adapter.notifyDataSetChanged();
+            pbPreviewLoading.setVisibility(View.GONE);
+            return;
+        }
+
+        // 2. Check ExamResult passed via Intent
+        if (getIntent().hasExtra(EXTRA_EXAM_RESULT)) {
+            ExamResult res = (ExamResult) getIntent().getSerializableExtra(EXTRA_EXAM_RESULT);
+            if (res != null && res.getAnswerSheet() != null && !res.getAnswerSheet().isEmpty()) {
+                previewList.clear();
+                previewList.addAll(res.getAnswerSheet());
+                adapter.notifyDataSetChanged();
+                pbPreviewLoading.setVisibility(View.GONE);
+                return;
+            }
+        }
+
+        // 3. Fallback: Network fetch for past exams (e.g. from Profile -> Exams)
         long examId = getIntent().getLongExtra(EXTRA_EXAM_ID, 0);
+        long attemptId = getIntent().getLongExtra(EXTRA_ATTEMPT_ID, 0);
         if (examId == 0 && getIntent().hasExtra(EXTRA_EXAM_RESULT)) {
             ExamResult res = (ExamResult) getIntent().getSerializableExtra(EXTRA_EXAM_RESULT);
             if (res != null) {
                 examId = res.getExamId();
+                if (attemptId == 0) attemptId = res.getAttemptId();
             }
         }
-        if (examId == 0) {
+
+        long targetId = attemptId > 0 ? attemptId : examId;
+        if (targetId == 0) {
             Toast.makeText(this, "Exam not found.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         pbPreviewLoading.setVisibility(View.VISIBLE);
-        examRepository.getExamAnswerPreview(examId, new ExamRepository.ExamCallback<List<ExamQuestionPreview>>() {
+        examRepository.getExamAnswerPreview(targetId, new ExamRepository.ExamCallback<List<ExamQuestionPreview>>() {
             @Override
             public void onSuccess(List<ExamQuestionPreview> data) {
                 pbPreviewLoading.setVisibility(View.GONE);
@@ -108,7 +136,7 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
             @Override
             public void onError(String message) {
                 pbPreviewLoading.setVisibility(View.GONE);
-                Toast.makeText(ExamAnswerPreviewActivity.this, message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ExamAnswerPreviewActivity.this, message != null ? message : "Failed to load answer preview.", Toast.LENGTH_SHORT).show();
             }
         });
     }

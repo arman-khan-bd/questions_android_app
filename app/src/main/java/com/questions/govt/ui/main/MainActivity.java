@@ -82,6 +82,14 @@ import retrofit2.Response;
  */
 public class MainActivity extends AppCompatActivity {
 
+    public static final String EXTRA_SHOW_SPLASH_LOADING = "extra_show_splash_loading";
+
+    // Splash Loading Overlay
+    private FrameLayout layoutSplashLoadingHome;
+    private ImageView ivSplashLoadingLogo;
+    private TextView tvSplashLoadingTitle;
+    private TextView tvSplashLoadingMessage;
+
     // Navigation Drawer
     private DrawerLayout drawerLayout;
 
@@ -153,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
         registerAccountStatusReceiver();
         applyDynamicBranding();
         setupFirebaseCloudMessaging();
+        checkAndShowSplashLoading(getIntent());
 
         // Load default HomeFragment
         if (savedInstanceState == null) {
@@ -194,6 +203,11 @@ public class MainActivity extends AppCompatActivity {
         switchDarkMode = findViewById(R.id.switchDarkMode);
         layoutDrawerLogout = findViewById(R.id.layoutDrawerLogout);
         tvDrawerVersion = findViewById(R.id.tvDrawerVersion);
+
+        layoutSplashLoadingHome = findViewById(R.id.layoutSplashLoadingHome);
+        ivSplashLoadingLogo = findViewById(R.id.ivSplashLoadingLogo);
+        tvSplashLoadingTitle = findViewById(R.id.tvSplashLoadingTitle);
+        tvSplashLoadingMessage = findViewById(R.id.tvSplashLoadingMessage);
 
         String versionText = getString(R.string.app_version_format, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE);
         tvDrawerVersion.setText(versionText);
@@ -666,6 +680,69 @@ public class MainActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             android.util.Log.w("MainActivity", "Error retrieving FCM token", e);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        checkAndShowSplashLoading(intent);
+    }
+
+    private void checkAndShowSplashLoading(Intent intent) {
+        if (intent != null && intent.getBooleanExtra(EXTRA_SHOW_SPLASH_LOADING, false)) {
+            if (layoutSplashLoadingHome != null) {
+                layoutSplashLoadingHome.setVisibility(View.VISIBLE);
+                layoutSplashLoadingHome.setAlpha(1.0f);
+
+                FeatureFlagManager flagManager = FeatureFlagManager.getInstance();
+                String appName = flagManager.getAppName();
+                if (tvSplashLoadingTitle != null && !TextUtils.isEmpty(appName)) {
+                    tvSplashLoadingTitle.setText(appName);
+                }
+
+                String logoUrl = flagManager.getHeaderLogoUrl();
+                if (TextUtils.isEmpty(logoUrl)) logoUrl = flagManager.getLogoUrl();
+                if (!TextUtils.isEmpty(logoUrl) && ivSplashLoadingLogo != null) {
+                    Glide.with(this)
+                            .load(logoUrl)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .placeholder(R.drawable.ic_app_logo)
+                            .error(R.drawable.ic_app_logo)
+                            .into(ivSplashLoadingLogo);
+                }
+
+                // Force refresh Home feed data
+                taxonomyRepository.fetchHomeFeed(true, new TaxonomyRepository.HomeFeedCallback() {
+                    @Override
+                    public void onSuccess(com.questions.govt.data.remote.response.HomeFeedResponse response) {
+                        dismissSplashLoadingOverlay();
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        dismissSplashLoadingOverlay();
+                    }
+                });
+
+                new Handler(Looper.getMainLooper()).postDelayed(this::dismissSplashLoadingOverlay, 1600);
+            }
+        }
+    }
+
+    private void dismissSplashLoadingOverlay() {
+        if (layoutSplashLoadingHome != null && layoutSplashLoadingHome.getVisibility() == View.VISIBLE) {
+            layoutSplashLoadingHome.animate()
+                    .alpha(0f)
+                    .setDuration(450)
+                    .withEndAction(() -> {
+                        if (layoutSplashLoadingHome != null) {
+                            layoutSplashLoadingHome.setVisibility(View.GONE);
+                            layoutSplashLoadingHome.setAlpha(1.0f);
+                        }
+                    })
+                    .start();
         }
     }
 
