@@ -22,6 +22,7 @@ import com.questions.govt.data.remote.request.LoginRequest;
 import com.questions.govt.data.remote.response.ApiResponse;
 import com.questions.govt.data.remote.response.AuthData;
 import com.questions.govt.ui.main.MainActivity;
+import com.questions.govt.util.AccountStatusDialogHelper;
 import com.questions.govt.util.FeatureFlagManager;
 import com.questions.govt.util.NetworkErrorParser;
 
@@ -34,7 +35,7 @@ import retrofit2.Response;
 
 /**
  * LoginActivity for Sanctum Bearer token authentication.
- * Handles instant sign-in and device FCM token synchronization.
+ * Handles instant sign-in, account suspension dialogs, and device FCM token synchronization.
  */
 public class LoginActivity extends AppCompatActivity {
 
@@ -53,6 +54,22 @@ public class LoginActivity extends AppCompatActivity {
 
         initViews();
         applyDynamicBrandingAndFlags();
+        checkSuspensionExtra(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        checkSuspensionExtra(intent);
+    }
+
+    private void checkSuspensionExtra(Intent intent) {
+        if (intent != null && "suspended".equalsIgnoreCase(intent.getStringExtra("extra_status"))) {
+            String reason = intent.getStringExtra("extra_reason");
+            String expires = intent.getStringExtra("extra_expires");
+            AccountStatusDialogHelper.showAccountSuspended(this, reason, expires);
+        }
     }
 
     private void initViews() {
@@ -135,6 +152,42 @@ public class LoginActivity extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
+                } else if (response.code() == 403) {
+                    String reason = "Administrative action / community guidelines.";
+                    String date = "Indefinitely";
+                    boolean isSuspended = false;
+
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorJson = response.errorBody().string();
+                            com.google.gson.JsonObject obj = com.google.gson.JsonParser.parseString(errorJson).getAsJsonObject();
+
+                            if ((obj.has("is_suspended") && obj.get("is_suspended").getAsBoolean())
+                                    || (obj.has("account_status") && "suspended".equalsIgnoreCase(obj.get("account_status").getAsString()))
+                                    || (obj.has("message") && obj.get("message").getAsString().toLowerCase().contains("suspended"))) {
+                                isSuspended = true;
+                            }
+
+                            if (obj.has("reason") && !obj.get("reason").isJsonNull()) {
+                                reason = obj.get("reason").getAsString();
+                            } else if (obj.has("suspension_reason") && !obj.get("suspension_reason").isJsonNull()) {
+                                reason = obj.get("suspension_reason").getAsString();
+                            }
+
+                            if (obj.has("suspended_until") && !obj.get("suspended_until").isJsonNull()) {
+                                date = obj.get("suspended_until").getAsString();
+                            } else if (obj.has("suspension_expires_at") && !obj.get("suspension_expires_at").isJsonNull()) {
+                                date = obj.get("suspension_expires_at").getAsString();
+                            }
+                        }
+                    } catch (Exception ignored) {}
+
+                    if (isSuspended) {
+                        AccountStatusDialogHelper.showAccountSuspended(LoginActivity.this, reason, date);
+                    } else {
+                        String errorMsg = NetworkErrorParser.parseError(response, "Account access restricted. Please contact support.");
+                        AccountStatusDialogHelper.showAccountDisabled(LoginActivity.this, errorMsg);
+                    }
                 } else {
                     String errorMsg = NetworkErrorParser.parseError(response, "Invalid credentials. Please verify your phone/email and password.");
                     Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_LONG).show();

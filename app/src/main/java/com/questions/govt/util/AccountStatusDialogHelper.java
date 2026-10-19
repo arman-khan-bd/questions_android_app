@@ -13,6 +13,7 @@ import com.questions.govt.ui.auth.LoginActivity;
 
 /**
  * Handles presentation of non-dismissible Account Suspended / Disabled alerts.
+ * Displays explicit reason and date, and auto-navigates to LoginActivity.
  */
 public class AccountStatusDialogHelper {
 
@@ -21,29 +22,37 @@ public class AccountStatusDialogHelper {
     public static synchronized void showAccountSuspended(Activity activity, String reason, String expiresAt) {
         if (activity == null || activity.isFinishing()) return;
         if (activeDialog != null && activeDialog.isShowing()) {
-            activeDialog.dismiss();
+            try {
+                activeDialog.dismiss();
+            } catch (Exception ignored) {}
         }
+
+        // Auto logout: Clear active session immediately
+        SessionManager.getInstance().clearSession();
+
+        String displayReason = !TextUtils.isEmpty(reason) ? reason : "Administrative action / community guidelines.";
+        String displayDate = !TextUtils.isEmpty(expiresAt) ? expiresAt : "Indefinitely";
 
         StringBuilder message = new StringBuilder();
-        message.append(activity.getString(R.string.account_suspended_msg)).append("\n\n");
-        if (!TextUtils.isEmpty(reason)) {
-            message.append(activity.getString(R.string.suspension_reason, reason)).append("\n");
-        }
-        if (!TextUtils.isEmpty(expiresAt)) {
-            message.append(activity.getString(R.string.suspension_expires, expiresAt));
-        }
+        message.append("You are suspended for: ").append(displayReason).append("\n\n");
+        message.append("Date: ").append(displayDate);
 
         activeDialog = new MaterialAlertDialogBuilder(activity)
-                .setTitle(R.string.account_suspended_title)
+                .setTitle("Account Suspended")
                 .setMessage(message.toString())
                 .setIcon(R.drawable.ic_warning)
                 .setCancelable(false)
-                .setPositiveButton("Logout", (dialog, which) -> {
-                    SessionManager.getInstance().clearSession();
-                    Intent intent = new Intent(activity, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    activity.startActivity(intent);
-                    activity.finish();
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    if (!(activity instanceof LoginActivity)) {
+                        Intent intent = new Intent(activity, LoginActivity.class);
+                        intent.putExtra("extra_status", "suspended");
+                        intent.putExtra("extra_reason", displayReason);
+                        intent.putExtra("extra_expires", displayDate);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        activity.startActivity(intent);
+                        activity.finish();
+                    }
                 })
                 .show();
     }
@@ -51,21 +60,28 @@ public class AccountStatusDialogHelper {
     public static synchronized void showAccountDisabled(Activity activity, String reason) {
         if (activity == null || activity.isFinishing()) return;
         if (activeDialog != null && activeDialog.isShowing()) {
-            activeDialog.dismiss();
+            try {
+                activeDialog.dismiss();
+            } catch (Exception ignored) {}
         }
 
         SessionManager.getInstance().clearSession();
 
+        String displayReason = !TextUtils.isEmpty(reason) ? reason : "Account deactivated by administrator.";
+
         activeDialog = new MaterialAlertDialogBuilder(activity)
-                .setTitle(R.string.account_disabled_title)
-                .setMessage(activity.getString(R.string.account_disabled_msg) + (TextUtils.isEmpty(reason) ? "" : "\n\nReason: " + reason))
+                .setTitle("Account Deactivated")
+                .setMessage("Your account has been deactivated.\n\nReason: " + displayReason)
                 .setIcon(R.drawable.ic_warning)
                 .setCancelable(false)
                 .setPositiveButton("Understood", (dialog, which) -> {
-                    Intent intent = new Intent(activity, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    activity.startActivity(intent);
-                    activity.finish();
+                    dialog.dismiss();
+                    if (!(activity instanceof LoginActivity)) {
+                        Intent intent = new Intent(activity, LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        activity.startActivity(intent);
+                        activity.finish();
+                    }
                 })
                 .show();
     }

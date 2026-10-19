@@ -24,8 +24,8 @@ import okio.Buffer;
 import okio.BufferedSource;
 
 /**
- * Intercepts HTTP 403 / status responses from Laravel User Manager to handle
- * account suspension and permanent disabling dynamically.
+ * Intercepts HTTP 403 / 401 status responses from Laravel User Manager to handle
+ * account suspension, auto logout, and permanent disabling dynamically.
  */
 public class AccountStatusInterceptor implements Interceptor {
 
@@ -61,20 +61,45 @@ public class AccountStatusInterceptor implements Interceptor {
 
                     String bodyString = buffer.clone().readString(charset);
                     JsonObject jsonObject = JsonParser.parseString(bodyString).getAsJsonObject();
-                    if (jsonObject.has("account_status")) {
-                        String status = jsonObject.get("account_status").getAsString();
-                        String reason = jsonObject.has("suspension_reason") && !jsonObject.get("suspension_reason").isJsonNull()
-                                ? jsonObject.get("suspension_reason").getAsString()
-                                : "Policy violation or administrative action.";
-                        String expires = jsonObject.has("suspension_expires_at") && !jsonObject.get("suspension_expires_at").isJsonNull()
-                                ? jsonObject.get("suspension_expires_at").getAsString()
-                                : null;
+
+                    boolean isSuspended = (jsonObject.has("account_status") && "suspended".equalsIgnoreCase(jsonObject.get("account_status").getAsString()))
+                            || (jsonObject.has("is_suspended") && jsonObject.get("is_suspended").getAsBoolean());
+                    boolean isDisabled = (jsonObject.has("account_status") && "disabled".equalsIgnoreCase(jsonObject.get("account_status").getAsString()));
+
+                    if (isSuspended || isDisabled) {
+                        String status = isSuspended ? "suspended" : "disabled";
+                        String reason = "Administrative action / community guidelines.";
+                        if (jsonObject.has("suspension_reason") && !jsonObject.get("suspension_reason").isJsonNull()) {
+                            reason = jsonObject.get("suspension_reason").getAsString();
+                        } else if (jsonObject.has("reason") && !jsonObject.get("reason").isJsonNull()) {
+                            reason = jsonObject.get("reason").getAsString();
+                        } else if (jsonObject.has("message") && !jsonObject.get("message").isJsonNull()) {
+                            reason = jsonObject.get("message").getAsString();
+                        }
+
+                        String expires = null;
+                        if (jsonObject.has("suspended_until") && !jsonObject.get("suspended_until").isJsonNull()) {
+                            expires = jsonObject.get("suspended_until").getAsString();
+                        } else if (jsonObject.has("suspension_expires_at") && !jsonObject.get("suspension_expires_at").isJsonNull()) {
+                            expires = jsonObject.get("suspension_expires_at").getAsString();
+                        }
 
                         handleAccountStatus(status, reason, expires);
                     }
                 } catch (Exception e) {
                     Log.d(TAG, "Not a custom account status JSON response: " + e.getMessage());
                 }
+            }
+        } else if (response.code() == 401) {
+            // Token was revoked or deleted (e.g. user suspended by admin)
+            // Immediately clear session so app auto-logs out on next reload / request
+            try {
+                if (SessionManager.getInstance().isLoggedIn()) {
+                    SessionManager.getInstance().clearSession();
+                    handleAccountStatus("disabled", "Session expired or revoked by administrator.", null);
+                }
+            } catch (Exception e) {
+                Log.d(TAG, "401 auto logout handler error: " + e.getMessage());
             }
         }
 
@@ -85,22 +110,16 @@ public class AccountStatusInterceptor implements Interceptor {
         Context context = GovtExamApp.getInstance();
         if (context == null) return;
 
-        if ("disabled".equalsIgnoreCase(status)) {
-            // Clear local token and session
-            SessionManager.getInstance().clearSession();
+        // Auto logout: immediately clear session on both suspend and disable
+        SessionManager.getInstance().clearSession();
 
-            Intent intent = new Intent(ACTION_ACCOUNT_STATUS);
-            intent.putExtra(EXTRA_STATUS, "disabled");
-            intent.putExtra(EXTRA_REASON, reason);
-            intent.setPackage(context.getPackageName());
-            context.sendBroadcast(intent);
-        } else if ("suspended".equalsIgnoreCase(status)) {
-            Intent intent = new Intent(ACTION_ACCOUNT_STATUS);
-            intent.putExtra(EXTRA_STATUS, "suspended");
-            intent.putExtra(EXTRA_REASON, reason);
+        Intent intent = new Intent(ACTION_ACCOUNT_STATUS);
+        intent.putExtra(EXTRA_STATUS, status);
+        intent.putExtra(EXTRA_REASON, reason);
+        if (expires != null) {
             intent.putExtra(EXTRA_EXPIRES, expires);
-            intent.setPackage(context.getPackageName());
-            context.sendBroadcast(intent);
         }
+        intent.setPackage(context.getPackageName());
+        context.sendBroadcast(intent);
     }
 }
