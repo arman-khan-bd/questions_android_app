@@ -132,11 +132,35 @@ public class User implements Serializable {
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
-    public String getAvatarUrl() { return avatarUrl; }
+    public String getAvatarUrl() {
+        return resolveMediaUrl(avatarUrl);
+    }
     public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 
-    public String getCoverPhotoUrl() { return coverPhotoUrl; }
+    public String getCoverPhotoUrl() {
+        return resolveMediaUrl(coverPhotoUrl);
+    }
     public void setCoverPhotoUrl(String coverPhotoUrl) { this.coverPhotoUrl = coverPhotoUrl; }
+
+    private String resolveMediaUrl(String url) {
+        if (url == null || url.trim().isEmpty()) {
+            return null;
+        }
+        url = url.trim();
+        if (url.startsWith("http://localhost:") || url.startsWith("http://localhost/") || url.startsWith("https://localhost:") || url.startsWith("https://localhost/")) {
+            url = url.replaceFirst("^https?://localhost(:[0-9]+)?/?", com.questions.govt.AppConfig.SERVER_URL);
+        } else if (url.startsWith("http://127.0.0.1:") || url.startsWith("http://127.0.0.1/") || url.startsWith("https://127.0.0.1:") || url.startsWith("https://127.0.0.1/")) {
+            url = url.replaceFirst("^https?://127\\.0\\.0\\.1(:[0-9]+)?/?", com.questions.govt.AppConfig.SERVER_URL);
+        } else if (url.startsWith("http://10.0.2.2:") || url.startsWith("http://10.0.2.2/") || url.startsWith("https://10.0.2.2:") || url.startsWith("https://10.0.2.2/")) {
+            url = url.replaceFirst("^https?://10\\.0\\.2\\.2(:[0-9]+)?/?", com.questions.govt.AppConfig.SERVER_URL);
+        } else if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            if (url.startsWith("/")) {
+                url = url.substring(1);
+            }
+            url = com.questions.govt.AppConfig.SERVER_URL + url;
+        }
+        return url;
+    }
 
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }

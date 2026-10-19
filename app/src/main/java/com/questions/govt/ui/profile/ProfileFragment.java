@@ -46,7 +46,6 @@ public class ProfileFragment extends Fragment {
     private ImageView imgAvatar;
     private MaterialButton btnEditProfile;
     private MaterialButton btnProfileSettings;
-    private MaterialButton btnProfileCreateQuestion;
     private TextView tvProfileName;
     private TextView tvProfileUsername;
     private TextView tvProfileBio;
@@ -124,14 +123,6 @@ public class ProfileFragment extends Fragment {
         if (swipeRefreshProfile != null) {
             swipeRefreshProfile.setColorSchemeResources(R.color.primary, R.color.secondary);
             swipeRefreshProfile.setOnRefreshListener(this::loadProfileData);
-        }
-
-        btnProfileCreateQuestion = root.findViewById(R.id.btnProfileCreateQuestion);
-        if (btnProfileCreateQuestion != null) {
-            btnProfileCreateQuestion.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), CreateQuestionActivity.class);
-                startActivity(intent);
-            });
         }
 
         btnProfileSettings = root.findViewById(R.id.btnProfileSettings);

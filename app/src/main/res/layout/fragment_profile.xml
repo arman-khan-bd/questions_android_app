@@ -75,79 +75,58 @@
                         android:src="@drawable/ic_app_logo" />
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Web3 Profile Action Buttons (Compact Small Buttons) -->
+                <!-- Web3 Profile Action Buttons -->
                 <LinearLayout
                     android:id="@+id/layoutProfileActions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layoutCoverContainer">
 
-                    <!-- Create Question Action Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnProfileCreateQuestion"
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="6dp"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:text="@string/create_question"
-                        android:textAllCaps="false"
-                        android:textColor="@color/text_white"
-                        android:textSize="11sp"
-                        app:backgroundTint="@color/primary"
-                        app:cornerRadius="16dp"
-                        app:icon="@drawable/ic_lucide_plus"
-                        app:iconPadding="4dp"
-                        app:iconSize="13dp"
-                        app:iconTint="@color/text_white" />
-
                     <!-- Edit Profile Action Button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnEditProfile"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="32dp"
+                        android:layout_height="36dp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
                         android:text="@string/edit_profile"
                         android:textAllCaps="false"
-                        android:textColor="@color/primary"
-                        android:textSize="11sp"
-                        app:cornerRadius="16dp"
+                        android:textColor="@color/text_white"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/primary"
+                        app:cornerRadius="18dp"
+                        app:elevation="2dp"
                         app:icon="@drawable/ic_lucide_edit"
-                        app:iconPadding="4dp"
-                        app:iconSize="13dp"
-                        app:iconTint="@color/primary"
-                        app:strokeColor="@color/border"
-                        app:strokeWidth="1dp" />
+                        app:iconPadding="6dp"
+                        app:iconSize="14dp"
+                        app:iconTint="@color/text_white" />
 
                     <!-- Settings Action Button -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnProfileSettings"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="36dp"
-                        android:layout_height="32dp"
-                        android:layout_marginStart="6dp"
+                        android:layout_width="38dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="8dp"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         android:padding="0dp"
-                        app:cornerRadius="16dp"
+                        app:cornerRadius="18dp"
                         app:icon="@drawable/ic_settings"
                         app:iconGravity="textStart"
                         app:iconPadding="0dp"
-                        app:iconSize="15dp"
+                        app:iconSize="16dp"
                         app:iconTint="@color/primary"
-                        app:strokeColor="@color/border"
-                        app:strokeWidth="1dp" />
+                        app:strokeColor="@color/primary"
+                        app:strokeWidth="1.2dp" />
                 </LinearLayout>
 
                 <!-- User Name -->

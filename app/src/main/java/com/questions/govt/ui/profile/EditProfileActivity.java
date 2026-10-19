@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,17 +34,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
- * Edit Student Profile Activity:
- * - Update personal bio, target exam, institution, phone
- * - Pick and preview new Avatar and 16:9 Cover Photo
- * - High-speed JSON fallback when no image attachments are selected
- * - Safe image downsampling and JPEG compression to eliminate payload errors
+ * Modern Student Profile Editor:
+ * - Update personal details (full name, phone, bio)
+ * - Academic aspirations (institution, target exam, passing year)
+ * - Interactive Avatar and 16:9 Cover Photo pickers with safe background downscaling
+ * - Ultra-fast, fail-safe JSON payload delivery with WebP encoding on backend
+ * - Real-time Session & Room database synchronization
  */
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -77,6 +77,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private Uri selectedAvatarUri = null;
     private Uri selectedCoverUri = null;
+
+    private final ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
     private final ActivityResultLauncher<String> avatarPickerLauncher =
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -155,7 +157,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if (user == null) return;
 
         if (user.getName() != null) etName.setText(user.getName());
-        if (user.getPhone() != null) etPhone.setText(user.getPhone());
+        if (user.getPhone() != null) etPhone.setText(user.getPhone().trim());
         if (user.getBio() != null) etBio.setText(user.getBio());
         if (user.getUniversity() != null) etInstitution.setText(user.getUniversity());
         if (user.getTargetExam() != null) etDegree.setText(user.getTargetExam());
@@ -164,22 +166,25 @@ public class EditProfileActivity extends AppCompatActivity {
         if (switchEditPhonePrivate != null) switchEditPhonePrivate.setChecked(user.isPhonePrivate());
         if (switchEditEmailPrivate != null) switchEditEmailPrivate.setChecked(user.isEmailPrivate());
 
-        // Load existing images
+        // Load existing avatar
         if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
             Glide.with(this)
                     .load(user.getAvatarUrl())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .circleCrop()
                     .placeholder(R.drawable.ic_app_logo)
+                    .error(R.drawable.ic_app_logo)
                     .into(imgEditAvatar);
         }
 
+        // Load existing cover photo
         if (user.getCoverPhotoUrl() != null && !user.getCoverPhotoUrl().isEmpty()) {
             Glide.with(this)
                     .load(user.getCoverPhotoUrl())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .centerCrop()
                     .placeholder(R.drawable.bg_splash_gradient)
+                    .error(R.drawable.bg_splash_gradient)
                     .into(imgEditCover);
         }
     }
@@ -203,31 +208,14 @@ public class EditProfileActivity extends AppCompatActivity {
 
         setLoading(true);
 
-        MultipartBody.Part avatarPart = prepareFilePart("avatar", selectedAvatarUri);
-        MultipartBody.Part coverPart = prepareFilePart("cover_photo", selectedCoverUri);
-
-        UserRepository.UserUpdateCallback callback = new UserRepository.UserUpdateCallback() {
-            @Override
-            public void onSuccess(User updatedUser) {
-                setLoading(false);
-                Toast.makeText(EditProfileActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
-                finish();
-            }
-
-            @Override
-            public void onError(String message) {
-                setLoading(false);
-                Toast.makeText(EditProfileActivity.this, message != null ? message : "Profile update failed.", Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        if (avatarPart == null && coverPart == null) {
-            // Pure text update: Send clean JSON payload to avoid multipart boundaries and transport errors
+        // Process image encoding in background executor to ensure butter-smooth UI
+        backgroundExecutor.execute(() -> {
             Map<String, Object> jsonFields = new HashMap<>();
             jsonFields.put("name", name);
             if (!TextUtils.isEmpty(phone)) {
                 jsonFields.put("phone", phone);
+            } else {
+                jsonFields.put("phone", "");
             }
             jsonFields.put("bio", bio);
             jsonFields.put("university", institution);
@@ -237,37 +225,48 @@ public class EditProfileActivity extends AppCompatActivity {
             jsonFields.put("is_phone_private", isPhonePrivate);
             jsonFields.put("is_email_private", isEmailPrivate);
 
-            UserRepository.getInstance(this).updateProfileJson(jsonFields, callback);
-        } else {
-            // Multipart payload with compressed image attachments
-            Map<String, RequestBody> fields = new HashMap<>();
-            fields.put("name", createPartFromString(name));
-            fields.put("phone", createPartFromString(phone));
-            fields.put("bio", createPartFromString(bio));
-            fields.put("university", createPartFromString(institution));
-            fields.put("target_exam", createPartFromString(degree));
-            fields.put("education_level", createPartFromString(passingYear));
-            fields.put("graduation_year", createPartFromString(passingYear));
-            fields.put("is_phone_private", createPartFromString(String.valueOf(isPhonePrivate)));
-            fields.put("is_email_private", createPartFromString(String.valueOf(isEmailPrivate)));
+            if (selectedAvatarUri != null) {
+                String avatarBase64 = convertUriToBase64DataUri(selectedAvatarUri, 600, 80);
+                if (avatarBase64 != null) {
+                    jsonFields.put("avatar_base64", avatarBase64);
+                }
+            }
 
-            UserRepository.getInstance(this).updateProfile(fields, avatarPart, coverPart, callback);
-        }
+            if (selectedCoverUri != null) {
+                String coverBase64 = convertUriToBase64DataUri(selectedCoverUri, 1200, 80);
+                if (coverBase64 != null) {
+                    jsonFields.put("cover_photo_base64", coverBase64);
+                }
+            }
+
+            runOnUiThread(() -> {
+                UserRepository.getInstance(EditProfileActivity.this).updateProfileJson(jsonFields, new UserRepository.UserUpdateCallback() {
+                    @Override
+                    public void onSuccess(User updatedUser) {
+                        setLoading(false);
+                        Toast.makeText(EditProfileActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        setLoading(false);
+                        Toast.makeText(EditProfileActivity.this, message != null ? message : "Profile update failed.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        });
     }
 
-    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
+    private String convertUriToBase64DataUri(Uri fileUri, int maxDimension, int quality) {
         if (fileUri == null) return null;
-
-        try {
-            InputStream inputStream = getContentResolver().openInputStream(fileUri);
+        try (InputStream inputStream = getContentResolver().openInputStream(fileUri)) {
             if (inputStream == null) return null;
 
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            inputStream.close();
             if (bitmap == null) return null;
 
-            // Safe downsample if dimensions exceed 1200px
-            int maxDimension = 1200;
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
             if (width > maxDimension || height > maxDimension) {
@@ -278,23 +277,25 @@ public class EditProfileActivity extends AppCompatActivity {
             }
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 82, outputStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
             byte[] bytes = outputStream.toByteArray();
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
-            return MultipartBody.Part.createFormData(partName, partName + ".jpg", requestFile);
+            String base64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
+            return "data:image/jpeg;base64," + base64;
         } catch (Exception e) {
-            Log.e(TAG, "prepareFilePart error: " + e.getMessage());
+            Log.e(TAG, "convertUriToBase64DataUri error: " + e.getMessage(), e);
+            return null;
         }
-        return null;
-    }
-
-    private RequestBody createPartFromString(String value) {
-        return RequestBody.create(MediaType.parse("text/plain"), value != null ? value : "");
     }
 
     private void setLoading(boolean isLoading) {
         btnSaveProfile.setEnabled(!isLoading);
         btnSaveProfile.setText(isLoading ? "" : getString(R.string.save_profile));
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        backgroundExecutor.shutdown();
     }
 }
