@@ -488,44 +488,68 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/btnUpvote"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Upvote"
-                    android:padding="4dp"
-                    app:srcCompat="@drawable/ic_thumb_up"
-                    app:tint="@color/text_muted" />
-
-                <TextView
-                    android:id="@+id/tvUpvotes"
+                <LinearLayout
+                    android:id="@+id/layoutBtnUpvote"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    tools:text="48" />
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_dialog_rounded"
+                    android:backgroundTint="@color/surface_variant"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="10dp">
 
-                <ImageView
-                    android:id="@+id/btnDownvote"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    <ImageView
+                        android:id="@+id/btnUpvote"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="Upvote"
+                        app:srcCompat="@drawable/ic_thumb_up"
+                        app:tint="@color/text_muted" />
+
+                    <TextView
+                        android:id="@+id/tvUpvotes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        tools:text="48" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layoutBtnDownvote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
                     android:layout_marginStart="8dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Downvote"
-                    android:padding="4dp"
-                    app:srcCompat="@drawable/ic_thumb_down"
-                    app:tint="@color/text_muted" />
+                    android:background="@drawable/bg_dialog_rounded"
+                    android:backgroundTint="@color/surface_variant"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="10dp">
 
-                <TextView
-                    android:id="@+id/tvDownvotes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    tools:text="2" />
+                    <ImageView
+                        android:id="@+id/btnDownvote"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="Downvote"
+                        app:srcCompat="@drawable/ic_thumb_down"
+                        app:tint="@color/text_muted" />
+
+                    <TextView
+                        android:id="@+id/tvDownvotes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        tools:text="2" />
+                </LinearLayout>
             </LinearLayout>
 
             <View

@@ -105,6 +105,21 @@ public class Comment implements Serializable {
     public Long getParentId() { return parentId; }
     public void setParentId(Long parentId) { this.parentId = parentId; }
 
-    public List<Comment> getReplies() { return replies != null ? replies : new ArrayList<>(); }
-    public void setReplies(List<Comment> replies) { this.replies = replies; }
+    public List<Comment> getReplies() {
+        if (replies == null) {
+            replies = new ArrayList<>();
+        }
+        return replies;
+    }
+
+    public void setReplies(List<Comment> replies) {
+        this.replies = replies != null ? replies : new ArrayList<>();
+    }
+
+    public void addReply(Comment reply) {
+        if (replies == null) {
+            replies = new ArrayList<>();
+        }
+        replies.add(reply);
+    }
 }

@@ -17,10 +17,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.questions.govt.R;
 import com.questions.govt.data.model.Comment;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- * Reusable Nested Comment Adapter supporting top-level comments and multi-level replies.
+ * Reusable Nested Comment Adapter supporting top-level comments and multi-level replies
+ * with a 10-reply display limit and "See more replies" expand/collapse toggle.
  */
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
 
@@ -30,10 +33,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     private final List<Comment> items;
     private final OnReplyClickListener listener;
+    private final Set<Long> expandedCommentIds;
 
     public CommentAdapter(List<Comment> items, OnReplyClickListener listener) {
+        this(items, listener, new HashSet<>());
+    }
+
+    public CommentAdapter(List<Comment> items, OnReplyClickListener listener, Set<Long> expandedCommentIds) {
         this.items = items;
         this.listener = listener;
+        this.expandedCommentIds = expandedCommentIds != null ? expandedCommentIds : new HashSet<>();
+    }
+
+    public void expandCommentReplies(long commentId) {
+        expandedCommentIds.add(commentId);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -90,17 +104,59 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             }
         });
 
-        // Nested replies (Level 2+) with thread layout
-        if (comment.getReplies() != null && !comment.getReplies().isEmpty()) {
+        // Nested replies (Level 2+) with 10-reply limit and "See more replies" expansion
+        List<Comment> replies = comment.getReplies();
+        if (replies != null && !replies.isEmpty()) {
             if (holder.layoutRepliesContainer != null) {
                 holder.layoutRepliesContainer.setVisibility(View.VISIBLE);
             }
             holder.rvReplies.setVisibility(View.VISIBLE);
+
+            int totalReplies = replies.size();
+            boolean isExpanded = expandedCommentIds.contains(comment.getId());
+            List<Comment> displayReplies;
+
+            if (totalReplies > 10) {
+                if (holder.btnSeeMoreReplies != null) {
+                    holder.btnSeeMoreReplies.setVisibility(View.VISIBLE);
+                    if (isExpanded) {
+                        displayReplies = replies;
+                        holder.btnSeeMoreReplies.setText("▲ Show fewer replies");
+                    } else {
+                        displayReplies = replies.subList(0, 10);
+                        int remaining = totalReplies - 10;
+                        holder.btnSeeMoreReplies.setText("── View " + remaining + " more " + (remaining == 1 ? "reply" : "replies"));
+                    }
+
+                    holder.btnSeeMoreReplies.setOnClickListener(v -> {
+                        int pos = holder.getBindingAdapterPosition();
+                        if (pos != RecyclerView.NO_POSITION) {
+                            if (expandedCommentIds.contains(comment.getId())) {
+                                expandedCommentIds.remove(comment.getId());
+                            } else {
+                                expandedCommentIds.add(comment.getId());
+                            }
+                            notifyItemChanged(pos);
+                        }
+                    });
+                } else {
+                    displayReplies = replies;
+                }
+            } else {
+                displayReplies = replies;
+                if (holder.btnSeeMoreReplies != null) {
+                    holder.btnSeeMoreReplies.setVisibility(View.GONE);
+                }
+            }
+
             holder.rvReplies.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
-            holder.rvReplies.setAdapter(new CommentAdapter(comment.getReplies(), listener));
+            holder.rvReplies.setAdapter(new CommentAdapter(displayReplies, listener, expandedCommentIds));
         } else {
             if (holder.layoutRepliesContainer != null) {
                 holder.layoutRepliesContainer.setVisibility(View.GONE);
+            }
+            if (holder.btnSeeMoreReplies != null) {
+                holder.btnSeeMoreReplies.setVisibility(View.GONE);
             }
             holder.rvReplies.setVisibility(View.GONE);
         }
@@ -121,6 +177,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         TextView btnReply;
         LinearLayout layoutRepliesContainer;
         RecyclerView rvReplies;
+        TextView btnSeeMoreReplies;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -133,6 +190,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             btnReply = itemView.findViewById(R.id.btnReply);
             layoutRepliesContainer = itemView.findViewById(R.id.layoutRepliesContainer);
             rvReplies = itemView.findViewById(R.id.rvReplies);
+            btnSeeMoreReplies = itemView.findViewById(R.id.btnSeeMoreReplies);
         }
     }
 }

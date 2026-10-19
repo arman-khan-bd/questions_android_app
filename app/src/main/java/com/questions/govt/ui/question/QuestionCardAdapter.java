@@ -253,7 +253,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.layoutVoting.setVisibility(flagManager.isAnswerVotingSystemEnabled() ? View.VISIBLE : View.GONE);
         bindVoting(holder, question, context);
 
-        holder.btnUpvote.setOnClickListener(v -> {
+        View.OnClickListener upvoteListener = v -> {
             String currentVote = question.getUserVoted();
             String voteAction = "up".equalsIgnoreCase(currentVote) ? "unvote" : "up";
             questionRepository.voteAnswer(question.getId(), voteAction, new QuestionRepository.RepositoryCallback<VoteResponse>() {
@@ -271,9 +271,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     Toast.makeText(context, error != null ? error : "Vote failed.", Toast.LENGTH_SHORT).show();
                 }
             });
-        });
+        };
+        if (holder.layoutBtnUpvote != null) holder.layoutBtnUpvote.setOnClickListener(upvoteListener);
+        holder.btnUpvote.setOnClickListener(upvoteListener);
+        holder.tvUpvotes.setOnClickListener(upvoteListener);
 
-        holder.btnDownvote.setOnClickListener(v -> {
+        View.OnClickListener downvoteListener = v -> {
             String currentVote = question.getUserVoted();
             String voteAction = "down".equalsIgnoreCase(currentVote) ? "unvote" : "down";
             questionRepository.voteAnswer(question.getId(), voteAction, new QuestionRepository.RepositoryCallback<VoteResponse>() {
@@ -291,7 +294,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
                     Toast.makeText(context, error != null ? error : "Vote failed.", Toast.LENGTH_SHORT).show();
                 }
             });
-        });
+        };
+        if (holder.layoutBtnDownvote != null) holder.layoutBtnDownvote.setOnClickListener(downvoteListener);
+        holder.btnDownvote.setOnClickListener(downvoteListener);
+        holder.tvDownvotes.setOnClickListener(downvoteListener);
 
         // 9. Comments & Discussions Bottom Sheet
         boolean commentsEnabled = flagManager.isQuestionCommentsEnabled();
@@ -469,26 +475,44 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             holder.btnUpvote.setColorFilter(ContextCompat.getColor(context, R.color.primary));
             holder.tvUpvotes.setTextColor(ContextCompat.getColor(context, R.color.primary));
             holder.tvUpvotes.setTypeface(null, Typeface.BOLD);
+            if (holder.layoutBtnUpvote != null) {
+                holder.layoutBtnUpvote.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.primary_surface)));
+            }
 
             holder.btnDownvote.setColorFilter(ContextCompat.getColor(context, R.color.text_muted));
             holder.tvDownvotes.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
             holder.tvDownvotes.setTypeface(null, Typeface.NORMAL);
+            if (holder.layoutBtnDownvote != null) {
+                holder.layoutBtnDownvote.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.surface_variant)));
+            }
         } else if ("down".equalsIgnoreCase(userVoted) || "unlike".equalsIgnoreCase(userVoted)) {
             holder.btnUpvote.setColorFilter(ContextCompat.getColor(context, R.color.text_muted));
             holder.tvUpvotes.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
             holder.tvUpvotes.setTypeface(null, Typeface.NORMAL);
+            if (holder.layoutBtnUpvote != null) {
+                holder.layoutBtnUpvote.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.surface_variant)));
+            }
 
-            holder.btnDownvote.setColorFilter(ContextCompat.getColor(context, R.color.diff_hard));
-            holder.tvDownvotes.setTextColor(ContextCompat.getColor(context, R.color.diff_hard));
+            holder.btnDownvote.setColorFilter(ContextCompat.getColor(context, R.color.error));
+            holder.tvDownvotes.setTextColor(ContextCompat.getColor(context, R.color.error));
             holder.tvDownvotes.setTypeface(null, Typeface.BOLD);
+            if (holder.layoutBtnDownvote != null) {
+                holder.layoutBtnDownvote.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.error_light)));
+            }
         } else {
             holder.btnUpvote.setColorFilter(ContextCompat.getColor(context, R.color.text_muted));
             holder.tvUpvotes.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
             holder.tvUpvotes.setTypeface(null, Typeface.NORMAL);
+            if (holder.layoutBtnUpvote != null) {
+                holder.layoutBtnUpvote.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.surface_variant)));
+            }
 
             holder.btnDownvote.setColorFilter(ContextCompat.getColor(context, R.color.text_muted));
             holder.tvDownvotes.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
             holder.tvDownvotes.setTypeface(null, Typeface.NORMAL);
+            if (holder.layoutBtnDownvote != null) {
+                holder.layoutBtnDownvote.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.surface_variant)));
+            }
         }
     }
 
@@ -588,8 +612,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         ImageView ivExplanationImage;
 
         LinearLayout layoutVoting;
+        LinearLayout layoutBtnUpvote;
         ImageView btnUpvote;
         TextView tvUpvotes;
+        LinearLayout layoutBtnDownvote;
         ImageView btnDownvote;
         TextView tvDownvotes;
 
@@ -636,8 +662,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             ivExplanationImage = itemView.findViewById(R.id.ivExplanationImage);
 
             layoutVoting = itemView.findViewById(R.id.layoutVoting);
+            layoutBtnUpvote = itemView.findViewById(R.id.layoutBtnUpvote);
             btnUpvote = itemView.findViewById(R.id.btnUpvote);
             tvUpvotes = itemView.findViewById(R.id.tvUpvotes);
+            layoutBtnDownvote = itemView.findViewById(R.id.layoutBtnDownvote);
             btnDownvote = itemView.findViewById(R.id.btnDownvote);
             tvDownvotes = itemView.findViewById(R.id.tvDownvotes);
 

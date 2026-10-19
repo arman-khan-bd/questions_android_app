@@ -176,12 +176,31 @@ public class CommentBottomSheetFragment extends BottomSheetDialogFragment {
                         boolean attached = false;
                         for (Comment parent : commentList) {
                             if (parent.getId() == submittedParentId) {
-                                if (parent.getReplies() == null) {
-                                    parent.setReplies(new ArrayList<>());
-                                }
-                                parent.getReplies().add(posted);
+                                parent.addReply(posted);
+                                adapter.expandCommentReplies(parent.getId());
                                 attached = true;
                                 break;
+                            }
+                            if (parent.getReplies() != null) {
+                                for (Comment child : parent.getReplies()) {
+                                    if (child.getId() == submittedParentId) {
+                                        parent.addReply(posted);
+                                        adapter.expandCommentReplies(parent.getId());
+                                        attached = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (attached) break;
+                        }
+                        if (!attached && posted.getParentId() != null) {
+                            for (Comment parent : commentList) {
+                                if (parent.getId() == posted.getParentId().longValue()) {
+                                    parent.addReply(posted);
+                                    adapter.expandCommentReplies(parent.getId());
+                                    attached = true;
+                                    break;
+                                }
                             }
                         }
                         if (!attached) {

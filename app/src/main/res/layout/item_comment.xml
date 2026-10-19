@@ -135,12 +135,37 @@
             android:layout_marginEnd="10dp"
             android:background="@color/border" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvReplies"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:nestedScrollingEnabled="false" />
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvReplies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:id="@+id/btnSeeMoreReplies"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:background="?attr/selectableItemBackground"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="4dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="4dp"
+                android:text="── View 10 more replies"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="── View 5 more replies"
+                tools:visibility="visible" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

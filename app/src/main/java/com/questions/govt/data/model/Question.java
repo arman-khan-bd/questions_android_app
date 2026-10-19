@@ -208,10 +208,11 @@ public class Question implements Serializable {
     public static class UserInteractions implements Serializable {
         @SerializedName("is_starred") public boolean isStarred;
         @SerializedName("my_vote") public String myVote;
+        @SerializedName("user_voted") public String userVoted;
         @SerializedName("my_last_attempt") public String myLastAttempt;
 
         public boolean isStarred() { return isStarred; }
-        public String getMyVote() { return myVote; }
+        public String getMyVote() { return myVote != null ? myVote : userVoted; }
         public String getMyLastAttempt() { return myLastAttempt; }
     }
 
@@ -426,13 +427,39 @@ public class Question implements Serializable {
         if (userInteractions != null) return userInteractions.isStarred;
         return isStarred;
     }
-    public void setStarred(boolean starred) { isStarred = starred; }
+    public void setStarred(boolean starred) {
+        this.isStarred = starred;
+        if (this.userInteractions != null) {
+            this.userInteractions.isStarred = starred;
+        }
+    }
 
     public String getUserVoted() {
-        if (userInteractions != null && userInteractions.myVote != null) return userInteractions.myVote;
-        return userVoted;
+        if (userVoted != null) {
+            String v = userVoted.trim().toLowerCase();
+            if ("up".equals(v) || "down".equals(v) || "like".equals(v) || "unlike".equals(v)) {
+                return v;
+            }
+        }
+        if (userInteractions != null) {
+            String candidate = userInteractions.getMyVote();
+            if (candidate != null) {
+                String v = candidate.trim().toLowerCase();
+                if ("up".equals(v) || "down".equals(v) || "like".equals(v) || "unlike".equals(v)) {
+                    return v;
+                }
+            }
+        }
+        return null;
     }
-    public void setUserVoted(String userVoted) { this.userVoted = userVoted; }
+
+    public void setUserVoted(String userVoted) {
+        this.userVoted = userVoted;
+        if (this.userInteractions != null) {
+            this.userInteractions.myVote = userVoted;
+            this.userInteractions.userVoted = userVoted;
+        }
+    }
 
     public boolean isMistake() { return isMistake; }
     public void setMistake(boolean mistake) { isMistake = mistake; }
