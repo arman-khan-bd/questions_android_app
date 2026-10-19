@@ -304,6 +304,8 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
         if (q.getAuthor() != null && !TextUtils.isEmpty(q.getAuthor().name)) {
             tvAuthorDetail.setText("By " + q.getAuthor().name);
+        } else if (!TextUtils.isEmpty(q.getCreatorName())) {
+            tvAuthorDetail.setText("By " + q.getCreatorName());
         } else {
             tvAuthorDetail.setText("");
         }

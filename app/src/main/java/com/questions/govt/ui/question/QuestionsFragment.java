@@ -70,7 +70,6 @@ public class QuestionsFragment extends Fragment {
 
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView rvQuestions;
-    private TextView tvQuestionsCountSubtitle;
     private ImageView btnToggleSearch;
     private ImageView btnRefreshQuestions;
 
@@ -154,7 +153,6 @@ public class QuestionsFragment extends Fragment {
     private void initViews(View view) {
         swipeRefresh = view.findViewById(R.id.swipeRefresh);
         rvQuestions = view.findViewById(R.id.rvQuestions);
-        tvQuestionsCountSubtitle = view.findViewById(R.id.tvQuestionsCountSubtitle);
         btnToggleSearch = view.findViewById(R.id.btnToggleSearch);
         btnRefreshQuestions = view.findViewById(R.id.btnRefreshQuestions);
 
@@ -762,12 +760,7 @@ public class QuestionsFragment extends Fragment {
     }
 
     private void updateSubtitleCounter() {
-        if (tvQuestionsCountSubtitle == null) return;
-        if (totalQuestions > 0) {
-            tvQuestionsCountSubtitle.setText(getString(R.string.all_questions_subtitle) + " (" + totalQuestions + ")");
-        } else {
-            tvQuestionsCountSubtitle.setText(getString(R.string.all_questions_subtitle));
-        }
+        // Redesigned compact top bar without subtitle text
     }
 
     private void resetAllFilters() {

@@ -329,6 +329,24 @@ public class Question implements Serializable {
     }
     public void setCommentsCount(int commentsCount) { this.commentsCount = commentsCount; }
 
+    public int getTotalComments() {
+        return getCommentsCount();
+    }
+
+    public QuestionAuthor getAuthor() {
+        return author;
+    }
+    public void setAuthor(QuestionAuthor author) {
+        this.author = author;
+    }
+
+    public UserInteractions getUserInteractions() {
+        return userInteractions;
+    }
+    public void setUserInteractions(UserInteractions userInteractions) {
+        this.userInteractions = userInteractions;
+    }
+
     public float getOptionAPct() {
         if (optionAPct > 0) return optionAPct;
         if (metrics != null && metrics.distribution != null && metrics.distribution.containsKey("A")) {
