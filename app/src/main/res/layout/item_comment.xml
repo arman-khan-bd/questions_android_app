@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
 
     <!-- Parent / Top-Level Comment -->
     <LinearLayout
@@ -14,11 +14,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCommentAvatar"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:contentDescription="Avatar"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
             app:srcCompat="@drawable/ic_nav_profile" />
 
         <LinearLayout
@@ -29,7 +31,7 @@
             android:background="@drawable/bg_dialog_rounded"
             android:backgroundTint="@color/surface_variant"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -39,13 +41,24 @@
 
                 <TextView
                     android:id="@+id/tvCommentUser"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:fontFamily="sans-serif-bold"
                     android:textColor="@color/text_primary"
                     android:textSize="13sp"
-                    tools:text="Tanvir Ahmed (@tanvir_203)" />
+                    tools:text="Tanvir Ahmed" />
+
+                <TextView
+                    android:id="@+id/tvCommentHandle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/text_muted"
+                    android:textSize="12sp"
+                    tools:text="@tanvir_203" />
 
                 <TextView
                     android:id="@+id/tvCommentDate"
@@ -80,8 +93,8 @@
                 android:id="@+id/tvCommentBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:lineSpacingExtra="2dp"
+                android:layout_marginTop="6dp"
+                android:lineSpacingExtra="3dp"
                 android:textColor="@color/text_primary"
                 android:textSize="13sp"
                 tools:text="Could someone please verify the source for Option A?" />
@@ -91,8 +104,12 @@
                 android:id="@+id/btnReply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:padding="2dp"
+                android:layout_marginTop="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:paddingStart="4dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="2dp"
                 android:text="Reply"
                 android:textColor="@color/primary"
                 android:textSize="12sp"
@@ -101,14 +118,29 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Nested Replies (Level 2) -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvReplies"
+    <!-- Nested Replies (Level 2) with visual thread line -->
+    <LinearLayout
+        android:id="@+id/layoutRepliesContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="38dp"
+        android:layout_marginStart="18dp"
         android:layout_marginTop="6dp"
-        android:nestedScrollingEnabled="false"
-        android:visibility="gone" />
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <!-- Thread Indicator Guide Line -->
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:background="@color/border" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvReplies"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:nestedScrollingEnabled="false" />
+    </LinearLayout>
 
 </LinearLayout>

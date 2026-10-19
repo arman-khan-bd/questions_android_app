@@ -181,6 +181,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             holder.tvDifficultyBadge.setTextColor(ContextCompat.getColor(context, R.color.diff_medium));
         }
 
+        // 2.1 Previous Submitted Answer Badge (preserves past attempt indicator without locking the card)
+        String prevAnswer = question.getUserSelectedOption();
+        if (!TextUtils.isEmpty(prevAnswer) && holder.tvPrevAnswerBadge != null) {
+            holder.tvPrevAnswerBadge.setVisibility(View.VISIBLE);
+            holder.tvPrevAnswerBadge.setText("Prev: Opt " + prevAnswer.trim().toUpperCase());
+        } else if (holder.tvPrevAnswerBadge != null) {
+            holder.tvPrevAnswerBadge.setVisibility(View.GONE);
+        }
+
         // 3. Question Text and Image
         holder.tvQuestionText.setText(question.getQuestionText());
         if (!TextUtils.isEmpty(question.getImageUrl())) {
@@ -310,9 +319,11 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     private void setupOptionClick(View optionView, String optionLetter, CardViewHolder holder, Question question, Context context) {
         optionView.setOnClickListener(v -> {
-            if (question.isAnswerRevealed()) return; // Prevent multiple submissions
-
             question.setUserSelectedOption(optionLetter);
+            if (holder.tvPrevAnswerBadge != null) {
+                holder.tvPrevAnswerBadge.setVisibility(View.VISIBLE);
+                holder.tvPrevAnswerBadge.setText("Selected: Opt " + optionLetter);
+            }
             questionRepository.checkAnswer(question.getId(), optionLetter, new QuestionRepository.RepositoryCallback<AnswerCheckResponse>() {
                 @Override
                 public void onSuccess(AnswerCheckResponse result) {
@@ -533,6 +544,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         MaterialCheckBox cbSelectQuestion;
         TextView tvSubjectBadge;
         TextView tvDifficultyBadge;
+        TextView tvPrevAnswerBadge;
         Button btnCreatorReveal;
         ImageView btnStar;
         TextView tvQuestionText;
@@ -581,6 +593,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             cbSelectQuestion = itemView.findViewById(R.id.cbSelectQuestion);
             tvSubjectBadge = itemView.findViewById(R.id.tvSubjectBadge);
             tvDifficultyBadge = itemView.findViewById(R.id.tvDifficultyBadge);
+            tvPrevAnswerBadge = itemView.findViewById(R.id.tvPrevAnswerBadge);
             btnCreatorReveal = itemView.findViewById(R.id.btnCreatorReveal);
             btnStar = itemView.findViewById(R.id.btnStar);
             tvQuestionText = itemView.findViewById(R.id.tvQuestionText);

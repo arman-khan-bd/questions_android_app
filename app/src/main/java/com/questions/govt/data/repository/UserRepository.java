@@ -63,13 +63,15 @@ public class UserRepository {
                     }
                     callback.onSuccess(profile);
                 } else {
-                    callback.onError("Could not load user profile.");
+                    String error = com.questions.govt.util.NetworkErrorParser.parseError(response, "Could not load user profile.");
+                    callback.onError(error);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<UserProfileResponse>> call, Throwable t) {
-                callback.onError(t.getMessage());
+                String error = com.questions.govt.util.NetworkErrorParser.parseFailure(t, "Network error loading profile.");
+                callback.onError(error);
             }
         });
     }
@@ -89,13 +91,15 @@ public class UserRepository {
                     AppDatabase.databaseWriteExecutor.execute(() -> userDao.insertOrReplace(updatedUser));
                     callback.onSuccess(updatedUser);
                 } else {
-                    callback.onError("Profile update failed.");
+                    String error = com.questions.govt.util.NetworkErrorParser.parseError(response, "Profile update failed.");
+                    callback.onError(error);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
-                callback.onError(t.getMessage());
+                String error = com.questions.govt.util.NetworkErrorParser.parseFailure(t, "Network error updating profile.");
+                callback.onError(error);
             }
         });
     }

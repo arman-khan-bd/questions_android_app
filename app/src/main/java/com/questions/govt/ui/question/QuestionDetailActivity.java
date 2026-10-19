@@ -397,7 +397,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
     }
 
     private void onOptionSelected(String selectedOption) {
-        if (question == null || isAnswerChecked) return;
+        if (question == null) return;
         isAnswerChecked = true;
 
         String correctOpt = question.getCorrectOption() != null ? question.getCorrectOption().trim() : "A";
@@ -420,12 +420,26 @@ public class QuestionDetailActivity extends AppCompatActivity {
             tvExplanationTextDetail.setText("No additional explanation provided.");
         }
 
-        // Send telemetry to backend
+        // Send telemetry to backend and update community poll percentages
         Map<String, String> body = new HashMap<>();
         body.put("selected_option", selectedOption);
         apiService.checkAnswer(questionId, body).enqueue(new Callback<ApiResponse<AnswerCheckResponse>>() {
             @Override
-            public void onResponse(Call<ApiResponse<AnswerCheckResponse>> call, Response<ApiResponse<AnswerCheckResponse>> response) {}
+            public void onResponse(Call<ApiResponse<AnswerCheckResponse>> call, Response<ApiResponse<AnswerCheckResponse>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    AnswerCheckResponse data = response.body().getData();
+                    question.setOptionAPct(data.getOptionAPct());
+                    question.setOptionBPct(data.getOptionBPct());
+                    question.setOptionCPct(data.getOptionCPct());
+                    question.setOptionDPct(data.getOptionDPct());
+                    if (!TextUtils.isEmpty(data.getExplanation())) {
+                        question.setExplanation(data.getExplanation());
+                        tvExplanationTextDetail.setText(data.getExplanation());
+                    }
+                    revealOptionPercentages();
+                }
+            }
+
             @Override
             public void onFailure(Call<ApiResponse<AnswerCheckResponse>> call, Throwable t) {}
         });

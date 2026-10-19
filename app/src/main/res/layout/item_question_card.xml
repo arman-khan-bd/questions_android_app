@@ -68,6 +68,24 @@
                 android:textSize="11sp"
                 tools:text="Medium" />
 
+            <TextView
+                android:id="@+id/tvPrevAnswerBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_dialog_rounded"
+                android:backgroundTint="@color/surface_variant"
+                android:paddingStart="8dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="3dp"
+                android:textColor="@color/secondary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="Prev: Opt A"
+                tools:visibility="visible" />
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"

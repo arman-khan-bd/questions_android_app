@@ -154,16 +154,29 @@ public class CreateQuestionActivity extends AppCompatActivity {
     private void setupTaxonomyDropdowns() {
         TaxonomyRepository repository = TaxonomyRepository.getInstance(this);
 
+        // Ensure taxonomy cache is fetched from network if empty
+        repository.fetchHomeFeed(null);
+
         repository.getSubjects().observe(this, subjects -> {
             if (subjects != null && !subjects.isEmpty()) {
                 subjectList.clear();
                 subjectList.addAll(subjects);
                 List<String> titles = new ArrayList<>();
-                for (TaxonomyItem s : subjects) titles.add(s.getTitle());
+                for (TaxonomyItem s : subjects) {
+                    titles.add(s.getTitle() != null ? s.getTitle() : s.getName());
+                }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, titles);
                 actvSubject.setAdapter(adapter);
-                actvSubject.setOnItemClickListener((parent, view, position, id) ->
-                        selectedSubjectId = subjectList.get(position).getId());
+                actvSubject.setOnItemClickListener((parent, view, position, id) -> {
+                    String selectedText = parent.getItemAtPosition(position).toString();
+                    for (TaxonomyItem item : subjectList) {
+                        String t = item.getTitle() != null ? item.getTitle() : item.getName();
+                        if (selectedText.equalsIgnoreCase(t)) {
+                            selectedSubjectId = item.getId();
+                            break;
+                        }
+                    }
+                });
             }
         });
 
@@ -172,11 +185,21 @@ public class CreateQuestionActivity extends AppCompatActivity {
                 categoryList.clear();
                 categoryList.addAll(categories);
                 List<String> titles = new ArrayList<>();
-                for (TaxonomyItem c : categories) titles.add(c.getTitle());
+                for (TaxonomyItem c : categories) {
+                    titles.add(c.getTitle() != null ? c.getTitle() : c.getName());
+                }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, titles);
                 actvCategory.setAdapter(adapter);
-                actvCategory.setOnItemClickListener((parent, view, position, id) ->
-                        selectedCategoryId = categoryList.get(position).getId());
+                actvCategory.setOnItemClickListener((parent, view, position, id) -> {
+                    String selectedText = parent.getItemAtPosition(position).toString();
+                    for (TaxonomyItem item : categoryList) {
+                        String t = item.getTitle() != null ? item.getTitle() : item.getName();
+                        if (selectedText.equalsIgnoreCase(t)) {
+                            selectedCategoryId = item.getId();
+                            break;
+                        }
+                    }
+                });
             }
         });
     }
@@ -207,9 +230,31 @@ public class CreateQuestionActivity extends AppCompatActivity {
             return;
         }
 
-        if (selectedSubjectId <= 0) {
-            Toast.makeText(this, "Please select a Subject", Toast.LENGTH_SHORT).show();
-            return;
+        // Fallback resolve subject if not selected via click
+        if (selectedSubjectId <= 0 && actvSubject.getText() != null) {
+            String enteredSubject = actvSubject.getText().toString().trim();
+            for (TaxonomyItem item : subjectList) {
+                String t = item.getTitle() != null ? item.getTitle() : item.getName();
+                if (enteredSubject.equalsIgnoreCase(t)) {
+                    selectedSubjectId = item.getId();
+                    break;
+                }
+            }
+        }
+        if (selectedSubjectId <= 0 && !subjectList.isEmpty()) {
+            selectedSubjectId = subjectList.get(0).getId();
+        }
+
+        // Fallback resolve category if entered
+        if (selectedCategoryId <= 0 && actvCategory.getText() != null) {
+            String enteredCat = actvCategory.getText().toString().trim();
+            for (TaxonomyItem item : categoryList) {
+                String t = item.getTitle() != null ? item.getTitle() : item.getName();
+                if (enteredCat.equalsIgnoreCase(t)) {
+                    selectedCategoryId = item.getId();
+                    break;
+                }
+            }
         }
 
         // Correct Option
@@ -238,7 +283,9 @@ public class CreateQuestionActivity extends AppCompatActivity {
         fields.put("correct_option", createPartFromString(correctOption));
         fields.put("explanation", createPartFromString(explanation));
         fields.put("difficulty", createPartFromString(difficulty));
-        fields.put("subject_id", createPartFromString(String.valueOf(selectedSubjectId)));
+        if (selectedSubjectId > 0) {
+            fields.put("subject_id", createPartFromString(String.valueOf(selectedSubjectId)));
+        }
         if (selectedCategoryId > 0) {
             fields.put("category_id", createPartFromString(String.valueOf(selectedCategoryId)));
         }

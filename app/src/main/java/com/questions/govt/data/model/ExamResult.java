@@ -71,7 +71,7 @@ public class ExamResult implements Serializable {
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
-    public long getExamId() { return examId; }
+    public long getExamId() { return examId > 0 ? examId : id; }
     public void setExamId(long examId) { this.examId = examId; }
 
     public String getTitle() { return title != null ? title : "Exam Result"; }
