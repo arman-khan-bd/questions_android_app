@@ -654,6 +654,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
             call = apiService.postComment(questionId, body);
         }
 
+        final Long submittedParentId = replyParentId;
         call.enqueue(new Callback<ApiResponse<Comment>>() {
             @Override
             public void onResponse(Call<ApiResponse<Comment>> c, Response<ApiResponse<Comment>> response) {
@@ -663,16 +664,31 @@ public class QuestionDetailActivity extends AppCompatActivity {
                     etCommentInputDetail.setText("");
                     cancelReply();
 
-                    // If it was a reply, attach to parent or reload
-                    if (replyParentId != null) {
-                        loadComments();
+                    // If it was a reply, attach to parent comment replies list instantly
+                    if (submittedParentId != null && submittedParentId > 0) {
+                        boolean attached = false;
+                        for (Comment parent : commentsList) {
+                            if (parent.getId() == submittedParentId) {
+                                if (parent.getReplies() == null) {
+                                    parent.setReplies(new ArrayList<>());
+                                }
+                                parent.getReplies().add(newComment);
+                                attached = true;
+                                break;
+                            }
+                        }
+                        if (!attached) {
+                            commentsList.add(0, newComment);
+                        }
+                        commentAdapter.notifyDataSetChanged();
                     } else {
                         commentsList.add(0, newComment);
                         commentAdapter.notifyItemInserted(0);
                         rvDetailComments.scrollToPosition(0);
-                        tvEmptyComments.setVisibility(View.GONE);
-                        tvTotalCommentsHeader.setText(commentsList.size() + " comments");
                     }
+
+                    tvEmptyComments.setVisibility(View.GONE);
+                    tvTotalCommentsHeader.setText(commentsList.size() + " comments");
 
                     Toast.makeText(QuestionDetailActivity.this, "Comment posted!", Toast.LENGTH_SHORT).show();
                 } else {

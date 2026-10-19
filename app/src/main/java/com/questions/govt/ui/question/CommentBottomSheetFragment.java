@@ -153,6 +153,7 @@ public class CommentBottomSheetFragment extends BottomSheetDialogFragment {
             call = ApiClient.getApiService().postComment(questionId, body);
         }
 
+        final Long submittedParentId = replyParentId;
         call.enqueue(new Callback<ApiResponse<Comment>>() {
             @Override
             public void onResponse(Call<ApiResponse<Comment>> call, Response<ApiResponse<Comment>> response) {
@@ -169,14 +170,38 @@ public class CommentBottomSheetFragment extends BottomSheetDialogFragment {
                     etCommentInput.setText("");
                     replyParentId = null;
                     layoutReplyingTo.setVisibility(View.GONE);
+                    etCommentInput.setHint("Add a polite comment or question…");
+
+                    if (submittedParentId != null && submittedParentId > 0) {
+                        boolean attached = false;
+                        for (Comment parent : commentList) {
+                            if (parent.getId() == submittedParentId) {
+                                if (parent.getReplies() == null) {
+                                    parent.setReplies(new ArrayList<>());
+                                }
+                                parent.getReplies().add(posted);
+                                attached = true;
+                                break;
+                            }
+                        }
+                        if (!attached) {
+                            commentList.add(0, posted);
+                        }
+                    } else {
+                        commentList.add(0, posted);
+                    }
+
+                    adapter.notifyDataSetChanged();
+                    if (submittedParentId == null) {
+                        rvComments.scrollToPosition(0);
+                    }
+                    tvCommentsTitle.setText("Comments (" + commentList.size() + ")");
 
                     if ("flagged_pending".equalsIgnoreCase(posted.getModerationStatus())) {
                         Toast.makeText(requireContext(), "Comment submitted! Held for Admin Review due to flagged words.", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(requireContext(), "Comment posted!", Toast.LENGTH_SHORT).show();
                     }
-
-                    loadComments();
                 } else {
                     Toast.makeText(requireContext(), "Failed to post comment.", Toast.LENGTH_SHORT).show();
                 }

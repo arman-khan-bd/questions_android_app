@@ -79,6 +79,12 @@ public class ProfileFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadProfileData();
+    }
+
     private void initViews(View root) {
         imgCoverPhoto = root.findViewById(R.id.imgCoverPhoto);
         imgAvatar = root.findViewById(R.id.imgAvatar);

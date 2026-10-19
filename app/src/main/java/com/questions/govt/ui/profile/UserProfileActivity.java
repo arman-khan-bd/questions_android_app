@@ -84,6 +84,12 @@ public class UserProfileActivity extends AppCompatActivity {
         loadProfile();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadProfile();
+    }
+
     private void initViews() {
         imgCoverPhoto = findViewById(R.id.imgCoverPhoto);
         imgAvatar = findViewById(R.id.imgAvatar);

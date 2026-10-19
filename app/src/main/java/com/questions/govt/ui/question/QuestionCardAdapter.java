@@ -254,7 +254,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         bindVoting(holder, question, context);
 
         holder.btnUpvote.setOnClickListener(v -> {
-            questionRepository.voteAnswer(question.getId(), "up", new QuestionRepository.RepositoryCallback<VoteResponse>() {
+            String currentVote = question.getUserVoted();
+            String voteAction = "up".equalsIgnoreCase(currentVote) ? "unvote" : "up";
+            questionRepository.voteAnswer(question.getId(), voteAction, new QuestionRepository.RepositoryCallback<VoteResponse>() {
                 @Override
                 public void onSuccess(VoteResponse result) {
                     question.setUpvotesCount(result.getUpvotesCount());
@@ -272,7 +274,9 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         });
 
         holder.btnDownvote.setOnClickListener(v -> {
-            questionRepository.voteAnswer(question.getId(), "down", new QuestionRepository.RepositoryCallback<VoteResponse>() {
+            String currentVote = question.getUserVoted();
+            String voteAction = "down".equalsIgnoreCase(currentVote) ? "unvote" : "down";
+            questionRepository.voteAnswer(question.getId(), voteAction, new QuestionRepository.RepositoryCallback<VoteResponse>() {
                 @Override
                 public void onSuccess(VoteResponse result) {
                     question.setUpvotesCount(result.getUpvotesCount());
