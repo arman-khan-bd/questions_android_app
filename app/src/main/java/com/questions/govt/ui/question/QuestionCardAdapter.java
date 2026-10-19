@@ -319,10 +319,15 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
     private void setupOptionClick(View optionView, String optionLetter, CardViewHolder holder, Question question, Context context) {
         optionView.setOnClickListener(v -> {
+            if (question.isAnswerRevealed()) {
+                Toast.makeText(context, "You have already voted! You can vote again in 1 hour.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             question.setUserSelectedOption(optionLetter);
             if (holder.tvPrevAnswerBadge != null) {
                 holder.tvPrevAnswerBadge.setVisibility(View.VISIBLE);
-                holder.tvPrevAnswerBadge.setText("Selected: Opt " + optionLetter);
+                holder.tvPrevAnswerBadge.setText("Voted: Opt " + optionLetter);
             }
             questionRepository.checkAnswer(question.getId(), optionLetter, new QuestionRepository.RepositoryCallback<AnswerCheckResponse>() {
                 @Override
@@ -346,7 +351,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
 
                 @Override
                 public void onError(String error) {
-                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, error != null ? error : "You can only vote once per hour.", Toast.LENGTH_LONG).show();
                 }
             });
         });

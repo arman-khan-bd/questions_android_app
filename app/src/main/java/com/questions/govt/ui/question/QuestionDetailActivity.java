@@ -398,6 +398,10 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
     private void onOptionSelected(String selectedOption) {
         if (question == null) return;
+        if (isAnswerChecked) {
+            Toast.makeText(this, "You have already voted! You can vote again in 1 hour.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         isAnswerChecked = true;
 
         String correctOpt = question.getCorrectOption() != null ? question.getCorrectOption().trim() : "A";
@@ -437,11 +441,17 @@ public class QuestionDetailActivity extends AppCompatActivity {
                         tvExplanationTextDetail.setText(data.getExplanation());
                     }
                     revealOptionPercentages();
+                } else {
+                    String error = com.questions.govt.util.NetworkErrorParser.parseError(response, "You can only vote once per hour.");
+                    Toast.makeText(QuestionDetailActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<AnswerCheckResponse>> call, Throwable t) {}
+            public void onFailure(Call<ApiResponse<AnswerCheckResponse>> call, Throwable t) {
+                String error = com.questions.govt.util.NetworkErrorParser.parseFailure(t, "Network error checking answer.");
+                Toast.makeText(QuestionDetailActivity.this, error, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

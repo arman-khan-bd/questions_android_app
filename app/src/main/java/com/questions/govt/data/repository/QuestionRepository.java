@@ -183,13 +183,15 @@ public class QuestionRepository {
                             ));
                     if (callback != null) callback.onSuccess(checkResult);
                 } else {
-                    if (callback != null) callback.onError("Failed to verify answer from server.");
+                    String error = com.questions.govt.util.NetworkErrorParser.parseError(response, "You can only vote once per hour.");
+                    if (callback != null) callback.onError(error);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<AnswerCheckResponse>> call, Throwable t) {
-                if (callback != null) callback.onError(t.getMessage());
+                String error = com.questions.govt.util.NetworkErrorParser.parseFailure(t, "Network error checking answer.");
+                if (callback != null) callback.onError(error);
             }
         });
     }
@@ -207,13 +209,15 @@ public class QuestionRepository {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     if (callback != null) callback.onSuccess(response.body().getData());
                 } else {
-                    if (callback != null) callback.onError("Failed to submit vote.");
+                    String error = com.questions.govt.util.NetworkErrorParser.parseError(response, "Failed to submit vote.");
+                    if (callback != null) callback.onError(error);
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<VoteResponse>> call, Throwable t) {
-                if (callback != null) callback.onError(t.getMessage());
+                String error = com.questions.govt.util.NetworkErrorParser.parseFailure(t, "Network error submitting vote.");
+                if (callback != null) callback.onError(error);
             }
         });
     }
