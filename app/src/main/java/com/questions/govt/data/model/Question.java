@@ -175,12 +175,21 @@ public class Question implements Serializable {
         @SerializedName("name") public String name;
         @SerializedName("username") public String username;
         @SerializedName("avatar_url") public String avatarUrl;
+
+        public Long getId() { return id; }
+        public String getName() { return name; }
+        public String getUsername() { return username; }
+        public String getAvatarUrl() { return avatarUrl; }
     }
 
     public static class TaxonomyNested implements Serializable {
         @SerializedName("id") public Long id;
         @SerializedName("name") public String name;
         @SerializedName("slug") public String slug;
+
+        public Long getId() { return id; }
+        public String getName() { return name; }
+        public String getSlug() { return slug; }
     }
 
     public static class QuestionMetrics implements Serializable {
@@ -200,6 +209,10 @@ public class Question implements Serializable {
         @SerializedName("is_starred") public boolean isStarred;
         @SerializedName("my_vote") public String myVote;
         @SerializedName("my_last_attempt") public String myLastAttempt;
+
+        public boolean isStarred() { return isStarred; }
+        public String getMyVote() { return myVote; }
+        public String getMyLastAttempt() { return myLastAttempt; }
     }
 
     // Getters and Setters with smart fallbacks
