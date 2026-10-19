@@ -162,10 +162,15 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             ExamQuestionPreview item = items.get(position);
+            if (item == null) return;
             Context context = holder.itemView.getContext();
 
-            holder.tvQuestionNum.setText("Question " + (position + 1));
-            holder.tvQuestionText.setText(item.getQuestionText());
+            if (holder.tvQuestionNum != null) {
+                holder.tvQuestionNum.setText("Question " + (position + 1));
+            }
+            if (holder.tvQuestionText != null) {
+                holder.tvQuestionText.setText(item.getQuestionText() != null ? item.getQuestionText() : "");
+            }
 
             // Outcome badge
             String userSelected = item.getUserSelectedOption();
@@ -173,42 +178,46 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
             boolean isSkipped = TextUtils.isEmpty(userSelected);
             boolean isCorrect = !isSkipped && userSelected.equalsIgnoreCase(correct);
 
-            if (isSkipped) {
-                holder.tvOutcomeBadge.setText("Skipped (0.00)");
-                holder.tvOutcomeBadge.setTextColor(ContextCompat.getColor(context, R.color.text_muted));
-                holder.tvOutcomeBadge.setBackgroundResource(R.drawable.bg_option_card);
-            } else if (isCorrect) {
-                holder.tvOutcomeBadge.setText("Correct (+1.00)");
-                holder.tvOutcomeBadge.setTextColor(ContextCompat.getColor(context, R.color.success));
-                holder.tvOutcomeBadge.setBackgroundResource(R.drawable.bg_option_correct);
-            } else {
-                holder.tvOutcomeBadge.setText("Wrong Answer");
-                holder.tvOutcomeBadge.setTextColor(ContextCompat.getColor(context, R.color.error));
-                holder.tvOutcomeBadge.setBackgroundResource(R.drawable.bg_option_wrong);
+            if (holder.tvOutcomeBadge != null) {
+                if (isSkipped) {
+                    holder.tvOutcomeBadge.setText("Skipped (0.00)");
+                    holder.tvOutcomeBadge.setTextColor(ContextCompat.getColor(context, R.color.text_muted));
+                    holder.tvOutcomeBadge.setBackgroundResource(R.drawable.bg_option_card);
+                } else if (isCorrect) {
+                    holder.tvOutcomeBadge.setText("Correct (+1.00)");
+                    holder.tvOutcomeBadge.setTextColor(ContextCompat.getColor(context, R.color.success));
+                    holder.tvOutcomeBadge.setBackgroundResource(R.drawable.bg_option_correct);
+                } else {
+                    holder.tvOutcomeBadge.setText("Wrong Answer");
+                    holder.tvOutcomeBadge.setTextColor(ContextCompat.getColor(context, R.color.error));
+                    holder.tvOutcomeBadge.setBackgroundResource(R.drawable.bg_option_wrong);
+                }
             }
 
             // Question Image
-            if (!TextUtils.isEmpty(item.getImageUrl())) {
-                holder.ivQuestionImage.setVisibility(View.VISIBLE);
-                Glide.with(context).load(item.getImageUrl()).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.ivQuestionImage);
-            } else {
-                holder.ivQuestionImage.setVisibility(View.GONE);
+            if (holder.ivQuestionImage != null) {
+                if (!TextUtils.isEmpty(item.getImageUrl())) {
+                    holder.ivQuestionImage.setVisibility(View.VISIBLE);
+                    Glide.with(context).load(item.getImageUrl()).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.ivQuestionImage);
+                } else {
+                    holder.ivQuestionImage.setVisibility(View.GONE);
+                }
             }
 
             // Options Text & Percentages
-            holder.tvOptionA.setText(item.getOptionA());
-            holder.tvOptionB.setText(item.getOptionB());
-            holder.tvOptionC.setText(item.getOptionC());
-            holder.tvOptionD.setText(item.getOptionD());
+            if (holder.tvOptionA != null) holder.tvOptionA.setText(item.getOptionA() != null ? item.getOptionA() : "");
+            if (holder.tvOptionB != null) holder.tvOptionB.setText(item.getOptionB() != null ? item.getOptionB() : "");
+            if (holder.tvOptionC != null) holder.tvOptionC.setText(item.getOptionC() != null ? item.getOptionC() : "");
+            if (holder.tvOptionD != null) holder.tvOptionD.setText(item.getOptionD() != null ? item.getOptionD() : "");
 
-            holder.tvPctA.setText(Math.round(item.getOptionAPct()) + "%");
-            holder.pbPctA.setProgress(Math.round(item.getOptionAPct()));
-            holder.tvPctB.setText(Math.round(item.getOptionBPct()) + "%");
-            holder.pbPctB.setProgress(Math.round(item.getOptionBPct()));
-            holder.tvPctC.setText(Math.round(item.getOptionCPct()) + "%");
-            holder.pbPctC.setProgress(Math.round(item.getOptionCPct()));
-            holder.tvPctD.setText(Math.round(item.getOptionDPct()) + "%");
-            holder.pbPctD.setProgress(Math.round(item.getOptionDPct()));
+            if (holder.tvPctA != null) holder.tvPctA.setText(Math.round(item.getOptionAPct()) + "%");
+            if (holder.pbPctA != null) holder.pbPctA.setProgress(Math.round(item.getOptionAPct()));
+            if (holder.tvPctB != null) holder.tvPctB.setText(Math.round(item.getOptionBPct()) + "%");
+            if (holder.pbPctB != null) holder.pbPctB.setProgress(Math.round(item.getOptionBPct()));
+            if (holder.tvPctC != null) holder.tvPctC.setText(Math.round(item.getOptionCPct()) + "%");
+            if (holder.pbPctC != null) holder.pbPctC.setProgress(Math.round(item.getOptionCPct()));
+            if (holder.tvPctD != null) holder.tvPctD.setText(Math.round(item.getOptionDPct()) + "%");
+            if (holder.pbPctD != null) holder.pbPctD.setProgress(Math.round(item.getOptionDPct()));
 
             // Highlight Correct key (Green) & User's wrong key (Red)
             bindOptionBackground(holder.layoutOptionA, "A", userSelected, correct);
@@ -217,38 +226,47 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
             bindOptionBackground(holder.layoutOptionD, "D", userSelected, correct);
 
             // Explanation
-            holder.tvCorrectKeyHeader.setText("Correct Answer: Option " + correct);
-            holder.tvExplanation.setText(item.getExplanation());
-            if (!TextUtils.isEmpty(item.getExplanationImageUrl())) {
-                holder.ivExplanationImage.setVisibility(View.VISIBLE);
-                Glide.with(context).load(item.getExplanationImageUrl()).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.ivExplanationImage);
-            } else {
-                holder.ivExplanationImage.setVisibility(View.GONE);
+            if (holder.tvCorrectKeyHeader != null) {
+                holder.tvCorrectKeyHeader.setText("Correct Answer: Option " + (!TextUtils.isEmpty(correct) ? correct : "N/A"));
+            }
+            if (holder.tvExplanation != null) {
+                holder.tvExplanation.setText(!TextUtils.isEmpty(item.getExplanation()) ? item.getExplanation() : "No detailed explanation provided for this question.");
+            }
+            if (holder.ivExplanationImage != null) {
+                if (!TextUtils.isEmpty(item.getExplanationImageUrl())) {
+                    holder.ivExplanationImage.setVisibility(View.VISIBLE);
+                    Glide.with(context).load(item.getExplanationImageUrl()).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.ivExplanationImage);
+                } else {
+                    holder.ivExplanationImage.setVisibility(View.GONE);
+                }
             }
 
             // Star toggle
-            bindStar(holder.btnStar, item.isStarred(), context);
-            holder.btnStar.setOnClickListener(v -> {
-                Question syntheticQuestion = new Question();
-                syntheticQuestion.setId(item.getQuestionId());
-                syntheticQuestion.setStarred(item.isStarred());
+            if (holder.btnStar != null) {
+                bindStar(holder.btnStar, item.isStarred(), context);
+                holder.btnStar.setOnClickListener(v -> {
+                    Question syntheticQuestion = new Question();
+                    syntheticQuestion.setId(item.getQuestionId());
+                    syntheticQuestion.setStarred(item.isStarred());
 
-                questionRepository.toggleStar(syntheticQuestion, new QuestionRepository.RepositoryCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean isStarred) {
-                        item.setStarred(isStarred);
-                        bindStar(holder.btnStar, isStarred, context);
-                    }
-                    @Override
-                    public void onError(String error) {}
+                    questionRepository.toggleStar(syntheticQuestion, new QuestionRepository.RepositoryCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean isStarred) {
+                            item.setStarred(isStarred);
+                            bindStar(holder.btnStar, isStarred, context);
+                        }
+                        @Override
+                        public void onError(String error) {}
+                    });
                 });
-            });
+            }
         }
 
         private void bindOptionBackground(LinearLayout layout, String letter, String userSelected, String correctKey) {
-            if (letter.equalsIgnoreCase(correctKey)) {
+            if (layout == null) return;
+            if (letter != null && letter.equalsIgnoreCase(correctKey)) {
                 layout.setBackgroundResource(R.drawable.bg_option_correct);
-            } else if (letter.equalsIgnoreCase(userSelected)) {
+            } else if (letter != null && letter.equalsIgnoreCase(userSelected)) {
                 layout.setBackgroundResource(R.drawable.bg_option_wrong);
             } else {
                 layout.setBackgroundResource(R.drawable.bg_option_card);
@@ -256,6 +274,7 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
         }
 
         private void bindStar(ImageView ivStar, boolean isStarred, Context context) {
+            if (ivStar == null) return;
             ivStar.setColorFilter(ContextCompat.getColor(context, isStarred ? R.color.amber_accent : R.color.text_muted));
         }
 
@@ -303,22 +322,22 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
                 tvQuestionText = itemView.findViewById(R.id.tvPreviewQuestionText);
                 ivQuestionImage = itemView.findViewById(R.id.ivPreviewQuestionImage);
 
-                layoutOptionA = itemView.findViewById(R.id.layoutOptionA);
+                layoutOptionA = itemView.findViewById(R.id.layoutPreviewOptionA);
                 tvOptionA = itemView.findViewById(R.id.tvPreviewOptionA);
                 tvPctA = itemView.findViewById(R.id.tvPreviewPctA);
                 pbPctA = itemView.findViewById(R.id.pbPreviewA);
 
-                layoutOptionB = itemView.findViewById(R.id.layoutOptionB);
+                layoutOptionB = itemView.findViewById(R.id.layoutPreviewOptionB);
                 tvOptionB = itemView.findViewById(R.id.tvPreviewOptionB);
                 tvPctB = itemView.findViewById(R.id.tvPreviewPctB);
                 pbPctB = itemView.findViewById(R.id.pbPreviewB);
 
-                layoutOptionC = itemView.findViewById(R.id.layoutOptionC);
+                layoutOptionC = itemView.findViewById(R.id.layoutPreviewOptionC);
                 tvOptionC = itemView.findViewById(R.id.tvPreviewOptionC);
                 tvPctC = itemView.findViewById(R.id.tvPreviewPctC);
                 pbPctC = itemView.findViewById(R.id.pbPreviewC);
 
-                layoutOptionD = itemView.findViewById(R.id.layoutOptionD);
+                layoutOptionD = itemView.findViewById(R.id.layoutPreviewOptionD);
                 tvOptionD = itemView.findViewById(R.id.tvPreviewOptionD);
                 tvPctD = itemView.findViewById(R.id.tvPreviewPctD);
                 pbPctD = itemView.findViewById(R.id.pbPreviewD);

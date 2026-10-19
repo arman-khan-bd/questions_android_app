@@ -139,6 +139,7 @@ public class ProfileTabContentFragment extends Fragment {
                             examSession.setNegativeMarking(0.25);
                             examSession.setQuestions(questions);
 
+                            com.questions.govt.util.ExamSessionManager.getInstance().setSession(examSession, true);
                             Intent intent = new Intent(requireContext(), ExamArenaActivity.class);
                             intent.putExtra(ExamArenaActivity.EXTRA_EXAM_DATA, examSession);
                             startActivity(intent);
@@ -168,6 +169,25 @@ public class ProfileTabContentFragment extends Fragment {
                     QuestionCardAdapter adapter = new QuestionCardAdapter(requireContext(), getChildFragmentManager());
                     adapter.submitList(starred);
                     rvTabContent.setAdapter(adapter);
+
+                    if (fabTabAction != null) {
+                        fabTabAction.setVisibility(View.VISIBLE);
+                        fabTabAction.setText("Practice Starred (" + starred.size() + " Q)");
+                        fabTabAction.setOnClickListener(v -> {
+                            CustomExamGenerateResponse examSession = new CustomExamGenerateResponse();
+                            examSession.setExamId(System.currentTimeMillis() % 100000);
+                            examSession.setTitle("Starred Questions Practice (" + starred.size() + " Q)");
+                            examSession.setTotalQuestions(starred.size());
+                            examSession.setDurationMinutes(Math.max(5, starred.size() * 1));
+                            examSession.setNegativeMarking(0.25);
+                            examSession.setQuestions(starred);
+
+                            com.questions.govt.util.ExamSessionManager.getInstance().setSession(examSession, true);
+                            Intent intent = new Intent(requireContext(), ExamArenaActivity.class);
+                            intent.putExtra(ExamArenaActivity.EXTRA_EXAM_DATA, examSession);
+                            startActivity(intent);
+                        });
+                    }
                 }
                 break;
             }
@@ -192,6 +212,25 @@ public class ProfileTabContentFragment extends Fragment {
                     QuestionCardAdapter adapter = new QuestionCardAdapter(requireContext(), getChildFragmentManager());
                     adapter.submitList(mistakes);
                     rvTabContent.setAdapter(adapter);
+
+                    if (fabTabAction != null) {
+                        fabTabAction.setVisibility(View.VISIBLE);
+                        fabTabAction.setText("Practice Mistakes (" + mistakes.size() + " Q)");
+                        fabTabAction.setOnClickListener(v -> {
+                            CustomExamGenerateResponse examSession = new CustomExamGenerateResponse();
+                            examSession.setExamId(System.currentTimeMillis() % 100000);
+                            examSession.setTitle("Mistake Notebook Practice (" + mistakes.size() + " Q)");
+                            examSession.setTotalQuestions(mistakes.size());
+                            examSession.setDurationMinutes(Math.max(5, mistakes.size() * 1));
+                            examSession.setNegativeMarking(0.25);
+                            examSession.setQuestions(mistakes);
+
+                            com.questions.govt.util.ExamSessionManager.getInstance().setSession(examSession, true);
+                            Intent intent = new Intent(requireContext(), ExamArenaActivity.class);
+                            intent.putExtra(ExamArenaActivity.EXTRA_EXAM_DATA, examSession);
+                            startActivity(intent);
+                        });
+                    }
                 }
                 break;
             }

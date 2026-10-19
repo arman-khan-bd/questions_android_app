@@ -425,6 +425,8 @@ public class ExamArenaActivity extends AppCompatActivity {
             result.setExamId(result.getId());
             result.setAttemptId(result.getId());
             result.setTitle(examTitle);
+            result.setExamType("practice");
+            result.setAffectsRanking(false);
             result.setTotalQuestions(total);
             result.setAttemptedCount(correct + wrong);
             result.setCorrectCount(correct);
@@ -436,7 +438,8 @@ public class ExamArenaActivity extends AppCompatActivity {
             result.setAccuracyPercentage(accuracy);
             result.setTimeSpentSeconds(timeSpentSeconds);
             result.setPassed(isPassed);
-            result.setPointsEarned(correct * 5.0);
+            result.setPointsEarned(0.0);
+            result.setGlobalRank(0);
             result.setCompletedAt(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
             result.setAnswerSheet(preview);
 
@@ -494,6 +497,8 @@ public class ExamArenaActivity extends AppCompatActivity {
                 result.setExamId(result.getId());
                 result.setAttemptId(result.getId());
                 result.setTitle(examTitle);
+                result.setExamType("practice");
+                result.setAffectsRanking(false);
                 result.setTotalQuestions(total);
                 result.setAttemptedCount(correct + wrong);
                 result.setCorrectCount(correct);
@@ -504,7 +509,8 @@ public class ExamArenaActivity extends AppCompatActivity {
                 result.setAccuracyPercentage(accuracy);
                 result.setTimeSpentSeconds(timeSpentSeconds);
                 result.setPassed(accuracy >= 50f);
-                result.setPointsEarned(correct * 5.0);
+                result.setPointsEarned(0.0);
+                result.setGlobalRank(0);
                 result.setCompletedAt(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
                 result.setAnswerSheet(localPreview);
 

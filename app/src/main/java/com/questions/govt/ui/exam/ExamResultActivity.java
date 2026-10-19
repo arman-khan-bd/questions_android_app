@@ -69,11 +69,35 @@ public class ExamResultActivity extends AppCompatActivity {
 
         btnPreviewAnswers.setOnClickListener(v -> {
             if (examResult != null) {
+                if (examResult.getAnswerSheet() != null && !examResult.getAnswerSheet().isEmpty()) {
+                    com.questions.govt.util.ExamSessionManager.getInstance().setLastPreviewList(examResult.getAnswerSheet());
+                }
                 Intent intent = new Intent(ExamResultActivity.this, ExamAnswerPreviewActivity.class);
                 intent.putExtra(ExamAnswerPreviewActivity.EXTRA_EXAM_ID, examResult.getExamId());
                 intent.putExtra(ExamAnswerPreviewActivity.EXTRA_ATTEMPT_ID, examResult.getAttemptId());
-                intent.putExtra(ExamAnswerPreviewActivity.EXTRA_EXAM_RESULT, examResult);
-                startActivity(intent);
+
+                // Create a lightweight copy for Intent to prevent TransactionTooLargeException
+                ExamResult lightResult = new ExamResult();
+                lightResult.setId(examResult.getId());
+                lightResult.setExamId(examResult.getExamId());
+                lightResult.setAttemptId(examResult.getAttemptId());
+                lightResult.setTitle(examResult.getTitle());
+                lightResult.setExamType(examResult.getExamType());
+                lightResult.setAffectsRanking(examResult.isAffectsRanking());
+                lightResult.setFinalScore(examResult.getFinalScore());
+                lightResult.setTotalQuestions(examResult.getTotalQuestions());
+                lightResult.setCorrectCount(examResult.getCorrectCount());
+                lightResult.setWrongCount(examResult.getWrongCount());
+                lightResult.setSkippedCount(examResult.getSkippedCount());
+                intent.putExtra(ExamAnswerPreviewActivity.EXTRA_EXAM_RESULT, lightResult);
+
+                try {
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Intent fallback = new Intent(ExamResultActivity.this, ExamAnswerPreviewActivity.class);
+                    fallback.putExtra(ExamAnswerPreviewActivity.EXTRA_EXAM_ID, examResult.getExamId());
+                    startActivity(fallback);
+                }
             }
         });
 
@@ -124,7 +148,12 @@ public class ExamResultActivity extends AppCompatActivity {
         tvTimeSpent.setText(String.format(Locale.getDefault(), "Time: %02dm %02ds", minutes, seconds));
 
         // Rank & Points
-        tvResultRank.setText(examResult.getGlobalRank() > 0 ? "#" + examResult.getGlobalRank() : "Unranked");
-        tvResultPoints.setText(String.format(Locale.getDefault(), "+%.0f pts", examResult.getPointsEarned()));
+        if (!examResult.isAffectsRanking() || "practice".equalsIgnoreCase(examResult.getExamType()) || "custom".equalsIgnoreCase(examResult.getExamType())) {
+            tvResultRank.setText("Practice (Unranked)");
+            tvResultPoints.setText("Practice Mode (No Rank Impact)");
+        } else {
+            tvResultRank.setText(examResult.getGlobalRank() > 0 ? "#" + examResult.getGlobalRank() : "Unranked");
+            tvResultPoints.setText(String.format(Locale.getDefault(), "+%.0f pts", examResult.getPointsEarned()));
+        }
     }
 }

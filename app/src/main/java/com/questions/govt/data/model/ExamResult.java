@@ -72,6 +72,12 @@ public class ExamResult implements Serializable {
     @SerializedName("completed_at")
     private String completedAt;
 
+    @SerializedName("exam_type")
+    private String examType = "practice";
+
+    @SerializedName("affects_ranking")
+    private boolean affectsRanking = false;
+
     public ExamResult() {
     }
 
@@ -137,4 +143,10 @@ public class ExamResult implements Serializable {
 
     public String getSubmittedAt() { return completedAt; }
     public void setSubmittedAt(String submittedAt) { this.completedAt = submittedAt; }
+
+    public String getExamType() { return examType != null ? examType : "practice"; }
+    public void setExamType(String examType) { this.examType = examType; }
+
+    public boolean isAffectsRanking() { return affectsRanking; }
+    public void setAffectsRanking(boolean affectsRanking) { this.affectsRanking = affectsRanking; }
 }
