@@ -387,8 +387,8 @@ public class ExamArenaActivity extends AppCompatActivity {
             countDownTimer.cancel();
         }
 
-        long timeSpentSeconds = (totalDurationMillis - millisRemaining) / 1000;
-        if (timeSpentSeconds <= 0) timeSpentSeconds = 1;
+        long calcSeconds = (totalDurationMillis - millisRemaining) / 1000;
+        final long timeSpentSeconds = calcSeconds <= 0 ? 1 : calcSeconds;
 
         // If Self-Test from Question Bank, calculate scores locally with negative cut marks
         if (ExamSessionManager.getInstance().isSelfTest()) {
