@@ -31,6 +31,9 @@ public class HomeFeedResponse implements Serializable {
     @SerializedName("tags")
     private List<TaxonomyItem> tags = new ArrayList<>();
 
+    @SerializedName("exams_overview")
+    private ExamsOverview examsOverview;
+
     public List<BannerItem> getBanners() { return banners != null ? banners : new ArrayList<>(); }
     public void setBanners(List<BannerItem> banners) { this.banners = banners; }
 
@@ -48,4 +51,27 @@ public class HomeFeedResponse implements Serializable {
 
     public List<TaxonomyItem> getTags() { return tags != null ? tags : new ArrayList<>(); }
     public void setTags(List<TaxonomyItem> tags) { this.tags = tags; }
+
+    public ExamsOverview getExamsOverview() { return examsOverview; }
+    public void setExamsOverview(ExamsOverview examsOverview) { this.examsOverview = examsOverview; }
+
+    public static class ExamsOverview implements Serializable {
+        @SerializedName("total_exams")
+        private int totalExams;
+
+        @SerializedName("total_attended")
+        private int totalAttended;
+
+        @SerializedName("total_correct")
+        private int totalCorrect;
+
+        public int getTotalExams() { return totalExams; }
+        public void setTotalExams(int totalExams) { this.totalExams = totalExams; }
+
+        public int getTotalAttended() { return totalAttended; }
+        public void setTotalAttended(int totalAttended) { this.totalAttended = totalAttended; }
+
+        public int getTotalCorrect() { return totalCorrect; }
+        public void setTotalCorrect(int totalCorrect) { this.totalCorrect = totalCorrect; }
+    }
 }

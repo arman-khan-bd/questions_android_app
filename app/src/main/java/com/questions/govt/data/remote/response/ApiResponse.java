@@ -22,6 +22,9 @@ public class ApiResponse<T> implements Serializable {
     @SerializedName("errors")
     private Map<String, Object> errors;
 
+    @SerializedName("meta")
+    private Map<String, Object> meta;
+
     public boolean isSuccess() {
         return success;
     }
@@ -52,5 +55,13 @@ public class ApiResponse<T> implements Serializable {
 
     public void setErrors(Map<String, Object> errors) {
         this.errors = errors;
+    }
+
+    public Map<String, Object> getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Map<String, Object> meta) {
+        this.meta = meta;
     }
 }

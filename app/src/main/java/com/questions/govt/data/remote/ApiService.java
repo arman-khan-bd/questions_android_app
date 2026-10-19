@@ -7,6 +7,7 @@ import com.questions.govt.data.model.CustomExamRequest;
 import com.questions.govt.data.model.ExamQuestionPreview;
 import com.questions.govt.data.model.ExamResult;
 import com.questions.govt.data.model.NotificationItem;
+import com.questions.govt.data.model.OfficialExamItem;
 import com.questions.govt.data.model.Question;
 import com.questions.govt.data.model.User;
 import com.questions.govt.data.remote.request.LoginRequest;
@@ -134,6 +135,9 @@ public interface ApiService {
     );
 
     // 7. Exam Engine & Submissions
+    @GET(AppConfig.ENDPOINT_OFFICIAL_EXAMS)
+    Call<ApiResponse<List<OfficialExamItem>>> getOfficialExams();
+
     @POST(AppConfig.ENDPOINT_CUSTOM_EXAM_GENERATE)
     Call<ApiResponse<CustomExamGenerateResponse>> generateCustomExam(@Body CustomExamRequest request);
 

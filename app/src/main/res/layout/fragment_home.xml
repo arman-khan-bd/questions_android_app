@@ -32,7 +32,170 @@
                     android:layout_height="match_parent" />
             </FrameLayout>
 
-            <!-- 2. Topics Section -->
+            <!-- 2. Official Competitive Exams Section (Links to Exams page) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardHomeOfficialExams"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/divider"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Title & Explore All Link -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="Official Exams Suite"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tvViewAllExams"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="4dp"
+                            android:text="View All"
+                            android:textColor="@color/primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Official test series • Performance affects leaderboard rankings"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                    <!-- Telemetry Stats Pill Cards -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <!-- Exams Count -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/bg_badge_pill"
+                            android:backgroundTint="@color/primary_surface"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp">
+
+                            <TextView
+                                android:id="@+id/tvHomeExamsCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-black"
+                                android:textColor="@color/primary"
+                                android:textSize="15sp"
+                                tools:text="8" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Exams"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="10sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- Users Attended -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/bg_badge_pill"
+                            android:backgroundTint="@color/surface_variant"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp">
+
+                            <TextView
+                                android:id="@+id/tvHomeUsersAttended"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-black"
+                                android:textColor="@color/text_primary"
+                                android:textSize="15sp"
+                                tools:text="142" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Attended"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="10sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- Correct Answers -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:background="@drawable/bg_badge_pill"
+                            android:backgroundTint="#ECFDF5"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp">
+
+                            <TextView
+                                android:id="@+id/tvHomeTotalCorrect"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-black"
+                                android:textColor="@color/success"
+                                android:textSize="15sp"
+                                tools:text="1,120" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Correct"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="10sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 3. Topics Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -93,6 +93,11 @@
 
         <!-- Exam Flow Activities -->
         <activity
+            android:name=".ui.exam.ExamsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.exam.ExamArenaActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

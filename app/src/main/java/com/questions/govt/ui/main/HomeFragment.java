@@ -27,15 +27,19 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.questions.govt.R;
 import com.questions.govt.data.model.BannerItem;
+import com.questions.govt.data.model.OfficialExamItem;
 import com.questions.govt.data.model.TaxonomyItem;
 import com.questions.govt.data.remote.response.HomeFeedResponse;
+import com.questions.govt.data.repository.ExamRepository;
 import com.questions.govt.data.repository.TaxonomyRepository;
 import com.questions.govt.ui.exam.ExamArenaActivity;
+import com.questions.govt.ui.exam.ExamsActivity;
 import com.questions.govt.ui.search.SearchResultActivity;
 import com.questions.govt.ui.subject.SubjectDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * HomeFragment structured vertically:
@@ -49,6 +53,11 @@ public class HomeFragment extends Fragment {
 
     private SwipeRefreshLayout swipeRefresh;
     private ViewPager2 vpHeroCarousel;
+    private View cardHomeOfficialExams;
+    private TextView tvViewAllExams;
+    private TextView tvHomeExamsCount;
+    private TextView tvHomeUsersAttended;
+    private TextView tvHomeTotalCorrect;
     private RecyclerView rvTopics;
     private RecyclerView rvSubjects;
     private TextView tvSubjectsCountBadge;
@@ -59,6 +68,7 @@ public class HomeFragment extends Fragment {
     private SubjectGridAdapter subjectAdapter;
 
     private TaxonomyRepository taxonomyRepository;
+    private ExamRepository examRepository;
 
     private final Handler carouselHandler = new Handler(Looper.getMainLooper());
     private Runnable carouselRunnable;
@@ -74,6 +84,7 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         taxonomyRepository = TaxonomyRepository.getInstance(requireContext());
+        examRepository = ExamRepository.getInstance(requireContext());
 
         initViews(view);
         setupAdapters();
@@ -84,10 +95,22 @@ public class HomeFragment extends Fragment {
     private void initViews(View view) {
         swipeRefresh = view.findViewById(R.id.swipeRefresh);
         vpHeroCarousel = view.findViewById(R.id.vpHeroCarousel);
+        cardHomeOfficialExams = view.findViewById(R.id.cardHomeOfficialExams);
+        tvViewAllExams = view.findViewById(R.id.tvViewAllExams);
+        tvHomeExamsCount = view.findViewById(R.id.tvHomeExamsCount);
+        tvHomeUsersAttended = view.findViewById(R.id.tvHomeUsersAttended);
+        tvHomeTotalCorrect = view.findViewById(R.id.tvHomeTotalCorrect);
         rvTopics = view.findViewById(R.id.rvTopics);
         rvSubjects = view.findViewById(R.id.rvSubjects);
         tvSubjectsCountBadge = view.findViewById(R.id.tvSubjectsCountBadge);
         cgCategoriesAndTags = view.findViewById(R.id.cgCategoriesAndTags);
+
+        View.OnClickListener openExamsListener = v -> {
+            Intent intent = new Intent(requireContext(), ExamsActivity.class);
+            startActivity(intent);
+        };
+        if (cardHomeOfficialExams != null) cardHomeOfficialExams.setOnClickListener(openExamsListener);
+        if (tvViewAllExams != null) tvViewAllExams.setOnClickListener(openExamsListener);
 
         swipeRefresh.setOnRefreshListener(() -> loadHomeFeedData(true));
     }
@@ -215,6 +238,14 @@ public class HomeFragment extends Fragment {
                         if (response.getTags() != null && !response.getTags().isEmpty()) {
                             populateTagChips(response.getTags());
                         }
+                        if (response.getExamsOverview() != null) {
+                            HomeFeedResponse.ExamsOverview ov = response.getExamsOverview();
+                            if (tvHomeExamsCount != null) tvHomeExamsCount.setText(String.valueOf(ov.getTotalExams()));
+                            if (tvHomeUsersAttended != null) tvHomeUsersAttended.setText(String.valueOf(ov.getTotalAttended()));
+                            if (tvHomeTotalCorrect != null) tvHomeTotalCorrect.setText(String.valueOf(ov.getTotalCorrect()));
+                        } else {
+                            loadOfficialExamsTelemetry();
+                        }
                     }
                 }
             }
@@ -223,8 +254,40 @@ public class HomeFragment extends Fragment {
             public void onError(String message) {
                 if (isAdded()) {
                     swipeRefresh.setRefreshing(false);
+                    loadOfficialExamsTelemetry();
                 }
             }
+        });
+    }
+
+    private void loadOfficialExamsTelemetry() {
+        if (examRepository == null) return;
+        examRepository.getOfficialExams(new ExamRepository.OfficialExamsCallback() {
+            @Override
+            public void onSuccess(List<OfficialExamItem> exams, Map<String, Object> meta) {
+                if (!isAdded()) return;
+                int totalExams = exams != null ? exams.size() : 0;
+                int totalAttended = 0;
+                int totalCorrect = 0;
+                if (meta != null) {
+                    try {
+                        if (meta.containsKey("total_exams")) totalExams = ((Number) meta.get("total_exams")).intValue();
+                        if (meta.containsKey("total_attended")) totalAttended = ((Number) meta.get("total_attended")).intValue();
+                        if (meta.containsKey("total_correct")) totalCorrect = ((Number) meta.get("total_correct")).intValue();
+                    } catch (Exception ignored) {}
+                } else if (exams != null) {
+                    for (OfficialExamItem e : exams) {
+                        totalAttended += e.getTotalAttended();
+                        totalCorrect += e.getTotalCorrect();
+                    }
+                }
+                if (tvHomeExamsCount != null) tvHomeExamsCount.setText(String.valueOf(totalExams));
+                if (tvHomeUsersAttended != null) tvHomeUsersAttended.setText(String.valueOf(totalAttended));
+                if (tvHomeTotalCorrect != null) tvHomeTotalCorrect.setText(String.valueOf(totalCorrect));
+            }
+
+            @Override
+            public void onError(String message) {}
         });
     }
 

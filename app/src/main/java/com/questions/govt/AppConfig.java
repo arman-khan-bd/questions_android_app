@@ -106,6 +106,9 @@ public final class AppConfig {
     public static final String ENDPOINT_COMMENT_REPLY = API_PREFIX + "comments/{id}/reply";
 
     // --- Exam Engine, Custom Tests & Graded Submissions ---
+    /** List all official competitive exams created by Admin */
+    public static final String ENDPOINT_OFFICIAL_EXAMS = API_PREFIX + "exams";
+
     /** Generate custom MCQ practice quiz based on student taxonomy & difficulty */
     public static final String ENDPOINT_CUSTOM_EXAM_GENERATE = API_PREFIX + "exams/custom-generate";
 

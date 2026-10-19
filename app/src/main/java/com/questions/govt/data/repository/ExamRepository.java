@@ -12,6 +12,7 @@ import com.questions.govt.data.local.entity.OfflineExamSubmission;
 import com.questions.govt.data.model.CustomExamRequest;
 import com.questions.govt.data.model.ExamQuestionPreview;
 import com.questions.govt.data.model.ExamResult;
+import com.questions.govt.data.model.OfficialExamItem;
 import com.questions.govt.data.remote.ApiClient;
 import com.questions.govt.data.remote.ApiService;
 import com.questions.govt.data.remote.response.ApiResponse;
@@ -206,6 +207,29 @@ public class ExamRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<List<ExamQuestionPreview>>> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
+    }
+
+    public interface OfficialExamsCallback {
+        void onSuccess(List<OfficialExamItem> exams, Map<String, Object> meta);
+        void onError(String message);
+    }
+
+    public void getOfficialExams(OfficialExamsCallback callback) {
+        apiService.getOfficialExams().enqueue(new Callback<ApiResponse<List<OfficialExamItem>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<OfficialExamItem>>> call, Response<ApiResponse<List<OfficialExamItem>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    callback.onSuccess(response.body().getData(), response.body().getMeta());
+                } else {
+                    callback.onError("Failed to load competitive exams.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<OfficialExamItem>>> call, Throwable t) {
                 callback.onError(t.getMessage());
             }
         });
