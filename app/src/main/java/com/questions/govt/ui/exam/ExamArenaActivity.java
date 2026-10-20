@@ -32,6 +32,7 @@ import com.questions.govt.data.model.Question;
 import com.questions.govt.data.remote.response.CustomExamGenerateResponse;
 import com.questions.govt.data.repository.ExamRepository;
 import com.questions.govt.util.ExamSessionManager;
+import com.questions.govt.util.LyxMathParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -289,11 +290,11 @@ public class ExamArenaActivity extends AppCompatActivity {
         tvQuestionCounter.setText("Question " + (index + 1) + " of " + questionList.size());
         pbExamProgress.setProgress(userAnswers.size());
 
-        tvArenaQuestionText.setText(question.getQuestionText());
-        tvOptionA.setText(question.getOptionA());
-        tvOptionB.setText(question.getOptionB());
-        tvOptionC.setText(question.getOptionC());
-        tvOptionD.setText(question.getOptionD());
+        LyxMathParser.setMathText(tvArenaQuestionText, question.getQuestionText());
+        LyxMathParser.setMathText(tvOptionA, question.getOptionA());
+        LyxMathParser.setMathText(tvOptionB, question.getOptionB());
+        LyxMathParser.setMathText(tvOptionC, question.getOptionC());
+        LyxMathParser.setMathText(tvOptionD, question.getOptionD());
 
         if (!TextUtils.isEmpty(question.getImageUrl())) {
             ivArenaQuestionImage.setVisibility(View.VISIBLE);

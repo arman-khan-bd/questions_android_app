@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.questions.govt.R;
 import com.questions.govt.data.model.Question;
 import com.questions.govt.data.repository.QuestionRepository;
+import com.questions.govt.util.LyxMathParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         Question question = questionList.get(position);
         Context context = holder.itemView.getContext();
 
-        holder.tvQuestionText.setText(question.getQuestionText());
+        LyxMathParser.setMathText(holder.tvQuestionText, question.getQuestionText());
 
         // Subject Badge
         String subject = question.getSubjectTitle();

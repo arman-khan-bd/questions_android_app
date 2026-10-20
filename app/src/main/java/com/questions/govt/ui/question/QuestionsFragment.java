@@ -105,7 +105,7 @@ public class QuestionsFragment extends Fragment {
     private String selectedDifficulty = null;
     private Long selectedSubjectId = null;
     private String selectedSubjectName = null;
-    private String selectedSort = "recent";
+    private String selectedSort = "weak_topics";
 
     private int currentPage = 1;
     private int lastPage = 1;
@@ -338,7 +338,7 @@ public class QuestionsFragment extends Fragment {
         });
 
         chipActiveSort.setOnCloseIconClickListener(v -> {
-            selectedSort = "recent";
+            selectedSort = "weak_topics";
             updateActiveFilterBadges();
             loadQuestions(1, true);
         });
@@ -365,12 +365,14 @@ public class QuestionsFragment extends Fragment {
             chipActiveSubject.setVisibility(View.GONE);
         }
 
-        if (!"recent".equals(selectedSort) && !TextUtils.isEmpty(selectedSort)) {
+        if (!"weak_topics".equals(selectedSort) && !TextUtils.isEmpty(selectedSort)) {
             activeCount++;
-            String sortLabel = "Popular";
-            if ("attempts".equals(selectedSort)) sortLabel = "Attempts";
+            String sortLabel = "Latest";
+            if ("popular".equals(selectedSort)) sortLabel = "Popular";
+            else if ("attempts".equals(selectedSort)) sortLabel = "Attempts";
             else if ("diff_asc".equals(selectedSort)) sortLabel = "Easy First";
             else if ("diff_desc".equals(selectedSort)) sortLabel = "Hard First";
+            else if ("recent".equals(selectedSort)) sortLabel = "Latest";
             chipActiveSort.setText(sortLabel);
             chipActiveSort.setVisibility(View.VISIBLE);
         } else {
@@ -457,15 +459,17 @@ public class QuestionsFragment extends Fragment {
             cgSort.check(R.id.chipSheetSortEasyFirst);
         } else if ("diff_desc".equals(selectedSort)) {
             cgSort.check(R.id.chipSheetSortHardFirst);
-        } else {
+        } else if ("recent".equals(selectedSort)) {
             cgSort.check(R.id.chipSheetSortLatest);
+        } else {
+            cgSort.check(R.id.chipSheetSortWeakTopics);
         }
 
         // Reset
         btnReset.setOnClickListener(v -> {
             cgDifficulty.check(R.id.chipSheetDiffAll);
             chipAllSubjects.setChecked(true);
-            cgSort.check(R.id.chipSheetSortLatest);
+            cgSort.check(R.id.chipSheetSortWeakTopics);
         });
 
         // Apply
@@ -495,7 +499,8 @@ public class QuestionsFragment extends Fragment {
             else if (sortId == R.id.chipSheetSortAttempts) selectedSort = "attempts";
             else if (sortId == R.id.chipSheetSortEasyFirst) selectedSort = "diff_asc";
             else if (sortId == R.id.chipSheetSortHardFirst) selectedSort = "diff_desc";
-            else selectedSort = "recent";
+            else if (sortId == R.id.chipSheetSortLatest) selectedSort = "recent";
+            else selectedSort = "weak_topics";
 
             updateActiveFilterBadges();
             loadQuestions(1, true);

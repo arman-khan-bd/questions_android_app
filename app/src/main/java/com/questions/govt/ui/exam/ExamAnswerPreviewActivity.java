@@ -27,6 +27,7 @@ import com.questions.govt.data.model.ExamResult;
 import com.questions.govt.data.model.Question;
 import com.questions.govt.data.repository.ExamRepository;
 import com.questions.govt.data.repository.QuestionRepository;
+import com.questions.govt.util.LyxMathParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -169,7 +170,7 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
                 holder.tvQuestionNum.setText("Question " + (position + 1));
             }
             if (holder.tvQuestionText != null) {
-                holder.tvQuestionText.setText(item.getQuestionText() != null ? item.getQuestionText() : "");
+                LyxMathParser.setMathText(holder.tvQuestionText, item.getQuestionText() != null ? item.getQuestionText() : "");
             }
 
             // Outcome badge
@@ -205,10 +206,10 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
             }
 
             // Options Text & Percentages
-            if (holder.tvOptionA != null) holder.tvOptionA.setText(item.getOptionA() != null ? item.getOptionA() : "");
-            if (holder.tvOptionB != null) holder.tvOptionB.setText(item.getOptionB() != null ? item.getOptionB() : "");
-            if (holder.tvOptionC != null) holder.tvOptionC.setText(item.getOptionC() != null ? item.getOptionC() : "");
-            if (holder.tvOptionD != null) holder.tvOptionD.setText(item.getOptionD() != null ? item.getOptionD() : "");
+            if (holder.tvOptionA != null) LyxMathParser.setMathText(holder.tvOptionA, item.getOptionA() != null ? item.getOptionA() : "");
+            if (holder.tvOptionB != null) LyxMathParser.setMathText(holder.tvOptionB, item.getOptionB() != null ? item.getOptionB() : "");
+            if (holder.tvOptionC != null) LyxMathParser.setMathText(holder.tvOptionC, item.getOptionC() != null ? item.getOptionC() : "");
+            if (holder.tvOptionD != null) LyxMathParser.setMathText(holder.tvOptionD, item.getOptionD() != null ? item.getOptionD() : "");
 
             if (holder.tvPctA != null) holder.tvPctA.setText(Math.round(item.getOptionAPct()) + "%");
             if (holder.pbPctA != null) holder.pbPctA.setProgress(Math.round(item.getOptionAPct()));
@@ -230,7 +231,7 @@ public class ExamAnswerPreviewActivity extends AppCompatActivity {
                 holder.tvCorrectKeyHeader.setText("Correct Answer: Option " + (!TextUtils.isEmpty(correct) ? correct : "N/A"));
             }
             if (holder.tvExplanation != null) {
-                holder.tvExplanation.setText(!TextUtils.isEmpty(item.getExplanation()) ? item.getExplanation() : "No detailed explanation provided for this question.");
+                LyxMathParser.setMathText(holder.tvExplanation, !TextUtils.isEmpty(item.getExplanation()) ? item.getExplanation() : "No detailed explanation provided for this question.");
             }
             if (holder.ivExplanationImage != null) {
                 if (!TextUtils.isEmpty(item.getExplanationImageUrl())) {

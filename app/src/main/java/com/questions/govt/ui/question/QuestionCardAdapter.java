@@ -32,6 +32,7 @@ import com.questions.govt.data.remote.response.AnswerCheckResponse;
 import com.questions.govt.data.remote.response.VoteResponse;
 import com.questions.govt.data.repository.QuestionRepository;
 import com.questions.govt.util.FeatureFlagManager;
+import com.questions.govt.util.LyxMathParser;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -191,7 +192,7 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
 
         // 3. Question Text and Image
-        holder.tvQuestionText.setText(question.getQuestionText());
+        LyxMathParser.setMathText(holder.tvQuestionText, question.getQuestionText());
         if (!TextUtils.isEmpty(question.getImageUrl())) {
             holder.ivQuestionImage.setVisibility(View.VISIBLE);
             Glide.with(context)
@@ -203,10 +204,10 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         }
 
         // 4. Option Texts & Adaptive Layout
-        holder.tvOptionA.setText(question.getOptionA());
-        holder.tvOptionB.setText(question.getOptionB());
-        holder.tvOptionC.setText(question.getOptionC());
-        holder.tvOptionD.setText(question.getOptionD());
+        LyxMathParser.setMathText(holder.tvOptionA, question.getOptionA());
+        LyxMathParser.setMathText(holder.tvOptionB, question.getOptionB());
+        LyxMathParser.setMathText(holder.tvOptionC, question.getOptionC());
+        LyxMathParser.setMathText(holder.tvOptionD, question.getOptionD());
 
         boolean isShort = isShortOption(question.getOptionA()) &&
                 isShortOption(question.getOptionB()) &&

@@ -34,6 +34,7 @@ import com.questions.govt.data.remote.response.AnswerCheckResponse;
 import com.questions.govt.data.remote.response.ApiResponse;
 import com.questions.govt.data.remote.response.VoteResponse;
 import com.questions.govt.data.repository.QuestionRepository;
+import com.questions.govt.util.LyxMathParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -310,7 +311,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
             tvAuthorDetail.setText("");
         }
 
-        tvQuestionTextDetail.setText(q.getQuestionText());
+        LyxMathParser.setMathText(tvQuestionTextDetail, q.getQuestionText());
 
         if (!TextUtils.isEmpty(q.getImageUrl())) {
             ivQuestionImageDetail.setVisibility(View.VISIBLE);
@@ -322,10 +323,10 @@ public class QuestionDetailActivity extends AppCompatActivity {
             ivQuestionImageDetail.setVisibility(View.GONE);
         }
 
-        tvOptionADetail.setText(q.getOptionA());
-        tvOptionBDetail.setText(q.getOptionB());
-        tvOptionCDetail.setText(q.getOptionC());
-        tvOptionDDetail.setText(q.getOptionD());
+        LyxMathParser.setMathText(tvOptionADetail, q.getOptionA());
+        LyxMathParser.setMathText(tvOptionBDetail, q.getOptionB());
+        LyxMathParser.setMathText(tvOptionCDetail, q.getOptionC());
+        LyxMathParser.setMathText(tvOptionDDetail, q.getOptionD());
 
         // Dynamic 2-column vs 1-column layout
         boolean isShort = isShortOption(q.getOptionA()) &&
@@ -419,7 +420,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
         layoutExplanationDetail.setVisibility(View.VISIBLE);
         tvCorrectAnswerHeaderDetail.setText("Correct Answer: Option " + correctOpt);
         if (!TextUtils.isEmpty(question.getExplanation())) {
-            tvExplanationTextDetail.setText(question.getExplanation());
+            LyxMathParser.setMathText(tvExplanationTextDetail, question.getExplanation());
         } else {
             tvExplanationTextDetail.setText("No additional explanation provided.");
         }
@@ -438,7 +439,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
                     question.setOptionDPct(data.getOptionDPct());
                     if (!TextUtils.isEmpty(data.getExplanation())) {
                         question.setExplanation(data.getExplanation());
-                        tvExplanationTextDetail.setText(data.getExplanation());
+                        LyxMathParser.setMathText(tvExplanationTextDetail, data.getExplanation());
                     }
                     revealOptionPercentages();
                 } else {
