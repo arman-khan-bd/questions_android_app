@@ -184,10 +184,9 @@ public class QuestionsFragment extends Fragment {
         btnResetFilters.setOnClickListener(v -> resetAllFilters());
         swipeRefresh.setOnRefreshListener(() -> loadQuestions(1, true));
 
-        // Floating Exam Pill Click -> Opens Self-Test Builder Bottom Sheet
+        // Floating Exam Pill Click -> Opens Self-Test Builder Bottom Sheet (Hidden by default, shown when questions selected)
         if (fabCreateExamFromQuestions != null) {
-            fabCreateExamFromQuestions.setText("Create Practice Exam");
-            fabCreateExamFromQuestions.show();
+            fabCreateExamFromQuestions.hide();
             fabCreateExamFromQuestions.setOnClickListener(v -> showSelfTestBuilderBottomSheet());
         }
     }
@@ -234,11 +233,11 @@ public class QuestionsFragment extends Fragment {
         }
         if (fabCreateExamFromQuestions != null) {
             if (selectedCount > 0) {
-                fabCreateExamFromQuestions.setText("Create Practice Exam (" + selectedCount + ")");
+                fabCreateExamFromQuestions.setText("Exam (" + selectedCount + ")");
+                fabCreateExamFromQuestions.show();
             } else {
-                fabCreateExamFromQuestions.setText("Create Practice Exam");
+                fabCreateExamFromQuestions.hide();
             }
-            fabCreateExamFromQuestions.show();
         }
     }
 

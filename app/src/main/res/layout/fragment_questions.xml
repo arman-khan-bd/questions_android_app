@@ -330,19 +330,20 @@
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabCreateExamFromQuestions"
         android:layout_width="wrap_content"
-        android:layout_height="46dp"
+        android:layout_height="40dp"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="72dp"
         android:contentDescription="Create Self-Exam"
-        android:text="Create Practice Exam"
+        android:text="Exam (0)"
         android:textColor="@color/text_white"
-        android:textSize="12sp"
-        android:visibility="visible"
-        tools:visibility="visible"
+        android:textSize="11sp"
+        android:visibility="gone"
+        tools:visibility="gone"
         app:backgroundTint="@color/accent"
-        app:elevation="6dp"
+        app:elevation="4dp"
         app:icon="@drawable/ic_trophy"
+        app:iconSize="16dp"
         app:iconTint="@color/text_white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
