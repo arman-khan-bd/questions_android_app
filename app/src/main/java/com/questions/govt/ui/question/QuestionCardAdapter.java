@@ -253,51 +253,12 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
         holder.layoutVoting.setVisibility(flagManager.isAnswerVotingSystemEnabled() ? View.VISIBLE : View.GONE);
         bindVoting(holder, question, context);
 
-        View.OnClickListener upvoteListener = v -> {
-            String currentVote = question.getUserVoted();
-            String voteAction = "up".equalsIgnoreCase(currentVote) ? "unvote" : "up";
-            questionRepository.voteAnswer(question.getId(), voteAction, new QuestionRepository.RepositoryCallback<VoteResponse>() {
-                @Override
-                public void onSuccess(VoteResponse result) {
-                    question.setUpvotesCount(result.getUpvotesCount());
-                    question.setDownvotesCount(result.getDownvotesCount());
-                    question.setUserVoted(result.getUserVoted());
-                    bindVoting(holder, question, context);
-                    String msg = "up".equalsIgnoreCase(result.getUserVoted()) ? "Upvoted!" : "Vote removed.";
-                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                }
-                @Override
-                public void onError(String error) {
-                    Toast.makeText(context, error != null ? error : "Vote failed.", Toast.LENGTH_SHORT).show();
-                }
-            });
-        };
-        if (holder.layoutBtnUpvote != null) holder.layoutBtnUpvote.setOnClickListener(upvoteListener);
-        holder.btnUpvote.setOnClickListener(upvoteListener);
-        holder.tvUpvotes.setOnClickListener(upvoteListener);
-
-        View.OnClickListener downvoteListener = v -> {
-            String currentVote = question.getUserVoted();
-            String voteAction = "down".equalsIgnoreCase(currentVote) ? "unvote" : "down";
-            questionRepository.voteAnswer(question.getId(), voteAction, new QuestionRepository.RepositoryCallback<VoteResponse>() {
-                @Override
-                public void onSuccess(VoteResponse result) {
-                    question.setUpvotesCount(result.getUpvotesCount());
-                    question.setDownvotesCount(result.getDownvotesCount());
-                    question.setUserVoted(result.getUserVoted());
-                    bindVoting(holder, question, context);
-                    String msg = "down".equalsIgnoreCase(result.getUserVoted()) ? "Dispute recorded!" : "Vote removed.";
-                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                }
-                @Override
-                public void onError(String error) {
-                    Toast.makeText(context, error != null ? error : "Vote failed.", Toast.LENGTH_SHORT).show();
-                }
-            });
-        };
-        if (holder.layoutBtnDownvote != null) holder.layoutBtnDownvote.setOnClickListener(downvoteListener);
-        holder.btnDownvote.setOnClickListener(downvoteListener);
-        holder.tvDownvotes.setOnClickListener(downvoteListener);
+        if (holder.layoutBtnUpvote != null) {
+            holder.layoutBtnUpvote.setOnClickListener(v -> handleVoteClick(holder, question, context, "up"));
+        }
+        if (holder.layoutBtnDownvote != null) {
+            holder.layoutBtnDownvote.setOnClickListener(v -> handleVoteClick(holder, question, context, "down"));
+        }
 
         // 9. Comments & Discussions Bottom Sheet
         boolean commentsEnabled = flagManager.isQuestionCommentsEnabled();
@@ -464,6 +425,78 @@ public class QuestionCardAdapter extends RecyclerView.Adapter<QuestionCardAdapte
             tvPct.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
             tvPct.setTypeface(null, Typeface.NORMAL);
         }
+    }
+
+    private void handleVoteClick(CardViewHolder holder, Question question, Context context, String targetType) {
+        String currentVote = question.getUserVoted();
+        int prevUpvotes = question.getUpvotesCount();
+        int prevDownvotes = question.getDownvotesCount();
+        String prevVote = currentVote;
+
+        String actionType;
+        if (targetType.equalsIgnoreCase(currentVote)) {
+            // Unvote toggle
+            actionType = "unvote";
+            if ("up".equalsIgnoreCase(currentVote) || "like".equalsIgnoreCase(currentVote)) {
+                question.setUpvotesCount(Math.max(0, question.getUpvotesCount() - 1));
+            } else if ("down".equalsIgnoreCase(currentVote) || "unlike".equalsIgnoreCase(currentVote)) {
+                question.setDownvotesCount(Math.max(0, question.getDownvotesCount() - 1));
+            }
+            question.setUserVoted(null);
+        } else {
+            // New vote or switch vote
+            actionType = targetType;
+            if ("up".equalsIgnoreCase(targetType)) {
+                question.setUpvotesCount(question.getUpvotesCount() + 1);
+                if ("down".equalsIgnoreCase(currentVote) || "unlike".equalsIgnoreCase(currentVote)) {
+                    question.setDownvotesCount(Math.max(0, question.getDownvotesCount() - 1));
+                }
+                question.setUserVoted("up");
+            } else {
+                question.setDownvotesCount(question.getDownvotesCount() + 1);
+                if ("up".equalsIgnoreCase(currentVote) || "like".equalsIgnoreCase(currentVote)) {
+                    question.setUpvotesCount(Math.max(0, question.getUpvotesCount() - 1));
+                }
+                question.setUserVoted("down");
+            }
+        }
+
+        // 1. Instant optimistic UI feedback
+        bindVoting(holder, question, context);
+
+        // 2. Synchronize with server and update Room cache
+        questionRepository.voteAnswer(question.getId(), actionType, new QuestionRepository.RepositoryCallback<VoteResponse>() {
+            @Override
+            public void onSuccess(VoteResponse result) {
+                if (result != null) {
+                    question.setUpvotesCount(result.getUpvotesCount());
+                    question.setDownvotesCount(result.getDownvotesCount());
+                    question.setUserVoted(result.getUserVoted());
+                    bindVoting(holder, question, context);
+
+                    questionRepository.updateVoteStatusLocally(
+                            question.getId(),
+                            result.getUpvotesCount(),
+                            result.getDownvotesCount(),
+                            result.getUserVoted()
+                    );
+
+                    String msg = "up".equalsIgnoreCase(result.getUserVoted()) ? "Upvoted!" :
+                            ("down".equalsIgnoreCase(result.getUserVoted()) ? "Dispute recorded!" : "Vote removed.");
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                // Rollback optimistic state
+                question.setUpvotesCount(prevUpvotes);
+                question.setDownvotesCount(prevDownvotes);
+                question.setUserVoted(prevVote);
+                bindVoting(holder, question, context);
+                Toast.makeText(context, error != null ? error : "Vote failed.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void bindVoting(CardViewHolder holder, Question question, Context context) {

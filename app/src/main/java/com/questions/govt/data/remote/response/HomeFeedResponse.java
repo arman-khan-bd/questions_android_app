@@ -34,6 +34,17 @@ public class HomeFeedResponse implements Serializable {
     @SerializedName("exams_overview")
     private ExamsOverview examsOverview;
 
+    @SerializedName("carousel_interval_seconds")
+    private int carouselIntervalSeconds = 4;
+
+    public int getCarouselIntervalSeconds() {
+        return carouselIntervalSeconds > 0 ? carouselIntervalSeconds : 4;
+    }
+
+    public void setCarouselIntervalSeconds(int carouselIntervalSeconds) {
+        this.carouselIntervalSeconds = carouselIntervalSeconds;
+    }
+
     public List<BannerItem> getBanners() { return banners != null ? banners : new ArrayList<>(); }
     public void setBanners(List<BannerItem> banners) { this.banners = banners; }
 

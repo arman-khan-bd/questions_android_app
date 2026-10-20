@@ -103,33 +103,36 @@ public class TaxonomyRepository {
                     cachedHomeFeed = feed;
                     lastHomeFeedFetchTime = System.currentTimeMillis();
 
-                    List<TaxonomyItem> allItems = new ArrayList<>();
+                    List<TaxonomyItem> subjects = new ArrayList<>();
                     if (feed.getSubjects() != null) {
                         for (TaxonomyItem item : feed.getSubjects()) {
                             item.setType("subject");
-                            allItems.add(item);
+                            subjects.add(item);
                         }
                     }
+                    List<TaxonomyItem> topics = new ArrayList<>();
                     if (feed.getTopics() != null) {
                         for (TaxonomyItem item : feed.getTopics()) {
                             item.setType("topic");
-                            allItems.add(item);
+                            topics.add(item);
                         }
                     }
+                    List<TaxonomyItem> categories = new ArrayList<>();
                     if (feed.getCategories() != null) {
                         for (TaxonomyItem item : feed.getCategories()) {
                             item.setType("category");
-                            allItems.add(item);
+                            categories.add(item);
                         }
                     }
+                    List<TaxonomyItem> tags = new ArrayList<>();
                     if (feed.getTags() != null) {
                         for (TaxonomyItem item : feed.getTags()) {
                             item.setType("tag");
-                            allItems.add(item);
+                            tags.add(item);
                         }
                     }
 
-                    AppDatabase.databaseWriteExecutor.execute(() -> taxonomyDao.insertOrReplaceAll(allItems));
+                    AppDatabase.databaseWriteExecutor.execute(() -> taxonomyDao.syncTaxonomies(subjects, topics, categories, tags));
 
                     if (callback != null) callback.onSuccess(feed);
                 } else {

@@ -1,9 +1,13 @@
 package com.questions.govt.ui.main;
 
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,11 +63,49 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
                 .error(R.drawable.bg_splash_gradient)
                 .into(holder.ivBanner);
 
+        // Title overlay visibility & position
+        if (holder.tvBannerTitle != null) {
+            if (banner.isShowTitle() && !TextUtils.isEmpty(banner.getTitle())) {
+                holder.tvBannerTitle.setVisibility(View.VISIBLE);
+                holder.tvBannerTitle.setText(banner.getTitle());
+
+                ViewGroup.LayoutParams lp = holder.tvBannerTitle.getLayoutParams();
+                if (lp instanceof FrameLayout.LayoutParams) {
+                    FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) lp;
+                    params.gravity = getGravityFromPosition(banner.getTitlePosition());
+                    holder.tvBannerTitle.setLayoutParams(params);
+                }
+            } else {
+                holder.tvBannerTitle.setVisibility(View.GONE);
+            }
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onBannerClick(banner);
             }
         });
+    }
+
+    private int getGravityFromPosition(String pos) {
+        if (pos == null) return Gravity.BOTTOM | Gravity.START;
+        switch (pos.toLowerCase().trim().replace('-', '_')) {
+            case "bottom_center":
+                return Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+            case "bottom_right":
+                return Gravity.BOTTOM | Gravity.END;
+            case "top_left":
+                return Gravity.TOP | Gravity.START;
+            case "top_center":
+                return Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+            case "top_right":
+                return Gravity.TOP | Gravity.END;
+            case "center":
+                return Gravity.CENTER;
+            case "bottom_left":
+            default:
+                return Gravity.BOTTOM | Gravity.START;
+        }
     }
 
     @Override
@@ -73,10 +115,12 @@ public class BannerCarouselAdapter extends RecyclerView.Adapter<BannerCarouselAd
 
     static class BannerViewHolder extends RecyclerView.ViewHolder {
         ImageView ivBanner;
+        TextView tvBannerTitle;
 
         BannerViewHolder(View itemView) {
             super(itemView);
             ivBanner = itemView.findViewById(R.id.ivBanner);
+            tvBannerTitle = itemView.findViewById(R.id.tvBannerTitle);
         }
     }
 }

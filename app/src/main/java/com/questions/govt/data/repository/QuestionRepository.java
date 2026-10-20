@@ -222,6 +222,12 @@ public class QuestionRepository {
         });
     }
 
+    public void updateVoteStatusLocally(long questionId, int upvotes, int downvotes, String userVoted) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            questionDao.updateVoteStatus(questionId, upvotes, downvotes, userVoted);
+        });
+    }
+
     public LiveData<List<Question>> searchQuestionsOffline(String query) {
         return questionDao.searchQuestionsOffline(query);
     }

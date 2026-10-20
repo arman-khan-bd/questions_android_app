@@ -44,6 +44,9 @@ public interface QuestionDao {
             "optionAPct = :optA, optionBPct = :optB, optionCPct = :optC, optionDPct = :optD WHERE id = :questionId")
     void updateTelemetry(long questionId, int viewsCount, int attemptsCount, float optA, float optB, float optC, float optD);
 
+    @Query("UPDATE questions SET upvotesCount = :upvotes, downvotesCount = :downvotes, userVoted = :userVoted WHERE id = :questionId")
+    void updateVoteStatus(long questionId, int upvotes, int downvotes, String userVoted);
+
     @Query("SELECT * FROM questions WHERE questionText LIKE '%' || :query || '%' OR subjectTitle LIKE '%' || :query || '%' LIMIT 50")
     LiveData<List<Question>> searchQuestionsOffline(String query);
 

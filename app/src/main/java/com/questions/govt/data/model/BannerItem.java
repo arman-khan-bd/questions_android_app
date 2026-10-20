@@ -27,6 +27,12 @@ public class BannerItem implements Serializable {
     @SerializedName("target_url")
     private String targetUrl;
 
+    @SerializedName("show_title")
+    private boolean showTitle = true;
+
+    @SerializedName("title_position")
+    private String titlePosition = "bottom_left";
+
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
 
@@ -44,4 +50,10 @@ public class BannerItem implements Serializable {
 
     public String getTargetUrl() { return targetUrl; }
     public void setTargetUrl(String targetUrl) { this.targetUrl = targetUrl; }
+
+    public boolean isShowTitle() { return showTitle; }
+    public void setShowTitle(boolean showTitle) { this.showTitle = showTitle; }
+
+    public String getTitlePosition() { return titlePosition != null ? titlePosition : "bottom_left"; }
+    public void setTitlePosition(String titlePosition) { this.titlePosition = titlePosition; }
 }

@@ -72,6 +72,7 @@ public class HomeFragment extends Fragment {
 
     private final Handler carouselHandler = new Handler(Looper.getMainLooper());
     private Runnable carouselRunnable;
+    private long carouselIntervalMs = 4000L;
 
     @Nullable
     @Override
@@ -150,7 +151,7 @@ public class HomeFragment extends Fragment {
                 if (bannerAdapter != null && bannerAdapter.getItemCount() > 1 && vpHeroCarousel != null) {
                     int next = (vpHeroCarousel.getCurrentItem() + 1) % bannerAdapter.getItemCount();
                     vpHeroCarousel.setCurrentItem(next, true);
-                    carouselHandler.postDelayed(this, 4000);
+                    carouselHandler.postDelayed(this, carouselIntervalMs);
                 }
             }
         };
@@ -173,6 +174,17 @@ public class HomeFragment extends Fragment {
         } else if ("category".equalsIgnoreCase(type) && targetId > 0) {
             Intent intent = new Intent(requireContext(), SearchResultActivity.class);
             intent.putExtra(SearchResultActivity.EXTRA_CATEGORY_ID, targetId);
+            intent.putExtra(SearchResultActivity.EXTRA_TITLE, banner.getTitle());
+            startActivity(intent);
+        } else if ("topic".equalsIgnoreCase(type) && targetId > 0) {
+            Intent intent = new Intent(requireContext(), SearchResultActivity.class);
+            intent.putExtra(SearchResultActivity.EXTRA_TOPIC_ID, targetId);
+            intent.putExtra(SearchResultActivity.EXTRA_TITLE, banner.getTitle());
+            startActivity(intent);
+        } else if ("tag".equalsIgnoreCase(type) && targetId > 0) {
+            Intent intent = new Intent(requireContext(), SearchResultActivity.class);
+            intent.putExtra(SearchResultActivity.EXTRA_TAG, banner.getTitle());
+            intent.putExtra(SearchResultActivity.EXTRA_TITLE, banner.getTitle());
             startActivity(intent);
         } else if ("url".equalsIgnoreCase(type) && !TextUtils.isEmpty(banner.getTargetUrl())) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(banner.getTargetUrl()));
@@ -183,28 +195,30 @@ public class HomeFragment extends Fragment {
     private void observeTaxonomyData() {
         // Observe Subjects from local Room
         taxonomyRepository.getSubjects().observe(getViewLifecycleOwner(), subjects -> {
-            if (subjects != null && !subjects.isEmpty()) {
+            if (subjects != null) {
                 subjectAdapter.setSubjects(subjects);
-                tvSubjectsCountBadge.setText(subjects.size() + " Subjects");
+                if (tvSubjectsCountBadge != null) {
+                    tvSubjectsCountBadge.setText(subjects.size() + " Subjects");
+                }
             }
         });
 
         // Observe Topics from local Room
         taxonomyRepository.getTopics().observe(getViewLifecycleOwner(), topics -> {
-            if (topics != null && !topics.isEmpty()) {
+            if (topics != null) {
                 topicAdapter.setTopics(topics);
             }
         });
 
         // Observe Categories & Tags from local Room
         taxonomyRepository.getCategories().observe(getViewLifecycleOwner(), categories -> {
-            if (categories != null && !categories.isEmpty()) {
+            if (categories != null) {
                 populateCategoryChips(categories);
             }
         });
 
         taxonomyRepository.getTags().observe(getViewLifecycleOwner(), tags -> {
-            if (tags != null && !tags.isEmpty()) {
+            if (tags != null) {
                 populateTagChips(tags);
             }
         });
@@ -220,22 +234,27 @@ public class HomeFragment extends Fragment {
                 if (isAdded()) {
                     swipeRefresh.setRefreshing(false);
                     if (response != null) {
+                        if (response.getCarouselIntervalSeconds() > 0) {
+                            carouselIntervalMs = response.getCarouselIntervalSeconds() * 1000L;
+                        }
                         if (response.getBanners() != null) {
                             bannerAdapter.setBanners(response.getBanners());
                             carouselHandler.removeCallbacks(carouselRunnable);
-                            carouselHandler.postDelayed(carouselRunnable, 4000);
+                            carouselHandler.postDelayed(carouselRunnable, carouselIntervalMs);
                         }
-                        if (response.getSubjects() != null && !response.getSubjects().isEmpty()) {
+                        if (response.getSubjects() != null) {
                             subjectAdapter.setSubjects(response.getSubjects());
-                            tvSubjectsCountBadge.setText(response.getSubjects().size() + " Subjects");
+                            if (tvSubjectsCountBadge != null) {
+                                tvSubjectsCountBadge.setText(response.getSubjects().size() + " Subjects");
+                            }
                         }
-                        if (response.getTopics() != null && !response.getTopics().isEmpty()) {
+                        if (response.getTopics() != null) {
                             topicAdapter.setTopics(response.getTopics());
                         }
-                        if (response.getCategories() != null && !response.getCategories().isEmpty()) {
+                        if (response.getCategories() != null) {
                             populateCategoryChips(response.getCategories());
                         }
-                        if (response.getTags() != null && !response.getTags().isEmpty()) {
+                        if (response.getTags() != null) {
                             populateTagChips(response.getTags());
                         }
                         if (response.getExamsOverview() != null) {

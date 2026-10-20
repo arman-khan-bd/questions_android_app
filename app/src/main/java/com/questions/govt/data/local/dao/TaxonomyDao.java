@@ -45,4 +45,32 @@ public interface TaxonomyDao {
 
     @Query("DELETE FROM taxonomies WHERE type = :type")
     void clearTaxonomyByType(String type);
+
+    @androidx.room.Transaction
+    default void syncTaxonomies(List<TaxonomyItem> subjects, List<TaxonomyItem> topics, List<TaxonomyItem> categories, List<TaxonomyItem> tags) {
+        if (subjects != null) {
+            clearTaxonomyByType("subject");
+            if (!subjects.isEmpty()) {
+                insertOrReplaceAll(subjects);
+            }
+        }
+        if (topics != null) {
+            clearTaxonomyByType("topic");
+            if (!topics.isEmpty()) {
+                insertOrReplaceAll(topics);
+            }
+        }
+        if (categories != null) {
+            clearTaxonomyByType("category");
+            if (!categories.isEmpty()) {
+                insertOrReplaceAll(categories);
+            }
+        }
+        if (tags != null) {
+            clearTaxonomyByType("tag");
+            if (!tags.isEmpty()) {
+                insertOrReplaceAll(tags);
+            }
+        }
+    }
 }

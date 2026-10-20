@@ -9,11 +9,33 @@
     app:strokeColor="@color/border"
     app:strokeWidth="1dp">
 
-    <ImageView
-        android:id="@+id/ivBanner"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="Promotional Banner"
-        android:scaleType="centerCrop" />
+        android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/ivBanner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Promotional Banner"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/tvBannerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_gravity="bottom|start"
+            android:background="@drawable/bg_banner_title"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:visibility="gone" />
+    </FrameLayout>
 </com.google.android.material.card.MaterialCardView>
